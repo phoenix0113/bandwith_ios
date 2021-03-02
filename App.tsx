@@ -1,13 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import React from 'react';
 import {
   SafeAreaView,
@@ -17,6 +7,7 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
+import styled from 'styled-components/native';
 
 import {
   Header,
@@ -25,6 +16,10 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+const StyledText = styled.Text`
+  color: red;
+`;
 
 declare const global: {HermesInternal: null | {}};
 
@@ -46,7 +41,7 @@ const App = () => {
           )}
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One 1</Text>
+              <StyledText>Step One 1</StyledText>
               <Text style={styles.sectionDescription}>
                 Edit <Text style={styles.highlight}>App.tsx</Text> to change
                 this screen and then come back to see your edits.
