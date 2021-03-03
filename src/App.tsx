@@ -6,6 +6,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
 
+console.log("> Reload log tracker");
+
 const App = () => {
   return (
     <>

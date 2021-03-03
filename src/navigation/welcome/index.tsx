@@ -11,7 +11,7 @@ import { MainNavigation } from "../main";
 const WelcomeStack = createStackNavigator<WelcomeStackParamList>();
 
 export const WelcomeNavigation = () => (
-  <WelcomeStack.Navigator>
+  <WelcomeStack.Navigator headerMode="none">
     <WelcomeStack.Screen name="Welcome" component={WelcomeScreen}/>
     <WelcomeStack.Screen name="Login" component={LoginScreen}/>
     <WelcomeStack.Screen name="Registration" component={RegistrationScreen}/>
