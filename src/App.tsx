@@ -11,7 +11,7 @@ console.log("> Reload log tracker");
 const App = () => {
   return (
     <>
-      <StatusBar barStyle="dark-content"/>
+      <StatusBar barStyle="light-content"/>
       <NavigationContainer ref={navigationRef}>
         <WelcomeNavigation />
       </NavigationContainer>

@@ -15,7 +15,7 @@ type WithNavigatorScreen = {
 export const LoginScreen = ({navigation}: WithNavigatorScreen) => (
   <SafeAreaView>
     <View>
-      <Text>Login</Text>
+      <Text>Login1</Text>
       <Button title="Back" onPress={() => navigation.navigate("Welcome")}/>
       <Button title="Registration" onPress={() => navigation.navigate("Registration")}/>
       <Button title="Main" onPress={() => navigation.navigate("Main")}/>

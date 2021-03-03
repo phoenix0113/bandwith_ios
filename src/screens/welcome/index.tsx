@@ -3,8 +3,9 @@ import { SafeAreaView } from "react-native";
 
 import {
   WelcomeWrapper, ContentToolbox, HeaderContent, ButtonText,
-  HeaderWrapper, LoginButton, RegistrationButton, COLORS,
+  HeaderWrapper, LoginButton, RegistrationButton,
 } from "./styled";
+import { COLORS } from "../../components/styled";
 
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 import ContinueWithGoogleIcon from "../../assets/images/general/ContinueWithGoogle.svg";

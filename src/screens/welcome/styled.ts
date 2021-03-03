@@ -1,16 +1,5 @@
 import styled from "styled-components/native";
-
-export const COLORS = {
-  MAIN_DARK: "#0B131A",
-  MAIN_LIGHT: "#0F1A23",
-  GREY: "#908F9D",
-  LIGHT_GREY: "#DEDEDE",
-  WHITE: "#fff",
-  BLACK: "#0B0B0B",
-  RED: "#FF0000",
-  ORANGE: "#FD9D00",
-  ALTERNATIVE: "#0AFFEF",
-};
+import { COLORS } from "../../components/styled";
 
 export const WelcomeWrapper = styled.View`
   display: flex;
