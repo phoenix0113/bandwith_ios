@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { SafeAreaView } from "react-native";
 import { Input } from "react-native-elements";
-import md5 from "md5";
 
 import {LoginScreenNavigationProps} from "../../navigation/welcome/types";
 import {getPasswordErrorMessage, getEmailErrorMessage, inputStyles} from "./utils";
@@ -14,8 +13,7 @@ import {
   RightItem, NavigationText, BasicButtonText, BasicButton,
 } from "../../components/styled";
 import {InputLabel, InputGroup} from "./styled";
-
-import { login } from "../../axios/routes/user";
+import {UserServiceInstance} from "../../services/user";
 
 type WithNavigatorScreen = {
   navigation: LoginScreenNavigationProps;
@@ -29,16 +27,8 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
   const passwordErrorMessage = useMemo(() => password === null ? "" : getPasswordErrorMessage(password), [password]);
 
   const onSubmit = async () => {
-    try {
-      if (email && password){
-        const response = await login({
-          email: email.toLowerCase(),
-          password: md5(password),
-        });
-        console.log(response);
-      }
-    } catch (err) {
-      console.error(err.message);
+    if (email && password){
+      UserServiceInstance.login(email, password);
     }
   };
 

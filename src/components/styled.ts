@@ -30,7 +30,7 @@ export const NavigationBar = styled.View<NavigationBarProps>`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  paddingVertical: 21px;
+  padding-vertical: 21px;
   background-color: ${COLORS.BLACK};
   position: ${({ position }) => position || "relative"};
   z-index: ${Z_INDEX.MIDDLE};
@@ -66,10 +66,6 @@ export const LeftItem = styled(NavigationItem)`
 export const RightItem = styled(NavigationItem)`
   width: 20%;
   justify-content: flex-end;
-
-  & > .anticon {
-    line-height: 1;
-  }
 `;
 
 export const CenterItem = styled(NavigationItem)`
@@ -131,7 +127,7 @@ export const PageWrapper = styled.View<PageWrapperProps>`
   align-items: center;
   width: 100%;
   height: 100%;
-  paddingHorizontal: ${({paddingHorizontal}) => paddingHorizontal}; 
+  padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal}; 
   background-color: ${({ background }) => background || COLORS.BLACK};
 `;
 

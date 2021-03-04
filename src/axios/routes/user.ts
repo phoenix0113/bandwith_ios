@@ -9,7 +9,7 @@ import {
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
-export const authWithGoogle = async (request: OAuthGoogleRequest): Promise<AuthResponse> => {
+export const authWithGoogleRequest = async (request: OAuthGoogleRequest): Promise<AuthResponse> => {
   try {
     const response = await instance.post<AuthResponse>(API.OAUTH_GOOGLE, request);
 
@@ -20,7 +20,7 @@ export const authWithGoogle = async (request: OAuthGoogleRequest): Promise<AuthR
   }
 };
 
-export const login = async (request: LoginRequest): Promise<AuthResponse> => {
+export const loginRequest = async (request: LoginRequest): Promise<AuthResponse> => {
   try {
     const response = await instance.post<AuthResponse>(API.LOGIN, request);
 
@@ -31,7 +31,7 @@ export const login = async (request: LoginRequest): Promise<AuthResponse> => {
   }
 };
 
-export const register = async (request: RegistrationRequest): Promise<AuthResponse> => {
+export const registerRequest = async (request: RegistrationRequest): Promise<AuthResponse> => {
   try {
     const response = await instance.post<AuthResponse>(API.REGISTRATION, request);
 
@@ -42,7 +42,7 @@ export const register = async (request: RegistrationRequest): Promise<AuthRespon
   }
 };
 
-export const userProfile = async (request: UserProfileRequest): Promise<UserProfileResponse> => {
+export const userProfileRequest = async (request: UserProfileRequest): Promise<UserProfileResponse> => {
   try {
     const response = await instance.post<UserProfileResponse>(API.USER_PROFILE, request);
 
@@ -53,7 +53,7 @@ export const userProfile = async (request: UserProfileRequest): Promise<UserProf
   }
 };
 
-export const avcoreCredentials = async (): Promise<CloudCredentials> => {
+export const avcoreCredentialsRequst = async (): Promise<CloudCredentials> => {
   try {
     const response = await instance.get<AvcoreAuthResponse>(API.AVCORE_CREDS);
 
@@ -64,7 +64,7 @@ export const avcoreCredentials = async (): Promise<CloudCredentials> => {
   }
 };
 
-export const setReadHint = async (request: SetReadHintRequest): Promise<SetReadHintResponse> => {
+export const setReadHintRequest = async (request: SetReadHintRequest): Promise<SetReadHintResponse> => {
   try {
     const response = await instance.post<SetReadHintResponse>(API.USER_HINTS, request);
 

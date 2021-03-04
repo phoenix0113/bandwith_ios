@@ -7,6 +7,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
 
+import {UserServiceInstance} from "./services/user";
+
+UserServiceInstance.init();
+
 console.log("> Reload log tracker");
 
 const App = () => {
