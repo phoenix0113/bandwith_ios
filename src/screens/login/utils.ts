@@ -1,4 +1,7 @@
-export const emailErrorMessage = (email: string): string => {
+import { StyleSheet } from "react-native";
+import { COLORS } from "../../components/styled";
+
+export const getEmailErrorMessage = (email: string): string => {
   if (!email) {
     return "Email is required";
   }
@@ -9,9 +12,27 @@ export const emailErrorMessage = (email: string): string => {
 };
 
 
-export const passwordErrorMessage = (password: string): string => {
+export const getPasswordErrorMessage = (password: string): string => {
   if (!password) {
     return "Password is required";
   }
   return "";
 };
+
+export const inputStyles = StyleSheet.create({
+  inputText: {
+    color: COLORS.WHITE,
+    fontFamily: "Kefa",
+    fontSize: 24,
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: 24,
+    letterSpacing: 0.80,
+    textAlign: "left",
+
+  },
+  inputContainer: {
+    borderWidth: 0,
+    paddingHorizontal: 0,
+  },
+});

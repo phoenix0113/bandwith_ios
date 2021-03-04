@@ -6,6 +6,7 @@ export const COLORS = {
   GREY: "#908F9D",
   LIGHT_GREY: "#DEDEDE",
   WHITE: "#fff",
+  WHITE_VAGUE: "#6D7278",
   BLACK: "#0B0B0B",
   RED: "#FF0000",
   ORANGE: "#FD9D00",
@@ -29,24 +30,28 @@ export const NavigationBar = styled.View<NavigationBarProps>`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  padding: 21px;
-  background-color: ${COLORS.MAIN_LIGHT};
+  paddingVertical: 21px;
+  background-color: ${COLORS.BLACK};
+  position: ${({ position }) => position || "relative"};
+  z-index: ${Z_INDEX.MIDDLE};
+  width: 100%;
+`;
+
+export const NavigationText = styled.Text`
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: 22px;
   letter-spacing: 0px;
   text-align: center;
-  position: ${({ position }) => position || "initial"};
-  z-index: ${Z_INDEX.MIDDLE};
-  width: 100%;
+  color: ${COLORS.WHITE};
 `;
 
 interface ItemProps {
   color?: string;
 }
 
-const NavigationItem = styled.View<ItemProps>`
+const NavigationItem = styled.TouchableOpacity<ItemProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -72,148 +77,63 @@ export const CenterItem = styled(NavigationItem)`
   justify-content: center;
 `;
 
+/**
+ * Basic button
+ */
+type BasicButtonProps = {
+  backgroundColor?: string;
+  borderColor?: string;
+  flexGrow?: number;
+  margin?: string;
+  width?: string;
+  disabled?: boolean;
+}
+
+export const BasicButton = styled.TouchableOpacity<BasicButtonProps>`
+  padding: 11px 37.5px;
+  border-radius: 6px;
+  border: 2px solid;
+  width: ${({width}) => width || "auto"};
+  margin: ${({margin}) => margin || "0 0 20px 0"};
+  background-color: ${({backgroundColor, disabled}) => disabled ? COLORS.WHITE_VAGUE : backgroundColor || COLORS.WHITE};
+  border-color: ${({borderColor, disabled}) => disabled ? COLORS.WHITE_VAGUE : borderColor || COLORS.WHITE};
+  flex-grow: ${({flexGrow}) => flexGrow || 0};
+`;
+
+type BasicButtonTextProps = {
+  color?: string;
+}
+
+export const BasicButtonText = styled.Text<BasicButtonTextProps>`
+  font-size: 18px;
+  text-align: center;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: 0px;
+  color: ${({color}) => color || COLORS.BLACK};
+`;
 
 /**
  * Basic page wrapper with navigation
  */
 
-// interface PageWrapperProps {
-//   background?: string;
-// }
+interface PageWrapperProps {
+  background?: string;
+  paddingHorizontal?: string;
+}
 
-// export const PageWrapper = styled.div<PageWrapperProps>`
-//   display: flex;
-//   flex-grow: 1;
-//   flex-direction: column;
-//   justify-content: space-between;
-//   width: 100%;
-//   background-color: ${({ background }) => background || COLORS.WHITE};
-// `;
-
-// /**
-//  * Authentication pages
-//  */
-
-// export const WelcomeLogo = styled.img`
-//   width: 46%;
-// `;
-
-// const AuthPageBlock = styled.div`
-//   width: 100%;
-//   transform: skewY(-12.2deg);
-//   display: flex;
-// `;
-
-// export const AuthPageTopBlock = styled(AuthPageBlock)`
-//   background-color: ${COLORS.MAIN_LIGHT};
-//   margin-top: -12.2%;
-//   padding-top: 24.4%;
-//   height: 42%;
-//   justify-content: center;
-//   align-items: center;
-
-//   @media (max-height: 800px) {
-//     height: 40%;
-//   }
-
-//   @media (max-height: 650px){
-//     height: 35%;
-//   }
-
-//   @media (max-height: 568px) {
-//     height: 30%;
-//   }
-// `;
-
-// export const AuthPageBottomBlock = styled(AuthPageBlock)`
-//   flex-grow: 1;
-//   margin-bottom: -12.2%;
-// `;
-
-// export const AuthPageBlockContent = styled.div`
-//   transform: skewY(12.2deg);
-//   width: 100%;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-// `;
-
-// export const AuthPageContentWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   width: 100%;
-
-//   @media (min-width: 768px) {
-//     display: flex;
-//     justify-content: center;
-//     margin: 0 20%;
-//   }
-// `;
-
-// export const AuthFormWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   padding: 20px;
-// `;
-
-// export const AuthFormHeader = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   padding: 54px 0;
-
-//   & > img {
-//     width: 36%;
-//   }
-// `;
-
-// export const AuthLinkRow = styled.div`
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: center;
-//   width: 100%;
-//   cursor: pointer;
-// `;
-
-// export const Text = styled.div`
-//   display: inline;
-//   color: ${COLORS.MAIN_LIGHT};
-//   font-size: 14px;
-//   font-style: normal;
-//   font-weight: 500;
-//   line-height: 31px;
-//   letter-spacing: 0px;
-//   text-align: center;
-//   margin-right: 4px;
-// `;
-
-// export const StyledLink = styled(Text)`
-//   color: ${COLORS.ALTERNATIVE};
-// `;
-
-// export const InputIconWrapper = styled.div`
-//   width: 20px;
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: center;
-//   align-items: center;
-// `;
-
-// export const AuthButton = styled.button`
-//   width: 100%;
-//   height: 50px;
-//   background: ${COLORS.ALTERNATIVE};
-//   box-shadow: 0px 0px 8px rgba(10, 255, 239, 0.3);
-//   border-radius: 10px;
-//   font-size: 20px;
-//   font-style: normal;
-//   font-weight: 800;
-//   line-height: 31px;
-//   letter-spacing: 0px;
-//   text-align: center;
-//   border: none;
-//   margin: 5px 0 20px 0;
-// `;
+export const PageWrapper = styled.View<PageWrapperProps>`
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  paddingHorizontal: ${({paddingHorizontal}) => paddingHorizontal}; 
+  background-color: ${({ background }) => background || COLORS.BLACK};
+`;
 
 // /**
 //  * Common components

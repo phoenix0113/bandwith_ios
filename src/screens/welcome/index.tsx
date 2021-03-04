@@ -1,11 +1,8 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
 
-import {
-  WelcomeWrapper, ContentToolbox, HeaderContent, ButtonText,
-  HeaderWrapper, LoginButton, RegistrationButton,
-} from "./styled";
-import { COLORS } from "../../components/styled";
+import { WelcomeWrapper, ContentToolbox, HeaderContent, HeaderWrapper } from "./styled";
+import { COLORS, BasicButton, BasicButtonText } from "../../components/styled";
 
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 import ContinueWithGoogleIcon from "../../assets/images/general/ContinueWithGoogle.svg";
@@ -26,12 +23,19 @@ export const WelcomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element 
         <HeaderContent>in order to use the application you need to log in</HeaderContent>
       </HeaderWrapper>
       <ContentToolbox>
-        <LoginButton onPress={() => navigation.navigate("Login")}>
-          <ButtonText color={COLORS.BLACK}>Login</ButtonText>
-        </LoginButton>
-        <RegistrationButton onPress={() => navigation.navigate("Registration")}>
-          <ButtonText color={COLORS.WHITE}>Registration</ButtonText>
-        </RegistrationButton>
+        <BasicButton
+          backgroundColor={COLORS.BLACK}
+          onPress={() => navigation.navigate("Login")}
+        >
+          <BasicButtonText color={COLORS.WHITE}>Login</BasicButtonText>
+        </BasicButton>
+        <BasicButton
+          flexGrow={1}
+          margin="0 0 20px 10px "
+          onPress={() => navigation.navigate("Registration")}
+        >
+          <BasicButtonText>Registration</BasicButtonText>
+        </BasicButton>
         <ContinueWithGoogleIcon width="100%"/>
       </ContentToolbox>
     </WelcomeWrapper>

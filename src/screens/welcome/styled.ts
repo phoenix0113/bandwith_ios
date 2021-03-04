@@ -37,37 +37,3 @@ export const ContentToolbox = styled.View`
   padding: 50px 30px;
   align-items: flex-end;
 `;
-
-const BasicButton = styled.TouchableOpacity`
-  padding: 11px 37.5px;
-  border-radius: 6px;
-  border: 2px solid;
-  margin-bottom: 20px;
-`;
-
-type ButtonTextProps = {
-  color: string;
-}
-
-export const ButtonText = styled.Text<ButtonTextProps>`
-  font-size: 18px;
-  text-align: center;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 25px;
-  letter-spacing: 0px;
-  color: ${({color}) => color};
-`;
-
-export const LoginButton = styled(BasicButton)`
-  background-color: white;
-  border-color: ${COLORS.MAIN_LIGHT};
-`;
-
-export const RegistrationButton = styled(BasicButton)`
-  background-color: ${COLORS.MAIN_LIGHT};
-  border-color: ${COLORS.MAIN_LIGHT};
-  color: white;
-  flex-grow: 1;
-  margin-left: 10px;
-`;

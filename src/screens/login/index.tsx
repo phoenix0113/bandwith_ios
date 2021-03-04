@@ -1,8 +1,21 @@
-import React, { useState } from "react";
-import { SafeAreaView, Button } from "react-native";
+import React, { useMemo, useState } from "react";
+import { SafeAreaView } from "react-native";
 import { Input } from "react-native-elements";
+import md5 from "md5";
+
 import {LoginScreenNavigationProps} from "../../navigation/welcome/types";
-import {emailErrorMessage, passwordErrorMessage} from "./utils";
+import {getPasswordErrorMessage, getEmailErrorMessage, inputStyles} from "./utils";
+
+import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
+import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
+
+import {
+  COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
+  RightItem, NavigationText, BasicButtonText, BasicButton,
+} from "../../components/styled";
+import {InputLabel, InputGroup} from "./styled";
+
+import { login } from "../../axios/routes/user";
 
 type WithNavigatorScreen = {
   navigation: LoginScreenNavigationProps;
@@ -10,24 +23,73 @@ type WithNavigatorScreen = {
 
 export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
   const [email, setEmail] = useState<string|null>(null);
-  const [password, setPassword] = useState<string>("");
+  const [password, setPassword] = useState<string|null>(null);
+
+  const emailErrorMessage = useMemo(() => email === null ? "" : getEmailErrorMessage(email), [email]);
+  const passwordErrorMessage = useMemo(() => password === null ? "" : getPasswordErrorMessage(password), [password]);
+
+  const onSubmit = async () => {
+    try {
+      if (email && password){
+        const response = await login({
+          email: email.toLowerCase(),
+          password: md5(password),
+        });
+        console.log(response);
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   return (
-    <SafeAreaView>
-      <Input
-        onChangeText={(value: string) => setEmail(value)}
-        placeholder="Email"
-        errorMessage={email === null ? "" : emailErrorMessage(email)}
-      />
-      <Input
-        secureTextEntry={true}
-        onChangeText={(value: string) => setPassword(value)}
-        placeholder="Password"
-        errorMessage={passwordErrorMessage(password)}
-      />
-      <Button title="Back" onPress={() => navigation.navigate("Welcome")}/>
-      <Button title="Registration" onPress={() => navigation.navigate("Registration")}/>
-      <Button title="Main" onPress={() => navigation.navigate("Main")}/>
+    <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
+      <PageWrapper paddingHorizontal="24px">
+
+        <NavigationBar>
+          <LeftItem onPress={() => navigation.navigate("Welcome")}>
+            <BackButtonIcon />
+          </LeftItem>
+          <CenterItem>
+            <NavigationText>Login</NavigationText>
+          </CenterItem>
+          <RightItem />
+        </NavigationBar>
+
+        <BandwwithTextLogo width="50%" />
+
+        <InputGroup>
+          <InputLabel>Your gmail is required for login</InputLabel>
+          <Input
+            onChangeText={(value: string) => setEmail(value)}
+            placeholder="ENTER YOUR EMAIL"
+            errorMessage={emailErrorMessage}
+            inputStyle={inputStyles.inputText}
+            containerStyle={inputStyles.inputContainer}
+          />
+        </InputGroup>
+
+        <InputGroup>
+          <InputLabel>Your password it's your safety</InputLabel>
+          <Input
+            secureTextEntry={true}
+            onChangeText={(value: string) => setPassword(value)}
+            placeholder="ENTER YOUR PASSWORD"
+            errorMessage={passwordErrorMessage}
+            inputStyle={inputStyles.inputText}
+            containerStyle={inputStyles.inputContainer}
+          />
+        </InputGroup>
+
+        <BasicButton
+          width="100%"
+          disabled={!!emailErrorMessage || !!passwordErrorMessage || !email || !password}
+          onPress={onSubmit}
+        >
+          <BasicButtonText>LOGIN</BasicButtonText>
+        </BasicButton>
+
+      </PageWrapper>
     </SafeAreaView>
   );
 };
