@@ -12,9 +12,19 @@ export const getEmailErrorMessage = (email: string): string => {
 };
 
 
-export const getPasswordErrorMessage = (password: string): string => {
+export const getPasswordErrorMessage = (password: string, rPassword?: string): string => {
   if (!password) {
     return "Password is required";
+  }
+  if (rPassword && password !== rPassword) {
+    return "Password must match";
+  }
+  return "";
+};
+
+export const getUsernameErrorMessage = (username: string): string => {
+  if (!username) {
+    return "Username is required";
   }
   return "";
 };

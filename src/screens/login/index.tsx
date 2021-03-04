@@ -32,6 +32,10 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
     }
   };
 
+  const isSubmitDisabled = useMemo(() => {
+    return !email || !password || !!emailErrorMessage || !!passwordErrorMessage;
+  }, [email, password, passwordErrorMessage, emailErrorMessage]);
+
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
       <PageWrapper paddingHorizontal="24px">
@@ -53,6 +57,7 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
           <Input
             onChangeText={(value: string) => setEmail(value)}
             placeholder="ENTER YOUR EMAIL"
+            autoCorrect={false}
             errorMessage={emailErrorMessage}
             inputStyle={inputStyles.inputText}
             containerStyle={inputStyles.inputContainer}
@@ -65,6 +70,7 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
             secureTextEntry={true}
             onChangeText={(value: string) => setPassword(value)}
             placeholder="ENTER YOUR PASSWORD"
+            textContentType="oneTimeCode"
             errorMessage={passwordErrorMessage}
             inputStyle={inputStyles.inputText}
             containerStyle={inputStyles.inputContainer}
@@ -73,7 +79,7 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
 
         <BasicButton
           width="100%"
-          disabled={!!emailErrorMessage || !!passwordErrorMessage || !email || !password}
+          disabled={isSubmitDisabled}
           onPress={onSubmit}
         >
           <BasicButtonText>LOGIN</BasicButtonText>

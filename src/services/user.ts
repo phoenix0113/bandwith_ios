@@ -28,9 +28,13 @@ class UserService {
   }
 
   fetchUserData = async () => {
-    // empty string in place of firebaseToken is just for compatibility
-    this.profile = await userProfileRequest({firebaseToken: ""});
-    console.log("> fetched user profile:", this.profile);
+    try {
+      // empty string in place of firebaseToken is just for compatibility
+      this.profile = await userProfileRequest({firebaseToken: ""});
+      console.log("> fetched user profile:", this.profile);
+    } catch (err) {
+      console.error(`>> fetchUserData error: ${err.message}`);
+    }
   }
 
   login = async (email: string, password: string) => {
@@ -40,11 +44,13 @@ class UserService {
           password: md5(password),
         });
 
+        console.log(`> login token ${token}`);
+
         this.saveToken(token);
         setBearerToken(this.token);
         this.fetchUserData();
     } catch (err) {
-      console.error(err.message);
+      console.error(`>> login error: ${err.message}`);
     }
   }
 
@@ -57,32 +63,48 @@ class UserService {
         name: username,
       });
 
+      console.log(`> registration token ${token}`);
+
       this.saveToken(token);
       setBearerToken(this.token);
     } catch (err) {
-      console.error(err.message);
+      console.error(`>> register error: ${err.message}`);
     }
   }
 
   logout = () => {
+    this.token = null;
+    this.profile = null;
     this.removeToken();
     clearBearerToken();
   }
 
   saveToken = async (token: string) => {
-    await AsyncStorage.setItem(TOKEN_STORAGE_KEY, token);
-    console.log(`> Token was saved: ${token.substring(0, 10)}`);
+    try {
+      await AsyncStorage.setItem(TOKEN_STORAGE_KEY, token);
+      console.log(`> Token was saved: ${token.substring(0, 10)}`);
+    } catch (err) {
+      console.error(`>> saveToken error: ${err.message}`);
+    }
   }
 
   removeToken = async () => {
-    await AsyncStorage.removeItem(TOKEN_STORAGE_KEY);
-    console.log("> Token was removed");
+    try {
+      await AsyncStorage.removeItem(TOKEN_STORAGE_KEY);
+      console.log("> Token was removed");
+    } catch (err) {
+      console.error(`>> removeToken error: ${err.message}`);
+    }
   }
 
   getToken = async () => {
-    const token = await AsyncStorage.getItem(TOKEN_STORAGE_KEY);
-    console.log(`> Token was retrieved ${token.substring(0, 10)}`);
-    this.token = token;
+    try {
+      const token = await AsyncStorage.getItem(TOKEN_STORAGE_KEY);
+      console.log(`> Token was retrieved ${token.substring(0, 10)}`);
+      this.token = token;
+    } catch (err) {
+      console.error(`>> getToken error: ${err.message}`);
+    }
   }
 }
 
