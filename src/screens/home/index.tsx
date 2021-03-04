@@ -6,13 +6,13 @@ import {
   Button,
 } from "react-native";
 
-import {navigateToScreen} from "../../navigation/helper";
+import {UserServiceInstance} from "../../services/user";
 
 export const HomeScreen = () => (
   <SafeAreaView>
     <View>
       <Text>Home</Text>
-      <Button title="toWelcome" onPress={() => navigateToScreen("Welcome")} />
+      <Button title="Logout" onPress={() => UserServiceInstance.logout()} />
     </View>
   </SafeAreaView>
 );

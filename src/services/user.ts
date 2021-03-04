@@ -1,12 +1,14 @@
-import {makeObservable, observable} from "mobx";
+import {makeObservable, observable, reaction} from "mobx";
 import md5 from "md5";
 import AsyncStorage from "@react-native-community/async-storage";
+import { createContext } from "react";
 
 import { UserProfileResponse } from "../shared/interfaces";
 
-import {loginRequest, registerRequest, userProfileRequest} from "../axios/routes/user";
-import {setBearerToken, clearBearerToken} from "../axios/instance";
-import { createContext } from "react";
+import { loginRequest, registerRequest, userProfileRequest } from "../axios/routes/user";
+import { setBearerToken, clearBearerToken } from "../axios/instance";
+
+import { navigateToScreen } from "../navigation/helper";
 
 const TOKEN_STORAGE_KEY = "TOKEN";
 
@@ -17,10 +19,21 @@ class UserService {
 
   constructor () {
     makeObservable(this);
+
+    reaction(
+      () => this.token,
+      () => {
+        if (this.token) {
+          navigateToScreen("Main");
+        } else {
+          navigateToScreen("Welcome");
+        }
+      }
+    );
   }
 
   init = async () => {
-    await this.getToken();
+    await this.getTokenFromStorage();
     if (this.token) {
       setBearerToken(this.token);
       this.fetchUserData();
@@ -46,8 +59,8 @@ class UserService {
 
         console.log(`> login token ${token}`);
 
-        this.saveToken(token);
-        setBearerToken(this.token);
+        this.saveTokenToStotage(token);
+        setBearerToken(token);
         this.fetchUserData();
     } catch (err) {
       console.error(`>> login error: ${err.message}`);
@@ -65,7 +78,8 @@ class UserService {
 
       console.log(`> registration token ${token}`);
 
-      this.saveToken(token);
+      this.token = token;
+      this.saveTokenToStotage(token);
       setBearerToken(this.token);
     } catch (err) {
       console.error(`>> register error: ${err.message}`);
@@ -75,11 +89,11 @@ class UserService {
   logout = () => {
     this.token = null;
     this.profile = null;
-    this.removeToken();
+    this.removeTokenFromStorage();
     clearBearerToken();
   }
 
-  saveToken = async (token: string) => {
+  saveTokenToStotage = async (token: string) => {
     try {
       await AsyncStorage.setItem(TOKEN_STORAGE_KEY, token);
       console.log(`> Token was saved: ${token.substring(0, 10)}`);
@@ -88,7 +102,7 @@ class UserService {
     }
   }
 
-  removeToken = async () => {
+  removeTokenFromStorage = async () => {
     try {
       await AsyncStorage.removeItem(TOKEN_STORAGE_KEY);
       console.log("> Token was removed");
@@ -97,11 +111,15 @@ class UserService {
     }
   }
 
-  getToken = async () => {
+  getTokenFromStorage = async () => {
     try {
       const token = await AsyncStorage.getItem(TOKEN_STORAGE_KEY);
-      console.log(`> Token was retrieved ${token.substring(0, 10)}`);
-      this.token = token;
+      if (token) {
+        this.token = token;
+        console.log(`> Token was retrieved ${token.substring(0, 10)}`);
+      } else {
+        console.log("> Not token found");
+      }
     } catch (err) {
       console.error(`>> getToken error: ${err.message}`);
     }

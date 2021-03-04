@@ -3,15 +3,15 @@ import React from "react";
 import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import {configure} from "mobx";
 
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
 
 import {UserServiceInstance} from "./services/user";
 
+configure({ enforceActions: "never" });
 UserServiceInstance.init();
-
-console.log("> Reload log tracker");
 
 const App = () => {
   return (
