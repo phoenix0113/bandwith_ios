@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
-import { Keyboard, SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native";
 import { Input } from "react-native-elements";
 
-import {RegistrationScreenNavigationProps} from "../../navigation/welcome/types";
-import {getPasswordErrorMessage, getEmailErrorMessage, inputStyles, getUsernameErrorMessage} from "../login/utils";
+import { RegistrationScreenNavigationProps } from "../../navigation/welcome/types";
+import { getPasswordErrorMessage, getEmailErrorMessage, inputStyles, getUsernameErrorMessage } from "../login/utils";
 
 import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
@@ -12,8 +12,8 @@ import {
   COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
   RightItem, NavigationText, BasicButtonText, BasicButton,
 } from "../../components/styled";
-import {InputLabel, InputGroup} from "../login/styled";
-import {UserServiceInstance} from "../../services/user";
+import { InputLabel, InputGroup } from "../login/styled";
+import { UserServiceInstance } from "../../services/user";
 
 type WithNavigatorScreen = {
   navigation: RegistrationScreenNavigationProps;

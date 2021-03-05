@@ -34,7 +34,6 @@ export const NavigationBar = styled.View<NavigationBarProps>`
   background-color: ${COLORS.BLACK};
   position: ${({ position }) => position || "relative"};
   z-index: ${Z_INDEX.MIDDLE};
-  width: 100%;
 `;
 
 export const NavigationText = styled.Text`
@@ -59,17 +58,17 @@ const NavigationItem = styled.TouchableOpacity<ItemProps>`
 `;
 
 export const LeftItem = styled(NavigationItem)`
-  width: 20%;
+  flex-grow: 0.2;
   justify-content: flex-start;
 `;
 
 export const RightItem = styled(NavigationItem)`
-  width: 20%;
+  flex-grow: 0.2;
   justify-content: flex-end;
 `;
 
 export const CenterItem = styled(NavigationItem)`
-  flex-grow: 1;
+  flex-grow: 0.6;
   justify-content: center;
 `;
 
@@ -127,157 +126,6 @@ export const PageWrapper = styled.View<PageWrapperProps>`
   align-items: center;
   width: 100%;
   height: 100%;
-  padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal}; 
+  padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal || "32px"}; 
   background-color: ${({ background }) => background || COLORS.BLACK};
 `;
-
-// /**
-//  * Common components
-//  */
-// interface CommonPageContentWrapperProps {
-//   padding?: string;
-// }
-
-// export const CommonPageContentWrapper = styled.div<CommonPageContentWrapperProps>`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-around;
-//   flex-grow: 1;
-//   background-color: ${COLORS.MAIN_DARK};
-//   padding: ${({ padding }) => padding || "8% 20px"};
-// `;
-
-// interface ICommonImgWrapperProps {
-//   width?: string;
-// }
-
-// export const CommonImgWrapper = styled.img<ICommonImgWrapperProps>`
-//   cursor: pointer;
-//   width: ${({ width }) => width || "auto"};
-// `;
-
-// interface ButtonProps {
-//   color?: string;
-//   backgroundColor?: string;
-//   margin?: string;
-// }
-
-// export const CommonButton = styled.button<ButtonProps>`
-//   width: 100%;
-//   height: 50px;
-//   padding: 13px 0 12px 0;
-//   border-radius: 6px;
-//   font-size: 18px;
-//   font-style: normal;
-//   font-weight: 500;
-//   line-height: 25px;
-//   letter-spacing: 0px;
-//   text-align: center;
-//   color: ${({ color }) => color || COLORS.WHITE};
-//   background-color: ${({ backgroundColor }) => backgroundColor || COLORS.MAIN_LIGHT};
-//   margin: ${({ margin }) => margin || 0};
-//   border: none;
-// `;
-
-// export const CommonContentWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-
-// `;
-
-// export const CommonContentTitle = styled.div`
-//   font-size: 24px;
-//   font-style: normal;
-//   font-weight: 500;
-//   line-height: 40px;
-//   letter-spacing: 0px;
-//   text-align: center;
-//   color: ${COLORS.WHITE};
-// `;
-
-// export const CommonContentDescription = styled.div`
-//   font-size: 12px;
-//   font-style: normal;
-//   font-weight: 400;
-//   line-height: 16px;
-//   letter-spacing: 0px;
-//   text-align: center;
-//   color: ${COLORS.WHITE};
-// `;
-
-// export const LoaderWrapper = styled.div`
-//   position: absolute;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 100%;
-//   height: 100%;
-//   z-index: ${Z_INDEX.HIGHEST};
-// `;
-
-// /**
-//  * Call page
-//  */
-// export const CallPageWrapper = styled.div`
-//   flex-grow: 1;
-//   width: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-between;
-//   position: relative;
-// `;
-
-// export const CALL_PAGE_NAVIGATION_HEIGHT = 75;
-
-// export const CallPageNavigation = styled.div`
-//   width: 100%;
-//   background: ${COLORS.MAIN_DARK};
-//   display: flex;
-//   flex-direction: row;
-//   align-items: center;
-//   padding: 0 17px;
-//   height: ${CALL_PAGE_NAVIGATION_HEIGHT}px;
-// `;
-
-// export const NavigationCenterContent = styled.div`
-//   flex-grow: 1;
-//   display: flex;
-//   flex-direction: column;
-//   padding: 0px 20px;
-//   color: ${COLORS.WHITE};
-// `;
-
-// interface ContentTopProps {
-//   lineHeight?: string;
-// }
-
-// export const ContentTop = styled.div<ContentTopProps>`
-//   font-size: 14px;
-//   font-style: normal;
-//   font-weight: 800;
-//   line-height: ${({ lineHeight }) => lineHeight || "31px"};
-//   letter-spacing: 0px;
-//   text-align: left;
-// `;
-
-// export const ContentBottom = styled.div`
-//   font-size: 12px;
-//   line-height: 14px;
-//   letter-spacing: 0px;
-//   text-align: left;
-// `;
-
-// export const CallPageToolbar = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   position: absolute;
-//   right: 0;
-//   bottom: 16%;
-//   z-index: ${Z_INDEX.MIDDLE};
-
-//   & > * {
-//     padding: 16px;
-//   }
-
-// `;

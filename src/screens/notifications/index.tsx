@@ -1,14 +1,23 @@
 import React from "react";
+import { SafeAreaView } from "react-native";
+
 import {
-  SafeAreaView,
-  View,
-  Text,
-} from "react-native";
+  COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
+  RightItem, NavigationText,
+ } from "../../components/styled";
 
 export const NotificationsScreen = () => (
-  <SafeAreaView>
-    <View>
-      <Text>Notifications</Text>
-    </View>
+  <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
+    <PageWrapper>
+
+      <NavigationBar>
+        <LeftItem />
+        <CenterItem>
+          <NavigationText>Notifications</NavigationText>
+        </CenterItem>
+        <RightItem />
+      </NavigationBar>
+
+    </PageWrapper>
   </SafeAreaView>
 );

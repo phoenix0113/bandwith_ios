@@ -1,4 +1,4 @@
-import {makeObservable, observable, reaction} from "mobx";
+import { makeObservable, observable, reaction } from "mobx";
 import md5 from "md5";
 import AsyncStorage from "@react-native-community/async-storage";
 import { createContext } from "react";
@@ -24,6 +24,7 @@ class UserService {
       () => this.token,
       () => {
         if (this.token) {
+          console.log("navigation to main");
           navigateToScreen("Main");
         } else {
           navigateToScreen("Welcome");
@@ -59,6 +60,7 @@ class UserService {
 
         console.log(`> login token ${token}`);
 
+        this.token = token;
         this.saveTokenToStotage(token);
         setBearerToken(token);
         this.fetchUserData();
