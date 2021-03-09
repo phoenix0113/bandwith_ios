@@ -34,6 +34,7 @@ export const NavigationBar = styled.View<NavigationBarProps>`
   background-color: ${COLORS.BLACK};
   position: ${({ position }) => position || "relative"};
   z-index: ${Z_INDEX.MIDDLE};
+  height: 70px;
 `;
 
 export const NavigationText = styled.Text`
@@ -58,17 +59,17 @@ const NavigationItem = styled.TouchableOpacity<ItemProps>`
 `;
 
 export const LeftItem = styled(NavigationItem)`
-  flex-grow: 0.2;
+  width: 10%;
   justify-content: flex-start;
 `;
 
 export const RightItem = styled(NavigationItem)`
-  flex-grow: 0.2;
+  width: 10%;
   justify-content: flex-end;
 `;
 
 export const CenterItem = styled(NavigationItem)`
-  flex-grow: 0.6;
+  flex-grow: 1;
   justify-content: center;
 `;
 
@@ -116,16 +117,17 @@ export const BasicButtonText = styled.Text<BasicButtonTextProps>`
 interface PageWrapperProps {
   background?: string;
   paddingHorizontal?: string;
+  justifyContent?: "space-between"|"flex-start";
 }
 
 export const PageWrapper = styled.View<PageWrapperProps>`
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: ${({justifyContent}) => justifyContent || "flex-start"};
   align-items: center;
   width: 100%;
   height: 100%;
-  padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal || "32px"}; 
+  padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal || "24px"}; 
   background-color: ${({ background }) => background || COLORS.BLACK};
 `;

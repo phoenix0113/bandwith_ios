@@ -38,7 +38,7 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
-      <PageWrapper paddingHorizontal="24px">
+      <PageWrapper justifyContent="space-between">
 
         <NavigationBar>
           <LeftItem onPress={() => navigation.navigate("Welcome")}>
