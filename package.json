@@ -16,7 +16,7 @@
     "@react-navigation/bottom-tabs": "^5.11.8",
     "@react-navigation/native": "^5.9.3",
     "@react-navigation/stack": "^5.14.3",
-    "avcore": "^1.0.32",
+    "avcore": "^1.0.34",
     "axios": "^0.21.1",
     "md5": "^2.3.0",
     "mobx": "^6.1.8",
@@ -31,6 +31,8 @@
     "react-native-svg": "^12.1.0",
     "react-native-svg-transformer": "^0.14.3",
     "react-native-vector-icons": "^8.1.0",
+    "react-native-webrtc": "^1.87.3",
+    "socket.io-client": "2.3.1",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
@@ -40,7 +42,9 @@
     "@types/jest": "^25.2.3",
     "@types/md5": "^2.3.0",
     "@types/react-native": "^0.63.2",
+    "@types/react-native-webrtc": "^1.75.2",
     "@types/react-test-renderer": "^16.9.2",
+    "@types/socket.io-client": "^1.4.35",
     "@types/styled-components-react-native": "^5.1.1",
     "babel-jest": "^25.1.0",
     "eslint": "^6.5.1",

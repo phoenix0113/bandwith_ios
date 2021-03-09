@@ -8,7 +8,9 @@ import {configure} from "mobx";
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
 
-import {UserServiceInstance} from "./services/user";
+import { UserServiceInstance } from "./services/user";
+import "./services/contacts";
+import "./services/socket";
 
 configure({ enforceActions: "never" });
 UserServiceInstance.init();

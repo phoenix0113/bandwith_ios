@@ -53,7 +53,7 @@ export const userProfileRequest = async (request: UserProfileRequest): Promise<U
   }
 };
 
-export const avcoreCredentialsRequst = async (): Promise<CloudCredentials> => {
+export const avcoreCredentialsRequest = async (): Promise<CloudCredentials> => {
   try {
     const response = await instance.get<AvcoreAuthResponse>(API.AVCORE_CREDS);
 

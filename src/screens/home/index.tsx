@@ -27,7 +27,7 @@ export const HomeScreen = () => (
         </RightItem>
       </NavigationBar>
 
-      <BandwwithTextLogo/>
+      <BandwwithTextLogo width="50%" />
 
       <ContentWrapper>
         <MakeCallIcon />
