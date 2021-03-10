@@ -19,10 +19,6 @@ class OutgoingCallMobxService extends AVCoreCall {
     super(CallType.OUTGOING);
     makeObservable(this);
     this.status = OutgoingCallStatus.INITIALIZED;
-
-    setTimeout(() => {
-      // this.makeCall();
-    }, 5000);
   }
 
   public makeCall = (userId: string = null) => {

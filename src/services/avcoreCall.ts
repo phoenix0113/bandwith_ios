@@ -342,7 +342,8 @@ export class AVCoreCall {
       if (!this.audioStream && kinds.includes("audio")) {
         this.audioStream = await mediaDevices.getUserMedia({ audio: true }) as MediaStream;
         if (!this.localStream) {
-          this.localStream = new MediaStream({});
+          // @ts-ignore
+          this.localStream = new MediaStream();
         }
         this.audioStream.getAudioTracks().forEach((track) => this.localStream.addTrack(track));
         logger.log("info", "avcoreCall.ts", "Audio stream was initialized. Tracks added to localStream", true);
@@ -362,7 +363,8 @@ export class AVCoreCall {
         }) as MediaStream;
 
         if (!this.localStream) {
-          this.localStream = new MediaStream({});
+          // @ts-ignore
+          this.localStream = new MediaStream();
         }
         this.videoStream.getVideoTracks().forEach((track) => this.localStream.addTrack(track));
         logger.log("info", "avcoreCall.ts", "Video stream was initialized. Tracks added to localStream", true);
