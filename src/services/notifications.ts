@@ -2,9 +2,10 @@ import { makeObservable, observable, reaction, runInAction } from "mobx";
 import { createContext } from "react";
 import { Alert } from "react-native";
 
+import { UserServiceInstance } from "./user";
+
 import { checkNotificationsRequest, getNotificationListRequest, removeNotificationRequest } from "../axios/routes/notifications";
 import { Notification, NotificationTypes } from "../shared/interfaces";
-import { UserServiceInstance } from "./user";
 
 class NotificationService {
   @observable notifications: Array<Notification> = [];
@@ -24,6 +25,7 @@ class NotificationService {
 
   private fetchUserNotifications = async () => {
     try {
+      console.log("> Fetching notification list");
       this.notifications = await getNotificationListRequest() || [];
     } catch (err) {
       Alert.alert("Notification", err.message);

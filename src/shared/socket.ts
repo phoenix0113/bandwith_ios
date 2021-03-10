@@ -1,4 +1,4 @@
-import { OutgoingCallStatus, IncommingCallStatus } from "../interfaces/call";
+import { OutgoingCallStatus, IncomingCallStatus } from "../interfaces/call";
 import { NotificationRequest, Notification, CommentRequest, Comment } from "./interfaces";
 
 export const LOBBY_ROOM = "lobby_room";
@@ -147,7 +147,7 @@ export interface CallStatusFromInitiator extends SocketData, CallInput {
 }
 
 export interface CallStatusFromReceiver extends SocketData, CallInput {
-  status: IncommingCallStatus;
+  status: IncomingCallStatus;
 }
 
 /**

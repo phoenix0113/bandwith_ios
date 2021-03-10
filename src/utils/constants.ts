@@ -9,3 +9,6 @@ export const SERVER_BASE_URL = servers.TELEPORT_DEV_URL;
 
 console.log(`> Using ${SERVER_BASE_URL} server`);
 
+export const SEND_LOGS_THRESHOLD = 5;
+
+export const TOKEN_STORAGE_KEY = "TOKEN";

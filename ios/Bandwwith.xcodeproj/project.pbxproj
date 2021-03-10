@@ -20,6 +20,7 @@
 		797F802960E1C26EADE4D894 /* libPods-Bandwwith-BandwwithTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7CE4AB30CE0971C5A52C9D9 /* libPods-Bandwwith-BandwwithTests.a */; };
 		7A3B6A9BA1A3527400BFC358 /* libPods-Bandwwith-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69C2F2DB6E0E7BF2D5DBF7FE /* libPods-Bandwwith-tvOSTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		CEC06CBC25F8ED5F00A81108 /* ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CEC06CBB25F8ED5F00A81108 /* ringtone.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 		CEBD94DF25F2761A0050FE67 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Solid.ttf; path = ../../../../Downloads/Fonts/FontAwesome5_Solid.ttf; sourceTree = "<group>"; };
 		CEBD94E025F2761A0050FE67 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Regular.ttf; path = ../../../../Downloads/Fonts/FontAwesome5_Regular.ttf; sourceTree = "<group>"; };
 		CEBD94E125F2761A0050FE67 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = ../../../../Downloads/Fonts/MaterialCommunityIcons.ttf; sourceTree = "<group>"; };
+		CEC06CBB25F8ED5F00A81108 /* ringtone.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = ringtone.mp3; path = ../src/assets/audio/ringtone.mp3; sourceTree = "<group>"; };
 		CF8EEBC6C38AFA726EF30855 /* libPods-Bandwwith-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Bandwwith-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB8650907D180C788928EFA9 /* Pods-Bandwwith-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bandwwith-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Bandwwith-tvOS/Pods-Bandwwith-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -142,6 +144,7 @@
 		13B07FAE1A68108700A75B9A /* Bandwwith */ = {
 			isa = PBXGroup;
 			children = (
+				CEC06CBB25F8ED5F00A81108 /* ringtone.mp3 */,
 				CEBD94D025F275D60050FE67 /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -395,6 +398,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				CEC06CBC25F8ED5F00A81108 /* ringtone.mp3 in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

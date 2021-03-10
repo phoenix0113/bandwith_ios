@@ -1,19 +1,19 @@
-import { createContext, createRef } from "react";
+import { createContext } from "react";
 import SocketIO from "socket.io-client";
 import { makeObservable, observable, reaction, runInAction, toJS } from "mobx";
+import { Alert } from "react-native";
 
 import { UserServiceInstance } from "./user";
+import { ContactsServiceInstance } from "./contacts";
+import { NotificationServiceInstance } from "./notifications";
+
 import { CallSocket } from "../interfaces/Socket";
 import { SERVER_BASE_URL } from "../utils/constants";
 import { ACTIONS, CLIENT_ONLY_ACTIONS, ErrorData, LobbyCallEventData, MakeLobbyCallResponse } from "../shared/socket";
 import { NotificationTypes } from "../shared/interfaces";
-
-import { ContactsServiceInstance } from "./contacts";
-import { ALL_USERS_ARE_UNAVAILABLE } from "../shared/errors";
-import { Alert } from "react-native";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
+import { ALL_USERS_ARE_UNAVAILABLE } from "../shared/errors";
 import { createAddToFriednsInvitation, createInvitationAcceptedNotification, createMissedCallNotification, createRemovedFromContactsNotification } from "../shared/utils";
-import { NotificationServiceInstance } from "./notifications";
 
 export interface LobbyCallEventDataExtended extends LobbyCallEventData {
   isFriend: boolean;
@@ -24,9 +24,9 @@ export interface LobbyCallResponse extends MakeLobbyCallResponse {
 }
 
 class SocketService {
-  private socket: CallSocket = null;
+  public socket: CallSocket = null;
 
-  @observable incommingCallData: LobbyCallEventDataExtended = null;
+  @observable incomingCallData: LobbyCallEventDataExtended = null;
 
   @observable onlineUsers: Array<string> = [];
 
@@ -43,7 +43,6 @@ class SocketService {
         }
       }
     );
-
   }
 
   private init = () => {
@@ -73,7 +72,7 @@ class SocketService {
         console.log("info", "global.ts", `You've been called by ${data.caller_name} from room with id ${data.call_id}`, true, true);
 
         runInAction(() => {
-          this.incommingCallData = {
+          this.incomingCallData = {
             ...data,
             isFriend: ContactsServiceInstance.isContact(data.caller_id),
           };
@@ -129,8 +128,8 @@ class SocketService {
     });
   }
 
-  public clearIncommingCallData = () => {
-    this.incommingCallData = null;
+  public clearIncomingCallData = () => {
+    this.incomingCallData = null;
   }
 
   public callRandomUser = (

@@ -1,10 +1,11 @@
 import { makeObservable, observable, reaction } from "mobx";
 import { createContext } from "react";
+
+import { UserServiceInstance } from "./user";
+
 import { getContactListRequest } from "../axios/routes/contacts";
 import { ContactItem } from "../shared/interfaces";
 import { UserStatus } from "../shared/socket";
-
-import { UserServiceInstance } from "./user";
 
 export interface ContactItemWithStatus extends ContactItem {
   status: UserStatus;
@@ -31,7 +32,7 @@ class ContactsService {
     busyUsers?: Array<string>,
   ) => {
     try {
-      console.log("> fetching contact list");
+      console.log("> Fetching contact list");
 
       const contacts = await getContactListRequest();
 
@@ -51,7 +52,7 @@ class ContactsService {
         };
       });
     } catch (err) {
-      console.error(`>> fetchUserContacts error: ${err.message}`);
+      console.error(`>> FetchUserContacts error: ${err.message}`);
     }
   }
 

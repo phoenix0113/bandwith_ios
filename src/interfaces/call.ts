@@ -16,9 +16,9 @@ export enum OutgoingCallStatus {
   FINISHED,
 }
 
-export enum IncommingCallStatus {
+export enum IncomingCallStatus {
   INITIALIZED,
-  INCOMMING,
+  INCOMING,
   ACCEPT,
   REJECT,
   MISSED,
