@@ -10,7 +10,7 @@ export const COLORS = {
   BLACK: "#0B0B0B",
   RED: "#FF0000",
   ORANGE: "#FD9D00",
-  ALTERNATIVE: "#0AFFEF",
+  ALTERNATIVE: "#0091FF",
 };
 
 export const Z_INDEX = {
@@ -37,34 +37,33 @@ export const NavigationBar = styled.View<NavigationBarProps>`
   height: 70px;
 `;
 
-export const NavigationText = styled.Text`
+interface NavigationTextProps {
+  color?: string;
+}
+
+export const NavigationText = styled.Text<NavigationTextProps>`
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: 22px;
   letter-spacing: 0px;
   text-align: center;
-  color: ${COLORS.WHITE};
-`;
-
-interface ItemProps {
-  color?: string;
-}
-
-const NavigationItem = styled.TouchableOpacity<ItemProps>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   color: ${({ color }) => color || COLORS.WHITE};
 `;
 
+const NavigationItem = styled.TouchableOpacity`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 export const LeftItem = styled(NavigationItem)`
-  width: 10%;
+  width: 16%;
   justify-content: flex-start;
 `;
 
 export const RightItem = styled(NavigationItem)`
-  width: 10%;
+  width: 16%;
   justify-content: flex-end;
 `;
 
@@ -130,4 +129,24 @@ export const PageWrapper = styled.View<PageWrapperProps>`
   height: 100%;
   padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal || "24px"}; 
   background-color: ${({ background }) => background || COLORS.BLACK};
+`;
+
+interface BasicTextProps {
+  color?: string;
+  fontSize?: string;
+  lineHeight?: string;
+  fontWeight?: string;
+  letterSpacing?: string;
+  textAlign?: string;
+}
+
+export const BasicText = styled.Text<BasicTextProps>`
+  font-family: Kefa;
+  font-size: ${({fontSize}) => fontSize || "24px"};
+  font-style: normal;
+  font-weight: ${({fontWeight}) => fontWeight || "400"};
+  line-height: ${({lineHeight}) => lineHeight || "24px"};
+  letter-spacing: ${({letterSpacing}) => letterSpacing || "0px"};
+  color: ${({color}) => color || COLORS.WHITE};
+  text-align: ${({textAlign}) => textAlign || "center"};
 `;

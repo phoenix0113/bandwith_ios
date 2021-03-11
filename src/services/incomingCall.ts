@@ -10,6 +10,7 @@ import { logger } from "./logger";
 
 import { ACTIONS } from "../shared/socket";
 import { CallParticipantData, IncomingCallStatus, OutgoingCallStatus } from "../interfaces/call";
+import { navigateToScreen } from "../navigation/helper";
 
 class IncomingCallService extends AVCoreCall {
   @observable status: IncomingCallStatus = null;
@@ -27,6 +28,7 @@ class IncomingCallService extends AVCoreCall {
           logger.log("info", "incomingCall.ts", `Call is being initialized... Current status: ${this.status}`);
           if (this.status !== IncomingCallStatus.INCOMING) {
             this.status = IncomingCallStatus.INCOMING;
+            navigateToScreen("IncomingCall");
             MediaServiceInstance.playRingtone();
             this.initializeCall(incomingCallData);
           }
@@ -185,10 +187,12 @@ class IncomingCallService extends AVCoreCall {
     SocketServiceInstance.clearIncomingCallData();
     MediaServiceInstance.resetMedia();
 
-    logger.log("info", "incomingCall.ts", "IncomingCall service was reset. Redirecting to Home page...", true, true);
+    navigateToScreen("Main");
+
+    logger.log("info", "incomingCall.ts", "IncomingCall service was reset. Redirecting to Main page...", true, true);
   }
 }
 
-export const IncomingCallInstance = new IncomingCallService();
+export const IncomingCallServiceInstance = new IncomingCallService();
 
-export const IncomingCallContext = createContext(IncomingCallInstance);
+export const IncomingCallServiceContext = createContext(IncomingCallServiceInstance);

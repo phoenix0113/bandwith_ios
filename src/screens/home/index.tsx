@@ -6,7 +6,9 @@ import {
   COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
   RightItem, NavigationText,
  } from "../../components/styled";
+
 import { UserServiceInstance } from "../../services/user";
+import { OutgoingCallServiceInstance } from "../../services/outgoingCall";
 
 import MakeCallIcon from "../../assets/images/home/MakeCall.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
@@ -30,7 +32,7 @@ export const HomeScreen = () => (
       <BandwwithTextLogo width="50%" />
 
       <ContentWrapper>
-        <MakeCallIcon />
+        <MakeCallIcon onPress={() => OutgoingCallServiceInstance.makeCall()} />
         <ContentTitle>Make Random Call</ContentTitle>
         <ContentText>Make calls to complete strangers, meet, invite friends and share your calls</ContentText>
       </ContentWrapper>

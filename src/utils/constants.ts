@@ -12,3 +12,7 @@ console.log(`> Using ${SERVER_BASE_URL} server`);
 export const SEND_LOGS_THRESHOLD = 5;
 
 export const TOKEN_STORAGE_KEY = "TOKEN";
+
+export const CALL_FINISHED_REDIRECT_TIMER = 59;
+
+export const OUTGOING_CALL_SECONDS = 14;

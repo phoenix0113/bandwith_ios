@@ -5,6 +5,8 @@ export type WelcomeStackParamList = {
   Login: undefined;
   Registration: undefined;
   Main: undefined;
+  IncomingCall: undefined;
+  OutgoingCall: undefined;
 };
 
 export type WelcomeScreenNavigationProps = StackNavigationProp<
@@ -25,4 +27,14 @@ export type RegistrationScreenNavigationProps = StackNavigationProp<
 export type MainNavigationNavigationProps = StackNavigationProp<
   WelcomeStackParamList,
   "Main"
+>;
+
+export type IncomingCallScreenNavigationProps = StackNavigationProp<
+  WelcomeStackParamList,
+  "IncomingCall"
+>;
+
+export type OutgoingCallScreenNavigationProps = StackNavigationProp<
+  WelcomeStackParamList,
+  "OutgoingCall"
 >;

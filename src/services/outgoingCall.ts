@@ -9,8 +9,9 @@ import { logger } from "./logger";
 
 import { ACTIONS, ErrorData } from "../shared/socket";
 import { CallParticipantData, IncomingCallStatus, OutgoingCallStatus } from "../interfaces/call";
+import { navigateToScreen } from "../navigation/helper";
 
-class OutgoingCallMobxService extends AVCoreCall {
+class OutgoingCallService extends AVCoreCall {
   @observable status: OutgoingCallStatus = null;
 
   @observable callParticipantData: CallParticipantData = null;
@@ -46,6 +47,7 @@ class OutgoingCallMobxService extends AVCoreCall {
         runInAction(() => {
           this.callId = callId;
           MediaServiceInstance.playRingtone();
+          navigateToScreen("OutgoingCall");
           this.status = OutgoingCallStatus.WAITING_FOR_PARTICIPANT;
         });
       },
@@ -201,10 +203,12 @@ class OutgoingCallMobxService extends AVCoreCall {
 
     MediaServiceInstance.resetMedia();
 
-    logger.log("info", "outgoingCall.ts", "OutgoingCall service was reset. Redirecting to Home page...", true, true);
+    navigateToScreen("Main");
+
+    logger.log("info", "outgoingCall.ts", "OutgoingCall service was reset. Redirecting to Main page...", true, true);
   }
 }
 
-export const OutgoingCallStorage = new OutgoingCallMobxService();
+export const OutgoingCallServiceInstance = new OutgoingCallService();
 
-export const OutgoingCallStorageContext = createContext(OutgoingCallStorage);
+export const OutgoingCallServiceContext = createContext(OutgoingCallServiceInstance);
