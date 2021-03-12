@@ -40,5 +40,6 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "prefer-destructuring": ["error", {"object": true, "array": false}],
     "@typescript-eslint/no-unused-vars": "off",
+    "react-hooks/exhaustive-deps": "off"
   },
 };

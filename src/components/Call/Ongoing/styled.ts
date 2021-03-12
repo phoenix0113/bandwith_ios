@@ -2,6 +2,8 @@ import styled from "styled-components/native";
 import { COLORS } from "../../styled";
 import { Dimensions } from "react-native";
 
+import { RTCView } from "react-native-webrtc";
+
 export const CALL_PAGE_NAVIGATION_HEIGHT = 75;
 
 const CALL_CONTENT_HEIGHT = Dimensions.get("window").height - 44 - 34 - (CALL_PAGE_NAVIGATION_HEIGHT * 2);
@@ -58,4 +60,9 @@ export const CallParticipant = styled.View`
   width: 100%;
   height: 50%;
   border: 1px solid grey;
+`;
+
+export const CallVideo = styled(RTCView)`
+  width: 100%;
+  height: 100%;
 `;

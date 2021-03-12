@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { ConferenceApi } from "avcore/client";
 import { SafeAreaView } from "react-native";
-import { MediaStream, RTCView } from "react-native-webrtc";
+import { MediaStream } from "react-native-webrtc";
 import { observer } from "mobx-react";
 
 import { MediaServiceContext } from "../../../services/media";
@@ -9,7 +9,7 @@ import { MediaServiceContext } from "../../../services/media";
 import { BasicText, COLORS, PageWrapper } from "../../styled";
 import {
   CallPageNavigation, NavigationCenterContent, BottomNavigationItem,
-  CallPageBottomNavigation, CallParticipant, CallWrapper,
+  CallPageBottomNavigation, CallParticipant, CallWrapper, CallVideo,
 } from "./styled";
 
 import CameraOffIcon from "../../../assets/images/call/CameraOff.svg";
@@ -62,11 +62,11 @@ export const OngoingCallComponent = observer(({
 
         <CallWrapper>
           <CallParticipant>
-            {localStream && <RTCView streamURL={localStream.toURL()} />}
+            {localStream && <CallVideo streamURL={localStream.toURL()} />}
           </CallParticipant>
 
           <CallParticipant>
-            {remoteStream && <RTCView streamURL={remoteStream.toURL()} />}
+            {remoteStream && <CallVideo streamURL={remoteStream.toURL()} />}
           </CallParticipant>
         </CallWrapper>
 

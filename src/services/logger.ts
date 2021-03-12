@@ -35,22 +35,20 @@ class LoggerService {
       type,
     });
 
-    const minifiedLog = `${file}: ${message}`;
-    const fullLog = `[${type}] ${formatedDate} ${minifiedLog} \n`;
+    const fullLog = `[${type}] ${formatedDate} ${file}: ${message} \n`;
 
     if (shouldConsole) {
       if (type === "error") {
-        console.error(`> ${minifiedLog}`);
+        console.error(`> ${message}`);
       }
-      console.log(`> ${minifiedLog}`);
+      console.log(`> ${message}`);
     }
 
     if (shouldShowUser) {
-      const minified = `${file}: ${message}`;
       if (type === "error") {
-        Alert.alert("Notification", minified);
+        Alert.alert("Notification", message);
       }
-      Alert.alert("Notification", minified);
+      Alert.alert("Notification", message);
     }
 
     this.stringifiedLogs = `${this.stringifiedLogs}${fullLog}`;
