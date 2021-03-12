@@ -71,35 +71,35 @@ export const OngoingCallComponent = observer(({
         </CallWrapper>
 
         <CallPageBottomNavigation>
-          <BottomNavigationItem>
+          <BottomNavigationItem onPress={() => toggleMedia(MediaType.CAMERA)}>
             {camera
-              ? <CameraOnIcon onPress={() => toggleMedia(MediaType.CAMERA)} />
-              : <CameraOffIcon onPress={() => toggleMedia(MediaType.CAMERA)} />}
+              ? <CameraOnIcon />
+              : <CameraOffIcon />}
               <BasicText fontSize="10px" lineHeight="14px">
-                {`camera (${volume ? "on" : "off"})`}
+                {`Camera (${volume ? "on" : "off"})`}
               </BasicText>
           </BottomNavigationItem>
 
-          <BottomNavigationItem>
+          <BottomNavigationItem onPress={() => toggleMedia(MediaType.MICRO)}>
             {micro
-              ? <MicroOnIcon onPress={() => toggleMedia(MediaType.MICRO)} />
-              : <MicroOffIcon onPress={() => toggleMedia(MediaType.MICRO)} />}
+              ? <MicroOnIcon />
+              : <MicroOffIcon />}
               <BasicText fontSize="10px" lineHeight="14px">
-                {`micro (${volume ? "on" : "off"})`}
+                {`Micro (${volume ? "on" : "off"})`}
               </BasicText>
           </BottomNavigationItem>
 
-          <BottomNavigationItem>
+          <BottomNavigationItem onPress={() => toggleMedia(MediaType.VOLUME)}>
             {volume
-              ? <VolumeOnIcon onPress={() => toggleMedia(MediaType.VOLUME)} />
-              : <VolumeOffIcon onPress={() => toggleMedia(MediaType.VOLUME)} />}
+              ? <VolumeOnIcon />
+              : <VolumeOffIcon />}
               <BasicText fontSize="10px" lineHeight="14px">
-                {`volume (${volume ? "on" : "off"})`}
+                {`Volume (${volume ? "on" : "off"})`}
               </BasicText>
           </BottomNavigationItem>
 
-          <BottomNavigationItem>
-            <EndCallIcon onPress={endCallHandler}/>
+          <BottomNavigationItem onPress={endCallHandler}>
+            <EndCallIcon />
             <BasicText fontSize="10px" lineHeight="14px">
               End Call
             </BasicText>

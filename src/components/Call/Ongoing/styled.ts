@@ -36,7 +36,7 @@ export const CallPageBottomNavigation = styled.View`
   height: ${CALL_PAGE_NAVIGATION_HEIGHT}px;
 `;
 
-export const BottomNavigationItem = styled.View`
+export const BottomNavigationItem = styled.TouchableOpacity`
   display: flex;
   flex-direction: column;
   justify-content: center;
