@@ -1,13 +1,11 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
-
 import {
-  COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
-  RightItem, NavigationText,
+  CenterItem, LeftItem, NavigationBar, PageWrapper,
+  RightItem, NavigationText, BasicSafeAreaView,
  } from "../../components/styled";
 
 export const ContactListScreen = () => (
-  <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
+  <BasicSafeAreaView>
     <PageWrapper>
 
       <NavigationBar>
@@ -19,5 +17,5 @@ export const ContactListScreen = () => (
       </NavigationBar>
 
     </PageWrapper>
-  </SafeAreaView>
+  </BasicSafeAreaView>
 );

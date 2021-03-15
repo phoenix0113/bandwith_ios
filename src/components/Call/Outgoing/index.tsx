@@ -1,11 +1,10 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
-
 import { OutgoingCallServiceInstance } from "../../../services/outgoingCall";
 
 import { TimerComponent } from "../../Timer";
 import {
- NavigationBar, CenterItem, PageWrapper, COLORS, NavigationText, BasicText,
+ NavigationBar, CenterItem, PageWrapper, COLORS,
+ NavigationText, BasicText, BasicSafeAreaView,
 } from "../../styled";
 import { OutgoingCallWrapper, TimerWrapper, OutgoingCallContent } from "./styled";
 
@@ -19,7 +18,7 @@ interface IProps {
 }
 
 export const OutgoingCallComponent = ({ callParticipantData }: IProps): JSX.Element => (
-  <SafeAreaView style={{ backgroundColor: COLORS.BLACK }} >
+  <BasicSafeAreaView>
     <PageWrapper justifyContent="space-between">
 
       <NavigationBar>
@@ -54,5 +53,5 @@ export const OutgoingCallComponent = ({ callParticipantData }: IProps): JSX.Elem
         <DeclineCallIcon onPress={OutgoingCallServiceInstance.cancelCallHandler} />
       </OutgoingCallWrapper>
     </PageWrapper>
-  </SafeAreaView>
+  </BasicSafeAreaView>
 );

@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { SafeAreaView } from "react-native";
 import { Input } from "react-native-elements";
 
 import { RegistrationScreenNavigationProps } from "../../navigation/welcome/types";
@@ -9,8 +8,8 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
-  RightItem, NavigationText, BasicButtonText, BasicButton,
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem,
+  NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView,
 } from "../../components/styled";
 import { InputLabel, InputGroup } from "../login/styled";
 import { UserServiceInstance } from "../../services/user";
@@ -28,7 +27,7 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
   const usernameErrorMessage = useMemo(() => username === null ? "" : getUsernameErrorMessage(username), [username]);
   const emailErrorMessage = useMemo(() => email === null ? "" : getEmailErrorMessage(email), [email]);
   const passwordErrorMessage = useMemo(() => password === null ? "" : getPasswordErrorMessage(password), [password]);
-  const rPasswordErrorMessage = useMemo(() => rPassword === null ? "" : getPasswordErrorMessage(rPassword), [rPassword]);
+  const rPasswordErrorMessage = useMemo(() => rPassword === null ? "" : getPasswordErrorMessage(password, rPassword), [rPassword]);
 
   const onSubmit = async () => {
     if (email && password && username) {
@@ -42,7 +41,7 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
   }, [username, email, password, rPassword, usernameErrorMessage, passwordErrorMessage, emailErrorMessage, rPasswordErrorMessage]);
 
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
+    <BasicSafeAreaView>
       <PageWrapper justifyContent="space-between">
 
         <NavigationBar>
@@ -118,7 +117,7 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
         </BasicButton>
 
       </PageWrapper>
-    </SafeAreaView>
+    </BasicSafeAreaView>
   );
 };
 

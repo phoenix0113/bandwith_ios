@@ -1,11 +1,10 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
-
 import { ProfileImageWrapper } from "../../ProfileImageWrapper";
 import { TimerComponent } from "../../Timer";
 import { ContentWrapper } from "./styled";
 import {
-  COLORS, NavigationBar, LeftItem, CenterItem, RightItem, PageWrapper, BasicText, NavigationText,
+  COLORS, NavigationBar, LeftItem, CenterItem, RightItem,
+  PageWrapper, BasicText, NavigationText, BasicSafeAreaView,
 } from "../../styled";
 
 import { CallParticipantData } from "../../../interfaces/call";
@@ -19,7 +18,7 @@ interface IProps {
 
 export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }: IProps): JSX.Element => {
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.BLACK }} >
+    <BasicSafeAreaView>
       <PageWrapper>
 
         <NavigationBar>
@@ -54,6 +53,6 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
         </ContentWrapper>
 
       </PageWrapper>
-    </SafeAreaView>
+    </BasicSafeAreaView>
   );
 };

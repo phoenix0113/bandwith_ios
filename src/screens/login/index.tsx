@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { SafeAreaView } from "react-native";
 import { Input } from "react-native-elements";
 
 import { LoginScreenNavigationProps } from "../../navigation/welcome/types";
@@ -9,8 +8,8 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
-  RightItem, NavigationText, BasicButtonText, BasicButton,
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem,
+  NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView,
 } from "../../components/styled";
 import { InputLabel, InputGroup } from "./styled";
 import { UserServiceInstance } from "../../services/user";
@@ -37,7 +36,7 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
   }, [email, password, passwordErrorMessage, emailErrorMessage]);
 
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
+    <BasicSafeAreaView>
       <PageWrapper justifyContent="space-between">
 
         <NavigationBar>
@@ -86,6 +85,6 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
         </BasicButton>
 
       </PageWrapper>
-    </SafeAreaView>
+    </BasicSafeAreaView>
   );
 };

@@ -1,12 +1,13 @@
 import React from "react";
-import { SafeAreaView, View } from "react-native";
+import { View } from "react-native";
 
 import { IncomingCallServiceInstance } from "../../../services/incomingCall";
 
 import { ProfileImageWrapper } from "../../ProfileImageWrapper";
 import { IncomingCallWrapper, CallUser, CallToolbar, CallToolbarItem } from "./styled";
 import {
- NavigationBar, CenterItem, PageWrapper, COLORS, NavigationText, BasicText,
+ NavigationBar, CenterItem, PageWrapper, COLORS,
+ NavigationText, BasicText, BasicSafeAreaView,
 } from "../../styled";
 
 import DeclineCallIcon from "../../../assets/images/call/DeclineCall.svg";
@@ -19,7 +20,7 @@ interface IProps {
 }
 
 export const IncomingCallComponent = ({ callParticipantData }: IProps): JSX.Element => (
-  <SafeAreaView style={{ backgroundColor: COLORS.BLACK }} >
+  <BasicSafeAreaView>
     <PageWrapper justifyContent="space-between">
 
       <NavigationBar>
@@ -52,5 +53,5 @@ export const IncomingCallComponent = ({ callParticipantData }: IProps): JSX.Elem
 
       </IncomingCallWrapper>
     </PageWrapper>
-  </SafeAreaView>
+  </BasicSafeAreaView>
 );

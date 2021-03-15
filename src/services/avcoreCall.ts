@@ -4,6 +4,7 @@ import { ConferenceApi } from "avcore/client";
 import { v4 as uuid } from "uuid";
 import { xor } from "lodash";
 import { MediaStream, MediaStreamTrack, mediaDevices } from "react-native-webrtc";
+import InCallManager from "react-native-incall-manager";
 
 import { SocketServiceInstance } from "./socket";
 import { MediaServiceInstance } from "./media";
@@ -28,17 +29,19 @@ export class AVCoreCall {
 
   private streamingKinds: Kinds = null;
 
-  private videoStream: MediaStream = null;
+  @observable videoStream: MediaStream = null;
 
   private audioStream: MediaStream = null;
 
   protected localStreamId: string = null;
 
-  @observable localStream: MediaStream = null;
+  private localStream: MediaStream = null;
 
   protected remoteStreamId: string = null;
 
-  @observable remoteStream: MediaStream = null;
+  private remoteStream: MediaStream = null;
+
+  @observable remoteVideoStream: MediaStream = null;
 
   private oldAudioTracks: Array<MediaStreamTrack> = [];
 
@@ -62,9 +65,9 @@ export class AVCoreCall {
 
     reaction(
       () => MediaServiceInstance.cameraMode,
-      (cameraMode) => {
+      () => {
         if (this.capture && this.videoStream) {
-          this.updateStreamingCameraMode(cameraMode);
+          this.updateStreamingCameraMode();
         }
       },
     );
@@ -233,28 +236,43 @@ export class AVCoreCall {
     }
   }
 
-  private updateStreamingCameraMode = async (cameraMode: "user"|"environment") => {
+  private updateStreamingCameraMode = async () => {
     try {
-      console.log(`> CameraMode changed to ${cameraMode} `);
-
-      this.videoStream.getVideoTracks().forEach((track) => track.stop());
-      this.videoStream = null;
-
-      this.localStream.getVideoTracks().forEach((track) => {
-        track.stop();
-        this.localStream.removeTrack(track);
-        this.capture.removeTrack(track);
+      logger.log("info", "avcoreCall.ts", "Changing camera", true, true);
+      this.videoStream.getVideoTracks().forEach((track) => {
+       // @ts-ignore
+        track._switchCamera();
       });
-
-      await this.createMediaStreams(["video"]);
-
-      this.localStream.getVideoTracks().forEach((track) => this.capture.addTrack(track));
-
-      if (this.callType === CallType.OUTGOING) {
-        this.sendMixerLayout();
-      }
     } catch (err) {
       logger.log("error", "avcoreCall.ts", err.message, true, true, true);
+    }
+  }
+
+  private onAddTrack = (track): void => {
+    logger.log("info", "avcoreCall.ts", "[onAddTrack] adding track to the remote stream", true);
+
+    this.remoteStream.addTrack(track.track);
+
+    this.remoteStream = new MediaStream(this.remoteStream.getTracks());
+
+    InCallManager.setForceSpeakerphoneOn(true);
+
+    const videoTracks = this.remoteStream.getVideoTracks();
+    if (videoTracks.length) {
+      logger.log("info", "avcoreCall.ts", "[onAddTrack] video tracks are present. Updating remote video stream", true);
+      this.remoteVideoStream = new MediaStream(videoTracks);
+    }
+  }
+
+  private onRemoveTrack = (track): void => {
+    logger.log("info", "avcoreCall.ts", "[onRemoveTrack] removing track from the remote stream", true);
+
+    this.remoteStream.removeTrack(track.track);
+
+    const videoTracks = this.remoteStream.getVideoTracks();
+    if (!videoTracks.length) {
+      logger.log("info", "avcoreCall.ts", "[onRemoveTrack] all video tracks were removed. Setting remote video stream to 'null'", true);
+      this.remoteVideoStream = null;
     }
   }
 
@@ -276,7 +294,11 @@ export class AVCoreCall {
 
       logger.log("info", "avcoreCall.ts", "Calling await playback.subscribe()", true);
 
-      const stream = await playback.subscribe();
+      playback
+        .on("addtrack", this.onAddTrack)
+        .on("removetrack", this.onRemoveTrack);
+
+      const stream = await playback.subscribe() as MediaStream;
 
       runInAction(() => {
         this.remoteStream = stream;
@@ -295,14 +317,16 @@ export class AVCoreCall {
   }
 
   protected updateSubscribedStream = (kinds: Kinds, streamId: string): void => {
-    this.playback.updateKinds(kinds);
-    logger.log("info", "avcoreCall.ts", `You've updated subscribed stream with id ${streamId}. Playing: [${kinds}]`, true, true);
+    if (this.playback) {
+      this.playback.updateKinds(kinds);
+      logger.log("info", "avcoreCall.ts", `You've updated subscribed stream with id ${streamId}. Playing: [${kinds}]`, true, true);
 
-    if (this.remoteStreamId !== streamId) {
-      this.remoteStreamId = streamId;
-    }
-    if (this.callType === CallType.OUTGOING) {
-      this.sendMixerLayout();
+      if (this.remoteStreamId !== streamId) {
+        this.remoteStreamId = streamId;
+      }
+      if (this.callType === CallType.OUTGOING) {
+        this.sendMixerLayout();
+      }
     }
   }
 
@@ -346,6 +370,7 @@ export class AVCoreCall {
           this.localStream = new MediaStream();
         }
         this.audioStream.getAudioTracks().forEach((track) => this.localStream.addTrack(track));
+        this.localStream = new MediaStream(this.localStream.getTracks());
         logger.log("info", "avcoreCall.ts", "Audio stream was initialized. Tracks added to localStream", true);
       }
 
@@ -367,6 +392,7 @@ export class AVCoreCall {
           this.localStream = new MediaStream();
         }
         this.videoStream.getVideoTracks().forEach((track) => this.localStream.addTrack(track));
+        this.localStream = new MediaStream(this.localStream.getTracks());
         logger.log("info", "avcoreCall.ts", "Video stream was initialized. Tracks added to localStream", true);
       }
       logger.log("info", "avcoreCall.ts", "All necessary streams were initialized", true, true);

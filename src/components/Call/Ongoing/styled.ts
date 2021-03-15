@@ -14,7 +14,7 @@ export const CallPageNavigation = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0 17px;
+  justify-content: space-between;
   height: ${CALL_PAGE_NAVIGATION_HEIGHT}px;
 `;
 
@@ -22,8 +22,13 @@ export const NavigationCenterContent = styled.View`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding: 0px 20px;
-  color: ${COLORS.WHITE};
+`;
+
+export const TouchableNavigationItem = styled.TouchableOpacity`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
 `;
 
 
@@ -34,7 +39,7 @@ export const CallPageBottomNavigation = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 27px;
+  padding: 0 10px;
   height: ${CALL_PAGE_NAVIGATION_HEIGHT}px;
 `;
 
@@ -43,7 +48,7 @@ export const BottomNavigationItem = styled.TouchableOpacity`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-width: 18%;
+  min-width: 20%;
 `;
 
 
@@ -53,13 +58,12 @@ export const CallWrapper = styled.View`
   flex-direction: column;
   flex-grow: 1;
   width: 100%;
-  height: ${CALL_CONTENT_HEIGHT};
+  height: ${CALL_CONTENT_HEIGHT}px;
 `;
 
 export const CallParticipant = styled.View`
   width: 100%;
   height: 50%;
-  border: 1px solid grey;
 `;
 
 export const CallVideo = styled(RTCView)`

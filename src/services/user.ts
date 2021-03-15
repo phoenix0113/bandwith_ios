@@ -57,17 +57,17 @@ class UserService {
 
   public login = async (email: string, password: string) => {
     try {
-        const { token } = await loginRequest({
-          email: email.toLowerCase(),
-          password: md5(password),
-        });
+      const { token } = await loginRequest({
+        email: email.toLowerCase(),
+        password: md5(password),
+      });
 
-        console.log(`> Login token ${token}`);
+      console.log(`> Login token ${token}`);
 
-        this.token = token;
-        this.saveTokenToStotage(token);
-        setBearerToken(token);
-        this.fetchUserData();
+      this.token = token;
+      this.saveTokenToStotage(token);
+      setBearerToken(token);
+      this.fetchUserData();
     } catch (err) {
       console.error(`>> Login error: ${err.message}`);
     }
@@ -83,6 +83,11 @@ class UserService {
       });
 
       console.log(`> Registration token ${token}`);
+
+      if (!token) {
+        navigateToScreen("Login");
+        return;
+      }
 
       this.token = token;
       this.saveTokenToStotage(token);
@@ -113,7 +118,7 @@ class UserService {
       await AsyncStorage.removeItem(TOKEN_STORAGE_KEY);
       console.log("> Token was removed");
     } catch (err) {
-      console.error(`>> removeToken error: ${err.message}`);
+      console.error(`>> RemoveToken error: ${err.message}`);
     }
   }
 
@@ -124,7 +129,7 @@ class UserService {
         this.token = token;
         console.log(`> Token was retrieved ${token.substring(0, 10)}`);
       } else {
-        console.log("> Not token found");
+        console.log("> No token found");
       }
     } catch (err) {
       console.error(`>> GetToken error: ${err.message}`);

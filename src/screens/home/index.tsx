@@ -1,10 +1,9 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 
 import {
   COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
-  RightItem, NavigationText,
+  RightItem, NavigationText, BasicSafeAreaView,
  } from "../../components/styled";
 
 import { UserServiceInstance } from "../../services/user";
@@ -16,7 +15,7 @@ import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg
 import { ContentText, ContentTitle, ContentWrapper } from "./styled";
 
 export const HomeScreen = () => (
-  <SafeAreaView style={{ backgroundColor: COLORS.BLACK }} >
+  <BasicSafeAreaView>
     <PageWrapper>
 
       <NavigationBar>
@@ -38,5 +37,5 @@ export const HomeScreen = () => (
       </ContentWrapper>
 
     </PageWrapper>
-  </SafeAreaView>
+  </BasicSafeAreaView>
 );

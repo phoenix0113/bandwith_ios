@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { ConferenceApi } from "avcore/client";
-import { SafeAreaView } from "react-native";
 import { MediaStream } from "react-native-webrtc";
 import { observer } from "mobx-react";
 
 import { MediaServiceContext } from "../../../services/media";
 
-import { BasicText, COLORS, PageWrapper } from "../../styled";
+import { BasicText, PageWrapper, BasicSafeAreaView } from "../../styled";
 import {
   CallPageNavigation, NavigationCenterContent, BottomNavigationItem,
   CallPageBottomNavigation, CallParticipant, CallWrapper, CallVideo,
+  TouchableNavigationItem,
 } from "./styled";
 
 import CameraOffIcon from "../../../assets/images/call/CameraOff.svg";
@@ -48,25 +48,29 @@ export const OngoingCallComponent = observer(({
   } = useContext(MediaServiceContext);
 
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.BLACK }} >
+    <BasicSafeAreaView>
       <PageWrapper paddingHorizontal="0px">
 
         <CallPageNavigation>
-          <RecordingIcon />
+          <TouchableNavigationItem>
+            <RecordingIcon />
+          </TouchableNavigationItem>
           <NavigationCenterContent>
-            <BasicText textAlign="left" fontWeight="800" fontSize="14px" lineHeight="31px">{callParticipantData?.name || "Unknown user"}</BasicText>
-            <BasicText textAlign="left" fontSize="12px" >{`${type} call`}</BasicText>
+            <BasicText textAlign="left" fontWeight="800" fontSize="14px" lineHeight="26px">{callParticipantData?.name || "Unknown user"}</BasicText>
+            <BasicText textAlign="left" fontSize="12px" lineHeight="19px">{`${type} call`}</BasicText>
           </NavigationCenterContent>
-          <SwitchCameraIcon onPress={toggleCameraMode} />
+          <TouchableNavigationItem onPress={toggleCameraMode} >
+            <SwitchCameraIcon />
+          </TouchableNavigationItem>
         </CallPageNavigation>
 
         <CallWrapper>
           <CallParticipant>
-            {localStream && <CallVideo streamURL={localStream.toURL()} />}
+            {localStream && <CallVideo objectFit="cover" streamURL={localStream.toURL()} />}
           </CallParticipant>
 
           <CallParticipant>
-            {remoteStream && <CallVideo streamURL={remoteStream.toURL()} />}
+            {remoteStream && <CallVideo objectFit="cover" streamURL={remoteStream.toURL()} />}
           </CallParticipant>
         </CallWrapper>
 
@@ -107,6 +111,6 @@ export const OngoingCallComponent = observer(({
         </CallPageBottomNavigation>
 
       </PageWrapper>
-    </SafeAreaView>
+    </BasicSafeAreaView>
   );
 });

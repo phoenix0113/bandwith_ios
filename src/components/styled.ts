@@ -121,12 +121,10 @@ interface PageWrapperProps {
 
 export const PageWrapper = styled.View<PageWrapperProps>`
   display: flex;
-  flex-grow: 1;
+  flex: 1;
   flex-direction: column;
   justify-content: ${({justifyContent}) => justifyContent || "flex-start"};
   align-items: center;
-  width: 100%;
-  height: 100%;
   padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal || "24px"}; 
   background-color: ${({ background }) => background || COLORS.BLACK};
 `;
@@ -149,4 +147,9 @@ export const BasicText = styled.Text<BasicTextProps>`
   letter-spacing: ${({letterSpacing}) => letterSpacing || "0px"};
   color: ${({color}) => color || COLORS.WHITE};
   text-align: ${({textAlign}) => textAlign || "center"};
+`;
+
+export const BasicSafeAreaView = styled.SafeAreaView`
+  flex: 1;
+  background-color: ${COLORS.BLACK};
 `;

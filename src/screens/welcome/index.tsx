@@ -1,8 +1,7 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
 
 import { WelcomeWrapper, ContentToolbox, HeaderContent, HeaderWrapper } from "./styled";
-import { COLORS, BasicButton, BasicButtonText } from "../../components/styled";
+import { COLORS, BasicButton, BasicButtonText, BasicSafeAreaView } from "../../components/styled";
 
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 import ContinueWithGoogleIcon from "../../assets/images/general/ContinueWithGoogle.svg";
@@ -15,7 +14,7 @@ type WithNavigatorScreen = {
 }
 
 export const WelcomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element => (
-  <SafeAreaView style={{ backgroundColor: COLORS.BLACK }}>
+  <BasicSafeAreaView>
     <WelcomeWrapper>
       <HeaderWrapper>
         <BandwwithTextLogo width="50%" />
@@ -39,6 +38,6 @@ export const WelcomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element 
         <ContinueWithGoogleIcon width="100%"/>
       </ContentToolbox>
     </WelcomeWrapper>
-  </SafeAreaView>
+  </BasicSafeAreaView>
 );
 

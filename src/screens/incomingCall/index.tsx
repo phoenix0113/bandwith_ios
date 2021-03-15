@@ -14,8 +14,8 @@ export const IncomingCallScreen = observer((): JSX.Element => {
   const {
     status,
     endCall,
-    localStream,
-    remoteStream,
+    videoStream,
+    remoteVideoStream,
     callParticipantData,
     playback,
     callId,
@@ -41,8 +41,8 @@ export const IncomingCallScreen = observer((): JSX.Element => {
       return (
         <OngoingCallComponent
           endCallHandler={endCall}
-          localStream={localStream}
-          remoteStream={remoteStream}
+          localStream={videoStream}
+          remoteStream={remoteVideoStream}
           type="Incoming"
           callParticipantData={callParticipantData}
           callId={callId}
