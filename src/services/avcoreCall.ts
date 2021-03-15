@@ -71,6 +71,13 @@ export class AVCoreCall {
         }
       },
     );
+
+    reaction(
+      () => MediaServiceInstance.volume,
+      (volume) => {
+        this.toggleVolume(volume);
+      }
+    );
   }
 
   protected trackViewers = (): void => {
@@ -342,6 +349,18 @@ export class AVCoreCall {
     if (this.callType === CallType.OUTGOING) {
       this.sendMixerLayout();
     }
+  }
+
+  private toggleVolume = (volume: boolean) => {
+    if (!this.remoteStream) {
+      return;
+    }
+
+    logger.log("info", "avcoreCall.ts", `Switching remote stream's volume to ${volume}`, true);
+
+    this.remoteStream.getAudioTracks().forEach((track) => {
+      track.enabled = volume;
+    });
   }
 
   /**
