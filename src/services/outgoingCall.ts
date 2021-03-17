@@ -151,6 +151,7 @@ class OutgoingCallService extends AVCoreCall {
 
     this.trackViewers();
     this.startAppStatusShare();
+    this.startTrackingParticipantAppStatuses();
     this.startStreaming();
   }
 
@@ -184,6 +185,7 @@ class OutgoingCallService extends AVCoreCall {
       logger.log("info", "outgoingCall.ts", `You left the call room with id ${this.callId}`, true);
 
       this.stopTrackingViewers();
+      this.stopTrackingParticipantAppStatuses();
       this.stopAppStatusShare();
       SocketServiceInstance.socket.off(ACTIONS.STREAM_START);
       SocketServiceInstance.socket.off(ACTIONS.STREAM_CHANGE);

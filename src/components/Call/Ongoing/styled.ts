@@ -70,3 +70,16 @@ export const CallVideo = styled(RTCView)`
   width: 100%;
   height: 100%;
 `;
+
+export const ParticipantStatusOverlay = styled.View`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: ${COLORS.BLACK};
+  opacity: 0.75;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

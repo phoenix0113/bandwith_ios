@@ -13,7 +13,8 @@ import { UserServiceInstance } from "./user";
 import { AppServiceInstance } from "./app";
 
 import {
- ACTIONS, AppStatus, CallDetectorStatus, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData,
+  ACTIONS, AppStatus, AppStatusType, CallDetectorStatus,
+  CallDetectorStatusType, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData,
 } from "../shared/socket";
 
 export enum CallType {
@@ -49,6 +50,10 @@ export class AVCoreCall {
   private oldAudioTracks: Array<MediaStreamTrack> = [];
 
   private shouldShareAppStatus = false;
+
+  @observable participantAppStatus: AppStatusType = null;
+
+  @observable participantCallDetectorStatus: CallDetectorStatusType = null;
 
   constructor(type: CallType) {
     this.callType = type;
@@ -466,10 +471,12 @@ export class AVCoreCall {
   }
 
   protected startAppStatusShare = () => {
+    console.log("> Started app status share");
     this.shouldShareAppStatus = true;
   }
 
   protected stopAppStatusShare = () => {
+    console.log("> Stopped app status share");
     this.shouldShareAppStatus = false;
   }
 
@@ -493,5 +500,26 @@ export class AVCoreCall {
     SocketServiceInstance.socket.emit(ACTIONS.CALL_DETECTOR_STATUS, eventData, () => {
       console.log(`> Shared CallDetectorStatus: ${eventData.callDetectorStatus}`);
     });
+  }
+
+  protected startTrackingParticipantAppStatuses = (): void => {
+    console.log("> Started tracking participant's app status");
+
+    SocketServiceInstance.socket.on(ACTIONS.APP_STATUS, ({ appStatus }) => {
+      logger.log("info", "avcoreCall.ts", `> APP_STATUS event: ${appStatus}`, true);
+      this.participantAppStatus = appStatus;
+    });
+
+    SocketServiceInstance.socket.on(ACTIONS.CALL_DETECTOR_STATUS, ({ callDetectorStatus }) => {
+      logger.log("info", "avcoreCall.ts", `> CALL_DETECTOR_STATUS event: ${callDetectorStatus}`, true);
+      this.participantCallDetectorStatus = callDetectorStatus;
+    });
+  }
+
+  protected stopTrackingParticipantAppStatuses = (): void => {
+    console.log("> Stopped tracking participant's app status");
+
+    SocketServiceInstance.socket.off(ACTIONS.APP_STATUS);
+    SocketServiceInstance.socket.off(ACTIONS.CALL_DETECTOR_STATUS);
   }
 }

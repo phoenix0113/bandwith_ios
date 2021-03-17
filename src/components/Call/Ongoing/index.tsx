@@ -24,16 +24,20 @@ import RecordingIcon from "../../../assets/images/call/Rec.svg";
 
 import { CallParticipantData } from "../../../interfaces/call";
 import { MediaType } from "../../../interfaces/global";
+import { AppStatusType, CallDetectorStatusType } from "../../../shared/socket";
+import { PartipantAppStatusComponent } from "./ParticipantAppStatusOverlay";
 
 
 interface IProps {
-  endCallHandler: () => void,
-  localStream: MediaStream,
-  remoteStream: MediaStream,
-  type: "Incoming"|"Outgoing",
+  endCallHandler: () => void;
+  localStream: MediaStream;
+  remoteStream: MediaStream;
+  type: "Incoming"|"Outgoing";
   callParticipantData: CallParticipantData;
-  playback?: ConferenceApi,
-  callId: string,
+  playback?: ConferenceApi;
+  callId: string;
+  participantAppStatus: AppStatusType;
+  participantCallStatus: CallDetectorStatusType;
 }
 
 export const OngoingCallComponent = observer(({
@@ -42,6 +46,8 @@ export const OngoingCallComponent = observer(({
   endCallHandler,
   callParticipantData,
   type,
+  participantAppStatus,
+  participantCallStatus,
 }: IProps): JSX.Element => {
   const {
     camera, volume, micro, toggleMedia, toggleCameraMode,
@@ -71,6 +77,10 @@ export const OngoingCallComponent = observer(({
 
           <CallParticipant>
             {remoteStream && <CallVideo objectFit="cover" streamURL={remoteStream.toURL()} />}
+            <PartipantAppStatusComponent
+              participantAppStatus={participantAppStatus}
+              participantCallStatus={participantCallStatus}
+            />
           </CallParticipant>
         </CallWrapper>
 

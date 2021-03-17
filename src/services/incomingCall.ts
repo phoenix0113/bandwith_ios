@@ -107,6 +107,7 @@ class IncomingCallService extends AVCoreCall {
       logger.log("info", "incomingCall.ts", "You acceped call. Starting a stream and init viewers tracker. ACCEPT status was sent", true, true);
       this.trackViewers();
       this.startAppStatusShare();
+      this.startTrackingParticipantAppStatuses();
       this.startStreaming();
     });
   }
@@ -168,6 +169,7 @@ class IncomingCallService extends AVCoreCall {
       logger.log("info", "incomingCall.ts", `You left the call room with id ${this.callId}`, true);
 
       this.stopTrackingViewers();
+      this.stopTrackingParticipantAppStatuses();
       this.stopAppStatusShare();
       SocketServiceInstance.socket.off(ACTIONS.STREAM_START);
       SocketServiceInstance.socket.off(ACTIONS.STREAM_CHANGE);
