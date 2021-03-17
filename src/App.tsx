@@ -20,6 +20,7 @@ import "./services/media";
 import "./services/outgoingCall";
 import "./services/incomingCall";
 import "./services/logger";
+import "./services/app";
 
 configure({ enforceActions: "never" });
 UserServiceInstance.init();

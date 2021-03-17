@@ -33,6 +33,7 @@ import {
   SendMissedCallNotificationRequest,
   LeaveRecordingCommentsRoomRequest,
   JoinRecordingCommentsRoomRequest,
+  AppStatus,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -52,6 +53,10 @@ export interface CallSocket extends SocketIOClient.Socket {
   on(
     event: ACTIONS.CALL_STATUS_FROM_RECEIVER,
     listener: (event: CallStatusFromReceiver) => void
+  ): this
+  on(
+    event: ACTIONS.APP_STATUS,
+    listener: (event: AppStatus) => void
   ): this
   on(event: ACTIONS.LEAVE_CALL, listener: (event: SocketClientCallData) => void): this
   on(event: CLIENT_ONLY_ACTIONS.LIVE_CALL_ENDED, listener: () => void): this
@@ -92,6 +97,11 @@ export interface CallSocket extends SocketIOClient.Socket {
   emit(
     type: ACTIONS.CALL_STATUS_FROM_RECEIVER,
     data: CallStatusFromReceiver,
+    callback: () => void
+  ): this
+  emit(
+    type: ACTIONS.APP_STATUS,
+    data: AppStatus,
     callback: () => void
   ): this
   emit(

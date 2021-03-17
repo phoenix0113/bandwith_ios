@@ -6400,6 +6400,11 @@ react-is@^16.12.0, react-is@^16.13.0, react-is@^16.7.0, react-is@^16.8.1, react-
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-native-call-detection@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-call-detection/-/react-native-call-detection-1.9.0.tgz#2477690158768e01842f0bd5c2544e4a3247e616"
+  integrity sha512-UaF/I1cp2UnIbdCh3UmrFIA4an8El1gIBM6uIbM+OYCrfe5btIj7DYtjqtNoeKOtF7fap32m37v6lafQ9SZHpg==
+
 react-native-elements@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-3.2.0.tgz#0880801ad5be6d1da9848b57659b0f62b8ebb9f4"

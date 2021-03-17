@@ -16,6 +16,7 @@ export enum ACTIONS {
   CALL_PARTICIPANTS = "callParticipants",
   CALL_STATUS_FROM_INITIATOR = "initiatorCallStatus",
   CALL_STATUS_FROM_RECEIVER = "receiverCallStatus",
+  APP_STATUS = "appStatus",
   SEND_INVITATION = "sendInvitation",
   SEND_INVITATION_ACCEPTED = "sendInvitationAccepted",
   SEND_REMOVED_FROM_CONTACTS = "sendRemovedFromContacts",
@@ -148,6 +149,15 @@ export interface CallStatusFromInitiator extends SocketData, CallInput {
 
 export interface CallStatusFromReceiver extends SocketData, CallInput {
   status: IncomingCallStatus;
+}
+
+export type AppStatusType = "active" | "background" | "inactive" | "unknown" | "extension";
+
+export type CallDetectorStatusType = "Incoming" | "Connected" | "Disconnected";
+
+export interface AppStatus extends CallInput {
+  appStatus: AppStatusType;
+  callDetectorStatus: CallDetectorStatusType;
 }
 
 /**
