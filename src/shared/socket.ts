@@ -17,6 +17,7 @@ export enum ACTIONS {
   CALL_STATUS_FROM_INITIATOR = "initiatorCallStatus",
   CALL_STATUS_FROM_RECEIVER = "receiverCallStatus",
   APP_STATUS = "appStatus",
+  CALL_DETECTOR_STATUS = "callDetectorStatus",
   SEND_INVITATION = "sendInvitation",
   SEND_INVITATION_ACCEPTED = "sendInvitationAccepted",
   SEND_REMOVED_FROM_CONTACTS = "sendRemovedFromContacts",
@@ -157,9 +158,11 @@ export type CallDetectorStatusType = "Incoming" | "Connected" | "Disconnected";
 
 export interface AppStatus extends CallInput {
   appStatus: AppStatusType;
-  callDetectorStatus: CallDetectorStatusType;
 }
 
+export interface CallDetectorStatus extends CallInput {
+  callDetectorStatus: CallDetectorStatusType;
+}
 /**
  * Avcore stream management
  */

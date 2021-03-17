@@ -13,7 +13,7 @@ import { UserServiceInstance } from "./user";
 import { AppServiceInstance } from "./app";
 
 import {
- ACTIONS, AppStatus, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData,
+ ACTIONS, AppStatus, CallDetectorStatus, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData,
 } from "../shared/socket";
 
 export enum CallType {
@@ -97,7 +97,7 @@ export class AVCoreCall {
       () => AppServiceInstance.callDetectorStatus,
       () => {
         if (this.shouldShareAppStatus) {
-          this.shareAppStatus();
+          this.shareCallDetectorStatus();
         }
       }
     );
@@ -476,12 +476,22 @@ export class AVCoreCall {
   private shareAppStatus = () => {
     const eventData: AppStatus = {
       appStatus: AppServiceInstance.appState,
-      callDetectorStatus: AppServiceInstance.callDetectorStatus,
       callId: this.callId,
     };
 
     SocketServiceInstance.socket.emit(ACTIONS.APP_STATUS, eventData, () => {
-      console.log(`> Shared app status with participants. AppStatus ${eventData.appStatus}. CallDetectorStatus: ${eventData.callId}`);
+      console.log(`> Shared AppStatus ${eventData.appStatus}`);
+    });
+  }
+
+  private shareCallDetectorStatus = () => {
+    const eventData: CallDetectorStatus = {
+      callDetectorStatus: AppServiceInstance.callDetectorStatus,
+      callId: this.callId,
+    };
+
+    SocketServiceInstance.socket.emit(ACTIONS.CALL_DETECTOR_STATUS, eventData, () => {
+      console.log(`> Shared CallDetectorStatus: ${eventData.callDetectorStatus}`);
     });
   }
 }

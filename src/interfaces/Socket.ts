@@ -34,6 +34,7 @@ import {
   LeaveRecordingCommentsRoomRequest,
   JoinRecordingCommentsRoomRequest,
   AppStatus,
+  CallDetectorStatus,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -57,6 +58,10 @@ export interface CallSocket extends SocketIOClient.Socket {
   on(
     event: ACTIONS.APP_STATUS,
     listener: (event: AppStatus) => void
+  ): this
+  on(
+    event: ACTIONS.CALL_DETECTOR_STATUS,
+    listener: (event: CallDetectorStatus) => void
   ): this
   on(event: ACTIONS.LEAVE_CALL, listener: (event: SocketClientCallData) => void): this
   on(event: CLIENT_ONLY_ACTIONS.LIVE_CALL_ENDED, listener: () => void): this
@@ -102,6 +107,11 @@ export interface CallSocket extends SocketIOClient.Socket {
   emit(
     type: ACTIONS.APP_STATUS,
     data: AppStatus,
+    callback: () => void
+  ): this
+  emit(
+    type: ACTIONS.CALL_DETECTOR_STATUS,
+    data: CallDetectorStatus,
     callback: () => void
   ): this
   emit(
