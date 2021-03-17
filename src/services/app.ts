@@ -4,6 +4,7 @@ import { AppState } from "react-native";
 import CallDetectorManager from "react-native-call-detection";
 import { AppStatusType, CallDetectorStatusType } from "../shared/socket";
 
+const MINIMAL_TIME = 100; // in milliseconds
 
 class AppService {
   private callDetector = null;
@@ -11,6 +12,8 @@ class AppService {
   @observable callDetectorStatus: CallDetectorStatusType = null;
 
   @observable appState: AppStatusType = null;
+
+  private lastCallStatusTriggerTime: number = null;
 
   constructor () {
     makeObservable(this);
@@ -35,7 +38,19 @@ class AppService {
 
   handlePhoneCallState = (status: CallDetectorStatusType) => {
     console.log(`> CallManagerStatus: ${status}`);
-    this.callDetectorStatus = status;
+
+    // Workaround of problem when "Incoming" status was fired
+    // right after the call was "Disconnected"
+    if (
+      this.callDetectorStatus === "Disconnected"
+      && status === "Incoming"
+      && Date.now() - this.lastCallStatusTriggerTime < MINIMAL_TIME
+      ) {
+        console.log("> Skip invalid Incomming status");
+    } else {
+      this.callDetectorStatus = status;
+      this.lastCallStatusTriggerTime = Date.now();
+    }
   }
 
   // TODO: call it when needed
