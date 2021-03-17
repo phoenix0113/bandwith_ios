@@ -10,8 +10,11 @@ import { SocketServiceInstance } from "./socket";
 import { MediaServiceInstance } from "./media";
 import { logger } from "./logger";
 import { UserServiceInstance } from "./user";
+import { AppServiceInstance } from "./app";
 
-import { ACTIONS, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData } from "../shared/socket";
+import {
+ ACTIONS, AppStatus, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData,
+} from "../shared/socket";
 
 export enum CallType {
   OUTGOING,
@@ -45,6 +48,8 @@ export class AVCoreCall {
 
   private oldAudioTracks: Array<MediaStreamTrack> = [];
 
+  private shouldShareAppStatus = false;
+
   constructor(type: CallType) {
     this.callType = type;
 
@@ -76,6 +81,24 @@ export class AVCoreCall {
       () => MediaServiceInstance.volume,
       (volume) => {
         this.toggleVolume(volume);
+      }
+    );
+
+    reaction(
+      () => AppServiceInstance.appState,
+      () => {
+        if (this.shouldShareAppStatus) {
+          this.shareAppStatus();
+        }
+      }
+    );
+
+    reaction(
+      () => AppServiceInstance.callDetectorStatus,
+      () => {
+        if (this.shouldShareAppStatus) {
+          this.shareAppStatus();
+        }
       }
     );
   }
@@ -439,6 +462,26 @@ export class AVCoreCall {
 
     SocketServiceInstance.socket.emit(ACTIONS.MIXER_LAYOUT, layoutData, () => {
       logger.log("info", "avcoreCall.ts", `Mixer layout has been sent: ${JSON.stringify(layoutData)}`, true);
+    });
+  }
+
+  protected startAppStatusShare = () => {
+    this.shouldShareAppStatus = true;
+  }
+
+  protected stopAppStatusShare = () => {
+    this.shouldShareAppStatus = false;
+  }
+
+  private shareAppStatus = () => {
+    const eventData: AppStatus = {
+      appStatus: AppServiceInstance.appState,
+      callDetectorStatus: AppServiceInstance.callDetectorStatus,
+      callId: this.callId,
+    };
+
+    SocketServiceInstance.socket.emit(ACTIONS.APP_STATUS, eventData, () => {
+      console.log(`> Shared app status with participants. AppStatus ${eventData.appStatus}. CallDetectorStatus: ${eventData.callId}`);
     });
   }
 }
