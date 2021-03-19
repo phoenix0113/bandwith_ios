@@ -22,6 +22,10 @@ export enum CallType {
   INCOMING,
 }
 
+interface TrackEvent {
+  track: MediaStreamTrack;
+}
+
 export class AVCoreCall {
   protected callType: CallType = null;
 
@@ -283,10 +287,15 @@ export class AVCoreCall {
     }
   }
 
-  private onAddTrack = (track): void => {
+  private onAddTrack = ({ track }: TrackEvent): void => {
     logger.log("info", "avcoreCall.ts", "[onAddTrack] adding track to the remote stream", true);
 
-    this.remoteStream.addTrack(track.track);
+    if (track.kind === "audio") {
+      logger.log("info", "avcoreCall.ts", `[onAddTrack] Received new audio track. Setting 'enabled' to ${MediaServiceInstance.volume}`, true);
+      track.enabled = MediaServiceInstance.volume;
+    }
+
+    this.remoteStream.addTrack(track);
 
     this.remoteStream = new MediaStream(this.remoteStream.getTracks());
 
@@ -299,10 +308,10 @@ export class AVCoreCall {
     }
   }
 
-  private onRemoveTrack = (track): void => {
+  private onRemoveTrack = ({ track }: TrackEvent): void => {
     logger.log("info", "avcoreCall.ts", "[onRemoveTrack] removing track from the remote stream", true);
 
-    this.remoteStream.removeTrack(track.track);
+    this.remoteStream.removeTrack(track);
 
     const videoTracks = this.remoteStream.getVideoTracks();
     if (!videoTracks.length) {
@@ -481,6 +490,11 @@ export class AVCoreCall {
   }
 
   private shareAppStatus = () => {
+    if (AppServiceInstance.appState === "active") {
+      // app returned from background, need to update remote audio tracks volume
+      this.toggleVolume(MediaServiceInstance.volume);
+    }
+
     const eventData: AppStatus = {
       appStatus: AppServiceInstance.appState,
       callId: this.callId,
