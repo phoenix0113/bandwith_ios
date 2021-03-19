@@ -1,13 +1,14 @@
 import { createContext } from "react";
 import { v4 as uuid } from "uuid";
-import { observable, makeObservable, action, runInAction, toJS } from "mobx";
+import {observable, makeObservable, action, runInAction, toJS} from "mobx";
+import { Alert } from "react-native";
 
 import { AVCoreCall, CallType } from "./avcoreCall";
 import { LobbyCallResponse, SocketServiceInstance } from "./socket";
 import { MediaServiceInstance } from "./media";
 import { logger } from "./logger";
 
-import { ACTIONS, ErrorData } from "../shared/socket";
+import { ACTIONS, ErrorData, CLIENT_ONLY_ACTIONS } from "../shared/socket";
 import { CallParticipantData, IncomingCallStatus, OutgoingCallStatus } from "../interfaces/call";
 import { navigateToScreen } from "../navigation/helper";
 
@@ -34,25 +35,36 @@ class OutgoingCallService extends AVCoreCall {
         if (userId) {
           SocketServiceInstance.callSpecificUser(callId, userId, (data) => {
             this.handleCallCallback(data);
+            runInAction(() => {
+              this.callId = callId;
+              MediaServiceInstance.playRingtone();
+              navigateToScreen("OutgoingCall");
+              this.status = OutgoingCallStatus.WAITING_FOR_PARTICIPANT;
+            });
           });
         } else {
           SocketServiceInstance.callRandomUser(callId, (data, error) => {
             if (error) {
-              this.resetService();
+              this.leaveCall(() => {
+                this.resetService();
+              });
+            } else {
+              this.handleCallCallback(data);
+              runInAction(() => {
+                this.callId = callId;
+                MediaServiceInstance.playRingtone();
+                navigateToScreen("OutgoingCall");
+                this.status = OutgoingCallStatus.WAITING_FOR_PARTICIPANT;
+              });
             }
-            this.handleCallCallback(data);
           });
         }
-
-        runInAction(() => {
-          this.callId = callId;
-          MediaServiceInstance.playRingtone();
-          navigateToScreen("OutgoingCall");
-          this.status = OutgoingCallStatus.WAITING_FOR_PARTICIPANT;
-        });
       },
     );
+    this.initListeners();
+  }
 
+  private initListeners = () => {
     SocketServiceInstance.socket.on(ACTIONS.JOIN_CALL, async (data) => {
       console.log(`> Socket ${data.socketId} joined ${data.callId} (receiver)`);
       logger.log("info", "outgoingCall.ts", `Socket ${data.socketId} joined ${data.callId} (receiver)`, true);
@@ -91,6 +103,23 @@ class OutgoingCallService extends AVCoreCall {
         default:
           throw new Error("> Unexpected call status");
       }
+    });
+
+    SocketServiceInstance.socket.on(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED, (data) => {
+      console.log(`> Participant ${data.userId} was disconnected from the call ${data.callId} due to long absence`);
+      Alert.alert("Notification", "Participant was disconnected from the call due to long absence");
+      this.closeSubscribedStream();
+      this.onReceiversFinish();
+    });
+
+    SocketServiceInstance.socket.on(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED, (data) => {
+      console.log(`> You was disconnected from the call ${data.callId} due to long absence`);
+      Alert.alert("Notification", "You was disconnected from the call due to long absence");
+
+      this.closeSubscribedStream();
+
+      // TODO: check if this is safe to call this function that includes already called on server events in socket.emit
+      this.onReceiversFinish();
     });
   }
 
@@ -189,8 +218,11 @@ class OutgoingCallService extends AVCoreCall {
       this.stopAppStatusShare();
       SocketServiceInstance.socket.off(ACTIONS.STREAM_START);
       SocketServiceInstance.socket.off(ACTIONS.STREAM_CHANGE);
+      SocketServiceInstance.socket.off(ACTIONS.STREAM_STOP);
       SocketServiceInstance.socket.off(ACTIONS.JOIN_CALL);
       SocketServiceInstance.socket.off(ACTIONS.CALL_STATUS_FROM_RECEIVER);
+      SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED);
+      SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED);
 
       logger.log("info", "outgoingCall.ts", "All listeners and trackers were cleaned", true, true);
 

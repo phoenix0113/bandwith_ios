@@ -47,7 +47,7 @@ class SocketService {
 
   private init = () => {
     this.socket = SocketIO(SERVER_BASE_URL, {
-      query: `auth_token=${UserServiceInstance.token}`,
+      query: `auth_token=${UserServiceInstance.token}&socketId=${UserServiceInstance.profile._id}-socket`,
     }) as CallSocket;
 
     this.socket.on("connect", () => {

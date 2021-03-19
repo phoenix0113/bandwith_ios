@@ -35,6 +35,8 @@ import {
   JoinRecordingCommentsRoomRequest,
   AppStatus,
   CallDetectorStatus,
+  SelfDisconnectedEventData,
+  ParticipantDisconnectedEventData,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -78,6 +80,14 @@ export interface CallSocket extends SocketIOClient.Socket {
   ): this
   on(event: CLIENT_ONLY_ACTIONS.USER_STATUS, listener: (event: UserStatusEventData) => void): this
   on(event: CLIENT_ONLY_ACTIONS.COMMENT, listener: (event: CommentEventData) => void): this
+  on(
+    event: CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED,
+    listener: (event: SelfDisconnectedEventData) => void
+  ): this
+  on(
+    event: CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED,
+    listener: (event: ParticipantDisconnectedEventData) => void
+  ): this
   emit(type: ACTIONS.JOIN_CALL, data: SocketClientCallData, callback: () => void): this
   emit(
     type: ACTIONS.JOIN_CALL_AS_VIEWER,

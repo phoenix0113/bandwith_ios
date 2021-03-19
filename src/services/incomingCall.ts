@@ -2,13 +2,14 @@ import { createContext } from "react";
 import {
   observable, makeObservable, runInAction, action, reaction, toJS,
 } from "mobx";
+import { Alert } from "react-native";
 
 import { SocketServiceInstance, LobbyCallEventDataExtended } from "./socket";
 import { AVCoreCall, CallType } from "./avcoreCall";
 import { MediaServiceInstance } from "./media";
 import { logger } from "./logger";
 
-import { ACTIONS } from "../shared/socket";
+import { ACTIONS, CLIENT_ONLY_ACTIONS } from "../shared/socket";
 import { CallParticipantData, IncomingCallStatus, OutgoingCallStatus } from "../interfaces/call";
 import { navigateToScreen } from "../navigation/helper";
 
@@ -62,6 +63,10 @@ class IncomingCallService extends AVCoreCall {
       },
     );
 
+    this.initListeners();
+  }
+
+  private initListeners = () => {
     SocketServiceInstance.socket.on(ACTIONS.STREAM_START, (data) => {
       logger.log("info", "incomingCall.ts", `STREAM_START event with stream ${data.stream}. Subscribing...`, true);
       this.subscribeToStream(data.kinds, data.stream);
@@ -94,6 +99,22 @@ class IncomingCallService extends AVCoreCall {
         default:
           throw new Error("> Unexpected call status");
       }
+    });
+
+    SocketServiceInstance.socket.on(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED, ({ userId, callId }) => {
+      console.log(`> Participant ${userId} was disconnected from the call ${callId} due to long absence`);
+      Alert.alert("Notification", "Participant was disconnected from the call due to long absence");
+      this.onInitiatorsFinished();
+    });
+
+    SocketServiceInstance.socket.on(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED, ({ callId }) => {
+      console.log(`> You was disconnected from the call ${callId} due to long absence`);
+      Alert.alert("Notification", "You was disconnected from the call due to long absence");
+
+      this.closeSubscribedStream();
+
+      // TODO: check if this is safe to call this function that includes already called on server events in socket.emit
+      this.onInitiatorsFinished();
     });
   }
 
@@ -173,7 +194,10 @@ class IncomingCallService extends AVCoreCall {
       this.stopAppStatusShare();
       SocketServiceInstance.socket.off(ACTIONS.STREAM_START);
       SocketServiceInstance.socket.off(ACTIONS.STREAM_CHANGE);
+      SocketServiceInstance.socket.off(ACTIONS.STREAM_STOP);
       SocketServiceInstance.socket.off(ACTIONS.CALL_STATUS_FROM_INITIATOR);
+      SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED);
+      SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED);
 
       logger.log("info", "incomingCall.ts", "All listeners and trackers were cleaned", true);
 

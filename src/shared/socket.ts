@@ -39,6 +39,8 @@ export enum CLIENT_ONLY_ACTIONS {
   LIVE_CALL_ENDED="liveCallEnded",
   COMMENT="comment",
   USER_STATUS="userStatus",
+  PARTICIPANT_DISCONNECTED="participantDisconnected",
+  SELF_DISCONNECTED="selfDisconnected"
 }
 
 /**
@@ -163,6 +165,13 @@ export interface AppStatus extends CallInput {
 export interface CallDetectorStatus extends CallInput {
   callDetectorStatus: CallDetectorStatusType;
 }
+
+export interface ParticipantDisconnectedEventData extends SocketData, CallInput {
+  userId: string;
+}
+
+export type SelfDisconnectedEventData = CallInput
+
 /**
  * Avcore stream management
  */
