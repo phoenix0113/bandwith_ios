@@ -20,6 +20,7 @@
 		797F802960E1C26EADE4D894 /* libPods-Bandwwith-BandwwithTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7CE4AB30CE0971C5A52C9D9 /* libPods-Bandwwith-BandwwithTests.a */; };
 		7A3B6A9BA1A3527400BFC358 /* libPods-Bandwwith-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69C2F2DB6E0E7BF2D5DBF7FE /* libPods-Bandwwith-tvOSTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		CE782D9D2608A8880026BFF7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE782D9C2608A8880026BFF7 /* GoogleService-Info.plist */; };
 		CEC06CBC25F8ED5F00A81108 /* ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CEC06CBB25F8ED5F00A81108 /* ringtone.mp3 */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,7 @@
 		B98EFD650619DD1797EC90CF /* libPods-Bandwwith.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Bandwwith.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD2CCF3D28FD0FA0E1B6E273 /* Pods-Bandwwith-BandwwithTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bandwwith-BandwwithTests.debug.xcconfig"; path = "Target Support Files/Pods-Bandwwith-BandwwithTests/Pods-Bandwwith-BandwwithTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C6F7E7C5DC790CCFC050247E /* Pods-Bandwwith-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bandwwith-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Bandwwith-tvOSTests/Pods-Bandwwith-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		CE782D9C2608A8880026BFF7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Bandwwith/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CEBD94D125F276090050FE67 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Brands.ttf; path = ../../../../Downloads/Fonts/FontAwesome5_Brands.ttf; sourceTree = "<group>"; };
 		CEBD94D225F2761A0050FE67 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = ../../../../Downloads/Fonts/FontAwesome.ttf; sourceTree = "<group>"; };
 		CEBD94D325F2761A0050FE67 /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AntDesign.ttf; path = ../../../../Downloads/Fonts/AntDesign.ttf; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 		13B07FAE1A68108700A75B9A /* Bandwwith */ = {
 			isa = PBXGroup;
 			children = (
+				CE782D9C2608A8880026BFF7 /* GoogleService-Info.plist */,
 				CEC06CBB25F8ED5F00A81108 /* ringtone.mp3 */,
 				CEBD94D025F275D60050FE67 /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -397,6 +400,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE782D9D2608A8880026BFF7 /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				CEC06CBC25F8ED5F00A81108 /* ringtone.mp3 in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
@@ -464,6 +468,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Bandwwith-BandwwithTests/Pods-Bandwwith-BandwwithTests-resources.sh",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -484,6 +489,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -586,6 +592,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Bandwwith/Pods-Bandwwith-resources.sh",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -606,6 +613,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
