@@ -13,6 +13,8 @@ export const SEND_LOGS_THRESHOLD = 5;
 
 export const TOKEN_STORAGE_KEY = "TOKEN";
 
+export const GOOGLE_CLIENT_ID = "145536000163-qjfeu4edovl197fsv86kor0li68uhdl0.apps.googleusercontent.com";
+
 export const CALL_FINISHED_REDIRECT_TIMER = 59;
 
 export const OUTGOING_CALL_SECONDS = 14;

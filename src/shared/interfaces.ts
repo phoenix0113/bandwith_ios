@@ -6,6 +6,8 @@ export interface AuthResponse {
 
 export interface OAuthGoogleRequest {
   tokenId: string;
+  isIos?: boolean;
+  isAndroid?: boolean;
 }
 
 export interface OAuthFacebookRequest {

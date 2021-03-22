@@ -4,13 +4,18 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { createContext } from "react";
 import { CloudClient } from "avcore/client";
 import { Alert } from "react-native";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 
 import { CloudCredentials, UserProfileResponse } from "../shared/interfaces";
-import { loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest } from "../axios/routes/user";
+import { loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest, authWithGoogleRequest } from "../axios/routes/user";
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
-import { TOKEN_STORAGE_KEY } from "../utils/constants";
+import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID } from "../utils/constants";
 
+GoogleSignin.configure({
+  webClientId: GOOGLE_CLIENT_ID,
+  offlineAccess: false,
+});
 
 class UserService {
   @observable profile: UserProfileResponse = null;
@@ -73,6 +78,31 @@ class UserService {
     }
   }
 
+  public authWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const { idToken } = await GoogleSignin.signIn();
+
+      const { token } = await authWithGoogleRequest({ tokenId: idToken, isIos: true });
+
+      console.log(`> Google Auth token ${token}`);
+
+      this.token = token;
+      this.saveTokenToStotage(token);
+      setBearerToken(token);
+      this.fetchUserData();
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert("Process Cancelled");
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        Alert.alert("Process in progress");
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert("Play services are not available");
+      } else {
+        Alert.alert("Something else went wrong... ", error.toString());
+      }
+    }
+  }
 
   public register = async (email: string, password: string, username: string) => {
     try {
