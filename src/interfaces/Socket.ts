@@ -37,6 +37,7 @@ import {
   CallDetectorStatus,
   SelfDisconnectedEventData,
   ParticipantDisconnectedEventData,
+  CallFinishedEventData,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -87,6 +88,10 @@ export interface CallSocket extends SocketIOClient.Socket {
   on(
     event: CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED,
     listener: (event: ParticipantDisconnectedEventData) => void
+  ): this
+  on(
+    event: CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED,
+    listener: (event: CallFinishedEventData) => void
   ): this
   emit(type: ACTIONS.JOIN_CALL, data: SocketClientCallData, callback: () => void): this
   emit(

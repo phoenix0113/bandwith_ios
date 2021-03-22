@@ -121,6 +121,16 @@ class OutgoingCallService extends AVCoreCall {
       // TODO: check if this is safe to call this function that includes already called on server events in socket.emit
       this.onReceiversFinish();
     });
+
+    SocketServiceInstance.socket.on(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED, (data) => {
+      console.log(`> Call ${data.callId} was already finished by another participant`);
+      Alert.alert("Notification", "The call was already finished by another participant");
+
+      this.closeSubscribedStream();
+
+      // TODO: check if this is safe to call this function that includes already called on server events in socket.emit
+      this.onReceiversFinish();
+    });
   }
 
   private handleCallCallback = (data: LobbyCallResponse | ErrorData) => {
@@ -223,6 +233,7 @@ class OutgoingCallService extends AVCoreCall {
       SocketServiceInstance.socket.off(ACTIONS.CALL_STATUS_FROM_RECEIVER);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED);
+      SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED);
 
       logger.log("info", "outgoingCall.ts", "All listeners and trackers were cleaned", true, true);
 

@@ -40,7 +40,8 @@ export enum CLIENT_ONLY_ACTIONS {
   COMMENT="comment",
   USER_STATUS="userStatus",
   PARTICIPANT_DISCONNECTED="participantDisconnected",
-  SELF_DISCONNECTED="selfDisconnected"
+  SELF_DISCONNECTED="selfDisconnected",
+  CALL_ALREADY_FINISHED="callAlreadyFinished"
 }
 
 /**
@@ -171,6 +172,8 @@ export interface ParticipantDisconnectedEventData extends SocketData, CallInput 
 }
 
 export type SelfDisconnectedEventData = CallInput
+
+export type CallFinishedEventData = CallInput
 
 /**
  * Avcore stream management

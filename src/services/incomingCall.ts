@@ -116,6 +116,16 @@ class IncomingCallService extends AVCoreCall {
       // TODO: check if this is safe to call this function that includes already called on server events in socket.emit
       this.onInitiatorsFinished();
     });
+
+    SocketServiceInstance.socket.on(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED, ({ callId }) => {
+      console.log(`> Call ${callId} was already finished by another participant`);
+      Alert.alert("Notification", "The call was already finished by another participant");
+
+      this.closeSubscribedStream();
+
+      // TODO: check if this is safe to call this function that includes already called on server events in socket.emit
+      this.onInitiatorsFinished();
+    });
   }
 
   public resetIncomingCall = () => {
@@ -198,6 +208,7 @@ class IncomingCallService extends AVCoreCall {
       SocketServiceInstance.socket.off(ACTIONS.CALL_STATUS_FROM_INITIATOR);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED);
+      SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED);
 
       logger.log("info", "incomingCall.ts", "All listeners and trackers were cleaned", true);
 
