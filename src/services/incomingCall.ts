@@ -223,6 +223,9 @@ class IncomingCallService extends AVCoreCall {
     this.callParticipantData = null;
     this.callId = null;
 
+    this.participantAppStatus = null;
+    this.participantCallDetectorStatus = null;
+
     SocketServiceInstance.clearIncomingCallData();
     MediaServiceInstance.resetMedia();
 

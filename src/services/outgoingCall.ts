@@ -248,6 +248,9 @@ class OutgoingCallService extends AVCoreCall {
     this.callParticipantData = null;
     this.callId = null;
 
+    this.participantAppStatus = null;
+    this.participantCallDetectorStatus = null;
+
     MediaServiceInstance.resetMedia();
 
     navigateToScreen("Main");
