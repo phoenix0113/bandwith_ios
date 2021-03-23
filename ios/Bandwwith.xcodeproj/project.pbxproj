@@ -21,7 +21,10 @@
 		7A3B6A9BA1A3527400BFC358 /* libPods-Bandwwith-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69C2F2DB6E0E7BF2D5DBF7FE /* libPods-Bandwwith-tvOSTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		CE782D9D2608A8880026BFF7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE782D9C2608A8880026BFF7 /* GoogleService-Info.plist */; };
+		CEAE09C4260A1A2E003F7250 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEAE09C3260A1A2E003F7250 /* Media.xcassets */; };
+		CEAE09C5260A1A2E003F7250 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEAE09C3260A1A2E003F7250 /* Media.xcassets */; };
 		CEC06CBC25F8ED5F00A81108 /* ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CEC06CBB25F8ED5F00A81108 /* ringtone.mp3 */; };
+		CEFD58C02609F8CA006E4674 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +67,7 @@
 		BD2CCF3D28FD0FA0E1B6E273 /* Pods-Bandwwith-BandwwithTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bandwwith-BandwwithTests.debug.xcconfig"; path = "Target Support Files/Pods-Bandwwith-BandwwithTests/Pods-Bandwwith-BandwwithTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C6F7E7C5DC790CCFC050247E /* Pods-Bandwwith-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bandwwith-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Bandwwith-tvOSTests/Pods-Bandwwith-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		CE782D9C2608A8880026BFF7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Bandwwith/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CEAE09C3260A1A2E003F7250 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		CEBD94D125F276090050FE67 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Brands.ttf; path = ../../../../Downloads/Fonts/FontAwesome5_Brands.ttf; sourceTree = "<group>"; };
 		CEBD94D225F2761A0050FE67 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = ../../../../Downloads/Fonts/FontAwesome.ttf; sourceTree = "<group>"; };
 		CEBD94D325F2761A0050FE67 /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AntDesign.ttf; path = ../../../../Downloads/Fonts/AntDesign.ttf; sourceTree = "<group>"; };
@@ -225,6 +229,7 @@
 		95263DA8A59A4C728DC539CB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CEAE09C3260A1A2E003F7250 /* Media.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -348,12 +353,14 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 9Y6VP7Y76K;
+						DevelopmentTeam = 6TT7A7VZ6Y;
+						ProvisioningStyle = Manual;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 9Y6VP7Y76K;
+						DevelopmentTeam = 6TT7A7VZ6Y;
 						LastSwiftMigration = 1120;
+						ProvisioningStyle = Manual;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -393,6 +400,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEAE09C5260A1A2E003F7250 /* Media.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,9 +408,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEFD58C02609F8CA006E4674 /* main.jsbundle in Resources */,
 				CE782D9D2608A8880026BFF7 /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				CEC06CBC25F8ED5F00A81108 /* ringtone.mp3 in Resources */,
+				CEAE09C4260A1A2E003F7250 /* Media.xcassets in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -777,7 +787,8 @@
 			baseConfigurationReference = BD2CCF3D28FD0FA0E1B6E273 /* Pods-Bandwwith-BandwwithTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 9Y6VP7Y76K;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -792,6 +803,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bandwwith.app/Bandwwith";
 			};
 			name = Debug;
@@ -801,8 +814,9 @@
 			baseConfigurationReference = 894C37F5F1C0641515F887A1 /* Pods-Bandwwith-BandwwithTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 9Y6VP7Y76K;
+				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
 				INFOPLIST_FILE = BandwwithTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -813,6 +827,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bandwwith.app/Bandwwith";
 			};
 			name = Release;
@@ -823,18 +839,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9Y6VP7Y76K;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bandwwith/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.01;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.DoejoBandwwithLLC;
 				PRODUCT_NAME = Bandwwith;
+				PROVISIONING_PROFILE_SPECIFIER = BandwwithProfile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -847,17 +867,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9Y6VP7Y76K;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bandwwith/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.01;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.DoejoBandwwithLLC;
 				PRODUCT_NAME = Bandwwith;
+				PROVISIONING_PROFILE_SPECIFIER = BandwwithProfile;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
