@@ -68,6 +68,7 @@
 		C6F7E7C5DC790CCFC050247E /* Pods-Bandwwith-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bandwwith-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Bandwwith-tvOSTests/Pods-Bandwwith-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		CE782D9C2608A8880026BFF7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Bandwwith/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CEAE09C3260A1A2E003F7250 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		CEB5D78F260DC04300E98D78 /* Bandwwith.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Bandwwith.entitlements; path = Bandwwith/Bandwwith.entitlements; sourceTree = "<group>"; };
 		CEBD94D125F276090050FE67 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Brands.ttf; path = ../../../../Downloads/Fonts/FontAwesome5_Brands.ttf; sourceTree = "<group>"; };
 		CEBD94D225F2761A0050FE67 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = ../../../../Downloads/Fonts/FontAwesome.ttf; sourceTree = "<group>"; };
 		CEBD94D325F2761A0050FE67 /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AntDesign.ttf; path = ../../../../Downloads/Fonts/AntDesign.ttf; sourceTree = "<group>"; };
@@ -150,6 +151,7 @@
 		13B07FAE1A68108700A75B9A /* Bandwwith */ = {
 			isa = PBXGroup;
 			children = (
+				CEB5D78F260DC04300E98D78 /* Bandwwith.entitlements */,
 				CE782D9C2608A8880026BFF7 /* GoogleService-Info.plist */,
 				CEC06CBB25F8ED5F00A81108 /* ringtone.mp3 */,
 				CEBD94D025F275D60050FE67 /* Fonts */,
@@ -839,8 +841,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Bandwwith/Bandwwith.entitlements;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bandwwith/Info.plist;
@@ -867,8 +870,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Bandwwith/Bandwwith.entitlements;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bandwwith/Info.plist;
