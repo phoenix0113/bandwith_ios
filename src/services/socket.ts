@@ -6,10 +6,13 @@ import { Alert } from "react-native";
 import { UserServiceInstance } from "./user";
 import { ContactsServiceInstance } from "./contacts";
 import { NotificationServiceInstance } from "./notifications";
+import { APNServiceInstance } from "./APNs";
 
 import { CallSocket } from "../interfaces/Socket";
 import { SERVER_BASE_URL } from "../utils/constants";
-import { ACTIONS, CLIENT_ONLY_ACTIONS, ErrorData, LobbyCallEventData, MakeLobbyCallResponse } from "../shared/socket";
+import {
+ ACTIONS, CLIENT_ONLY_ACTIONS, ErrorData, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest,
+} from "../shared/socket";
 import { NotificationTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
 import { ALL_USERS_ARE_UNAVAILABLE } from "../shared/errors";
@@ -43,12 +46,27 @@ class SocketService {
         }
       }
     );
+
+    // TODO: find a better place to initialize token on the server and
+    // if possible store it there
+    reaction(
+      () => APNServiceInstance.token,
+      () => {
+        if (this.socket) {
+          this.sendTestNotification();
+        }
+      }
+    );
   }
 
   private init = () => {
     this.socket = SocketIO(SERVER_BASE_URL, {
       query: `auth_token=${UserServiceInstance.token}&socketId=${UserServiceInstance.profile._id}-socket`,
     }) as CallSocket;
+
+    if (APNServiceInstance.token) {
+      this.sendTestNotification();
+    }
 
     this.socket.on("connect", () => {
       this.socket.emit(ACTIONS.JOIN_LOBBY, {
@@ -264,6 +282,16 @@ class SocketService {
       Alert.alert("Notification", err.message);
       return false;
     }
+  }
+
+  private sendTestNotification = () => {
+    const request: SendAPNDeviceIdRequest = {
+      apnDeviceId: APNServiceInstance.token,
+    };
+
+    SocketServiceInstance.socket.emit(ACTIONS.SEND_APN_DEVICE_ID, request, () => {
+      console.log("> APN token has been send to the server. Test notification will be send soon");
+    });
   }
 }
 

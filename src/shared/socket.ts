@@ -26,6 +26,7 @@ export enum ACTIONS {
   SEND_COMMENT= "sendComment",
   JOIN_RECORDING_COMMENTS_ROOM="joinRecordingCommentsRoom",
   LEAVE_RECORDING_COMMENTS_ROOM="leaveRecordingCommentsRoom",
+  SEND_APN_DEVICE_ID="sendApnDeviceId",
 }
 
 /**
@@ -121,6 +122,10 @@ export type UserStatus = "online" | "offline" | "busy";
 export interface UserStatusEventData {
   user_id: string;
   status: UserStatus;
+}
+
+export interface SendAPNDeviceIdRequest {
+  apnDeviceId: string;
 }
 
 /**

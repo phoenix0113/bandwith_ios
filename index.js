@@ -1,5 +1,6 @@
 import { AppRegistry } from "react-native";
 import { registerGlobals, MediaStreamTrack } from "react-native-webrtc";
+import "./src/services/APNs";
 
 registerGlobals();
 

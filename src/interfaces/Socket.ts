@@ -38,6 +38,7 @@ import {
   SelfDisconnectedEventData,
   ParticipantDisconnectedEventData,
   CallFinishedEventData,
+  SendAPNDeviceIdRequest,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -176,6 +177,11 @@ export interface CallSocket extends SocketIOClient.Socket {
   emit(
     type: ACTIONS.LEAVE_RECORDING_COMMENTS_ROOM,
     data: LeaveRecordingCommentsRoomRequest,
+    callback: () => void,
+  ): this
+  emit(
+    type: ACTIONS.SEND_APN_DEVICE_ID,
+    data: SendAPNDeviceIdRequest,
     callback: () => void,
   ): this
 }
