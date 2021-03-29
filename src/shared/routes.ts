@@ -22,6 +22,7 @@ export const PATH = {
   PUBLISH: "publish",
   REC_COMMENTS: "rec-comments",
   LOGS: "logs",
+  SERVER_SIDE: "serverSide",
 };
 
 export const API = {
@@ -44,4 +45,5 @@ export const API = {
   RECORD: `${PATH.API}/${PATH.RECORD}`,
   RECORD_PUBLISH: `${PATH.API}/${PATH.RECORD}/${PATH.PUBLISH}`,
   SEND_LOGS: `${PATH.API}/${PATH.LOGS}`,
+  LOG_ON_SERVER: `${PATH.API}/${PATH.LOGS}/${PATH.SERVER_SIDE}`,
 };

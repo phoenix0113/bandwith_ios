@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 
 import { UserServiceInstance } from "./user";
 
-import { sendLogsRequest } from "../axios/routes/logs";
+import { logOnServerRequest, sendLogsRequest } from "../axios/routes/logs";
 import { SEND_LOGS_THRESHOLD } from "../utils/constants";
 
 interface LogItem {
@@ -72,6 +72,16 @@ class LoggerService {
     } catch (err) {
       console.log(err);
       Alert.alert("Notification", err.message);
+    }
+  }
+
+  public logOnServer = async (message: string): Promise<void> => {
+    try {
+      await logOnServerRequest({
+        log: message,
+      });
+    } catch (err) {
+      console.log(err);
     }
   }
 }

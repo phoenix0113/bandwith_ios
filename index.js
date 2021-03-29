@@ -1,8 +1,10 @@
 import { AppRegistry } from "react-native";
 import { registerGlobals, MediaStreamTrack } from "react-native-webrtc";
+import "./src/services/logger";
 import "./src/services/APNs";
 
 registerGlobals();
+console.log("IOS project is running. Globals registered");
 
 class MediaStreamTrackEvent {
   type: string;

@@ -253,3 +253,7 @@ export interface SendLogsRequest {
   userId: string;
   logs: string;
 }
+
+export interface LogOnServerRequest {
+  log: string;
+}
