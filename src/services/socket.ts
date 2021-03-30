@@ -57,6 +57,16 @@ class SocketService {
         }
       }
     );
+
+    reaction(
+      () => APNServiceInstance.incomingCallData,
+      (incomingCallData) => {
+        if (this.socket && incomingCallData) {
+          this.initializeIncomingCall(incomingCallData);
+          APNServiceInstance.resetIncomingCallData();
+        }
+      }
+    );
   }
 
   private init = () => {
@@ -69,6 +79,12 @@ class SocketService {
     }
 
     this.socket.on("connect", () => {
+      // check if we have an incoming call from APN
+      if (APNServiceInstance.incomingCallData) {
+        this.initializeIncomingCall(APNServiceInstance.incomingCallData);
+        APNServiceInstance.resetIncomingCallData();
+      }
+
       this.socket.emit(ACTIONS.JOIN_LOBBY, {
         self_id: UserServiceInstance.profile._id,
         self_name: UserServiceInstance.profile.name,
@@ -87,14 +103,7 @@ class SocketService {
       });
 
       this.socket.on(CLIENT_ONLY_ACTIONS.LOBBY_CALL, (data) => {
-        console.log("info", "global.ts", `You've been called by ${data.caller_name} from room with id ${data.call_id}`, true, true);
-
-        runInAction(() => {
-          this.incomingCallData = {
-            ...data,
-            isFriend: ContactsServiceInstance.isContact(data.caller_id),
-          };
-        });
+        this.initializeIncomingCall(data);
       });
 
       this.socket.on(CLIENT_ONLY_ACTIONS.NOTIFICATION, (notification) => {
@@ -143,6 +152,17 @@ class SocketService {
         console.log("> Online users in lobby changed: ", toJS(this.onlineUsers));
         console.log("> Busy users in lobby changed: ", toJS(this.busyUsers));
       });
+    });
+  }
+
+  private initializeIncomingCall = (data: LobbyCallEventData) => {
+    console.log(`You've been called by ${data.caller_name} from room with id ${data.call_id}`);
+
+    runInAction(() => {
+      this.incomingCallData = {
+        ...data,
+        isFriend: ContactsServiceInstance.isContact(data.caller_id),
+      };
     });
   }
 

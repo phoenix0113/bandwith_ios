@@ -2,12 +2,15 @@ import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { makeObservable, observable } from "mobx";
 import { createContext } from "react";
 import PushNotification from "react-native-push-notification";
+import { LobbyCallEventData } from "../shared/socket";
 import { logger } from "./logger";
 
 logger.logOnServer("APNs.ts file");
 
 class APNService {
   @observable token: string = null;
+
+  @observable incomingCallData: LobbyCallEventData = null;
 
   constructor() {
     makeObservable(this);
@@ -27,6 +30,13 @@ class APNService {
         logger.logOnServer("onRegisterError: " + error);
       },
       onNotification: function (notification) {
+        that.incomingCallData = {
+          call_id: notification.data.call_id,
+          caller_id: notification.data.caller_id,
+          caller_image: notification.data.caller_image,
+          caller_name: notification.data.caller_name,
+          caller_socket: notification.data.caller_socket,
+        };
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
       permissions: {
@@ -37,6 +47,10 @@ class APNService {
       popInitialNotification: true,
       requestPermissions: true,
     });
+  }
+
+  public resetIncomingCallData = () => {
+    this.incomingCallData = null;
   }
 
   public sendLocalNotification = (message: string) => {
