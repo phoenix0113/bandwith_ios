@@ -1,3 +1,4 @@
+import { StyleSheet } from "react-native";
 import styled from "styled-components/native";
 
 export const COLORS = {
@@ -153,3 +154,10 @@ export const BasicSafeAreaView = styled.SafeAreaView`
   flex: 1;
   background-color: ${COLORS.BLACK};
 `;
+
+export const SpinnerOverlayText = StyleSheet.create({
+  text: {
+    color: COLORS.WHITE,
+    fontSize: 20,
+  },
+});

@@ -63,7 +63,6 @@ class SocketService {
       (incomingCallData) => {
         if (this.socket && incomingCallData) {
           this.initializeIncomingCall(incomingCallData);
-          APNServiceInstance.resetIncomingCallData();
         }
       }
     );
@@ -82,7 +81,6 @@ class SocketService {
       // check if we have an incoming call from APN
       if (APNServiceInstance.incomingCallData) {
         this.initializeIncomingCall(APNServiceInstance.incomingCallData);
-        APNServiceInstance.resetIncomingCallData();
       }
 
       this.socket.emit(ACTIONS.JOIN_LOBBY, {
@@ -163,6 +161,7 @@ class SocketService {
         ...data,
         isFriend: ContactsServiceInstance.isContact(data.caller_id),
       };
+      APNServiceInstance.resetIncomingCallData();
     });
   }
 

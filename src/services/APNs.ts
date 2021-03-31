@@ -30,13 +30,20 @@ class APNService {
         logger.logOnServer("onRegisterError: " + error);
       },
       onNotification: function (notification) {
-        that.incomingCallData = {
-          call_id: notification.data.call_id,
-          caller_id: notification.data.caller_id,
-          caller_image: notification.data.caller_image,
-          caller_name: notification.data.caller_name,
-          caller_socket: notification.data.caller_socket,
-        };
+        console.log(notification);
+        // TODO: track "missed call" notification and redirect to the notifications screen
+
+        // incoming call handling
+        if (notification.data.call_id) {
+          that.incomingCallData = {
+            call_id: notification.data.call_id,
+            caller_id: notification.data.caller_id,
+            caller_image: notification.data.caller_image,
+            caller_name: notification.data.caller_name,
+            caller_socket: notification.data.caller_socket,
+          };
+        }
+
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
       permissions: {
