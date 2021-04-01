@@ -10,6 +10,14 @@ export const ContentWrapper = styled.View`
   padding: 20px;
 `;
 
+export const SwitchWrapper = styled.View`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-end;
+`;
+
 export const ContentTitle = styled.Text`
   font-family: Kefa;
   font-size: 24px;

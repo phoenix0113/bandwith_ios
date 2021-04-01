@@ -59,12 +59,12 @@ const NavigationItem = styled.TouchableOpacity`
 `;
 
 export const LeftItem = styled(NavigationItem)`
-  width: 16%;
+  width: 18%;
   justify-content: flex-start;
 `;
 
 export const RightItem = styled(NavigationItem)`
-  width: 16%;
+  width: 18%;
   justify-content: flex-end;
 `;
 
@@ -137,6 +137,7 @@ interface BasicTextProps {
   fontWeight?: string;
   letterSpacing?: string;
   textAlign?: string;
+  margin?: string;
 }
 
 export const BasicText = styled.Text<BasicTextProps>`
@@ -148,6 +149,7 @@ export const BasicText = styled.Text<BasicTextProps>`
   letter-spacing: ${({letterSpacing}) => letterSpacing || "0px"};
   color: ${({color}) => color || COLORS.WHITE};
   text-align: ${({textAlign}) => textAlign || "center"};
+  margin: ${({margin}) => margin || 0}
 `;
 
 export const BasicSafeAreaView = styled.SafeAreaView`
