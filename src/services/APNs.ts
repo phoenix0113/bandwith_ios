@@ -40,7 +40,6 @@ class APNService {
             caller_id: notification.data.caller_id,
             caller_image: notification.data.caller_image,
             caller_name: notification.data.caller_name,
-            caller_socket: notification.data.caller_socket,
           };
         }
 

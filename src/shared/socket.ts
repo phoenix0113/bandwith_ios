@@ -27,6 +27,9 @@ export enum ACTIONS {
   JOIN_RECORDING_COMMENTS_ROOM="joinRecordingCommentsRoom",
   LEAVE_RECORDING_COMMENTS_ROOM="leaveRecordingCommentsRoom",
   SEND_APN_DEVICE_ID="sendApnDeviceId",
+  MAKE_APN_CALL="makeApnCall",
+  APN_CALL_TIMEOUT="apnCallTimeout",
+  CANCEL_APN_CALL="cancelApnCall"
 }
 
 /**
@@ -105,15 +108,12 @@ export interface MakeLobbyCallRequest {
   isRandomCall: boolean;
 }
 
-export interface MakeLobbyCallResponse extends ParticipantData {
-  participant_socket: string;
-}
+export type MakeLobbyCallResponse = ParticipantData;
 
 export interface LobbyCallEventData {
   caller_id: string;
   caller_name: string;
   caller_image: string;
-  caller_socket: string;
   call_id: string;
 }
 
@@ -127,6 +127,16 @@ export interface UserStatusEventData {
 export interface SendAPNDeviceIdRequest {
   apnDeviceId: string;
 }
+
+export interface APNCallRequest {
+  call_id: string;
+}
+
+export interface APNCallTimeout extends APNCallRequest {
+  user_id: string;
+}
+
+export type APNCallCancel = APNCallTimeout;
 
 /**
  * Notifications (works in "lobby" room)

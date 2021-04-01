@@ -2,8 +2,9 @@ export interface CallParticipantData {
   name: string;
   id: string;
   image: string | null;
-  socketId: string;
   isFriend: boolean;
+  onCancelHandler?: (callId: string, userId: string) => void;
+  onTimeoutHandler?: (callId: string, userId: string) => void;
 }
 
 export enum OutgoingCallStatus {

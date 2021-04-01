@@ -51,7 +51,6 @@ class IncomingCallService extends AVCoreCall {
         id: incomingCallData.caller_id,
         name: incomingCallData.caller_name,
         image: incomingCallData.caller_image,
-        socketId: incomingCallData.caller_socket,
         isFriend: incomingCallData.isFriend,
       };
       this.callId = incomingCallData.call_id;

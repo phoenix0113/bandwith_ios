@@ -144,8 +144,9 @@ class OutgoingCallService extends AVCoreCall {
         id: data.participant_id,
         name: data.participant_name,
         image: data.participant_image,
-        socketId: data.participant_socket,
         isFriend: data.isFriend,
+        onCancelHandler: data.onCancelHandler,
+        onTimeoutHandler: data.onTimeoutHandler,
       };
     }
   }
@@ -156,6 +157,11 @@ class OutgoingCallService extends AVCoreCall {
 
   public noResponseHandler = () => {
     MediaServiceInstance.stopRingtone();
+
+    if (this.callParticipantData && this.callParticipantData.onTimeoutHandler) {
+      this.callParticipantData.onTimeoutHandler(this.callId, this.callParticipantData.id);
+    }
+
     logger.log("info", "outgoingCall.ts", "Receiver didn't respond", true, true, true);
     this.setStatusAndNotify(OutgoingCallStatus.NO_RESPONSE, () => {
       this.leaveCall(() => {
@@ -166,6 +172,11 @@ class OutgoingCallService extends AVCoreCall {
 
   public cancelCallHandler = () => {
     MediaServiceInstance.stopRingtone();
+
+    if (this.callParticipantData && this.callParticipantData.onCancelHandler) {
+      this.callParticipantData.onCancelHandler(this.callId, this.callParticipantData.id);
+    }
+
     logger.log("info", "outgoingCall.ts", "You canceled the call", true, true);
     this.setStatusAndNotify(OutgoingCallStatus.CANCELED, () => {
       this.leaveCall(() => {

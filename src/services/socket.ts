@@ -11,7 +11,7 @@ import { APNServiceInstance } from "./APNs";
 import { CallSocket } from "../interfaces/Socket";
 import { SERVER_BASE_URL } from "../utils/constants";
 import {
- ACTIONS, CLIENT_ONLY_ACTIONS, ErrorData, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest,
+ ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest,
 } from "../shared/socket";
 import { NotificationTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
@@ -24,6 +24,8 @@ export interface LobbyCallEventDataExtended extends LobbyCallEventData {
 
 export interface LobbyCallResponse extends MakeLobbyCallResponse {
   isFriend: boolean;
+  onCancelHandler?: (callId: string, userId: string) => void;
+  onTimeoutHandler?: (callId: string, userId: string) => void;
 }
 
 class SocketService {
@@ -174,14 +176,54 @@ class SocketService {
     callback: (data: LobbyCallResponse | ErrorData, error?: boolean) => void,
   ) => {
     if (!this.onlineUsers.length) {
-      Alert.alert("Notification", ALL_USERS_ARE_UNAVAILABLE);
-      callback(null, true);
-      return;
+      // no users in the lobby, make call via APN
+      this.APNCall(callId, callback);
+    } else {
+      // there are online users in the lobby, prioritize them
+      const randomOnlineUser = this.onlineUsers[Math.floor(Math.random() * this.onlineUsers.length)];
+
+      this.callSpecificUser(callId, randomOnlineUser, callback, true);
     }
+  }
 
-    const randomOnlineUser = this.onlineUsers[Math.floor(Math.random() * this.onlineUsers.length)];
+  private APNCall = (
+    callId: string,
+    callback: (data: LobbyCallResponse | ErrorData, error?: boolean) => void,
+  ) => {
+    const requestData: APNCallRequest = { call_id: callId };
 
-    this.callSpecificUser(callId, randomOnlineUser, callback, true);
+    this.socket.emit(ACTIONS.MAKE_APN_CALL, requestData, (data) => {
+      if ("errorId" in data) {
+        Alert.alert("Error", data.error);
+        callback(null, true);
+      } else {
+        console.log(`> Trying to make APN call to ${data.participant_name}`);
+        callback({
+          ...data,
+          isFriend: false,
+          onCancelHandler: this.cancelAPNCallHandler,
+          onTimeoutHandler: this.APNCallTimeoutHandler,
+        });
+      }
+    });
+  }
+
+  private cancelAPNCallHandler = (callId: string, userId: string) => {
+    console.log("> Cancelling APN call...");
+
+    const requestData: APNCallCancel = { call_id: callId, user_id: userId };
+    this.socket.emit(ACTIONS.CANCEL_APN_CALL, requestData, () => {
+      console.log("> CANCEL_APN_CALL event success");
+    });
+  }
+
+  private APNCallTimeoutHandler = (callId: string, userId: string) => {
+    console.log("> APN call timeout...");
+
+    const requestData: APNCallTimeout = { call_id: callId, user_id: userId };
+    this.socket.emit(ACTIONS.APN_CALL_TIMEOUT, requestData, () => {
+      console.log("> APN_CALL_TIMEOUT event success");
+    });
   }
 
   public callSpecificUser = (
