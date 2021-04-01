@@ -11,11 +11,10 @@ import { APNServiceInstance } from "./APNs";
 import { CallSocket } from "../interfaces/Socket";
 import { SERVER_BASE_URL } from "../utils/constants";
 import {
- ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest,
+ ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest, SetCallAvailabilityRequest,
 } from "../shared/socket";
 import { NotificationTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
-import { ALL_USERS_ARE_UNAVAILABLE } from "../shared/errors";
 import { createAddToFriednsInvitation, createInvitationAcceptedNotification, createMissedCallNotification, createRemovedFromContactsNotification } from "../shared/utils";
 
 export interface LobbyCallEventDataExtended extends LobbyCallEventData {
@@ -85,12 +84,14 @@ class SocketService {
         this.initializeIncomingCall(APNServiceInstance.incomingCallData);
       }
 
-      this.socket.emit(ACTIONS.JOIN_LOBBY, {
+      const joinLobbyRequest: JoinLobbyRequest = {
         self_id: UserServiceInstance.profile._id,
         self_name: UserServiceInstance.profile.name,
         self_image: UserServiceInstance.profile.imageUrl || null,
-      },
-      ({ onlineUsers, busyUsers }) => {
+        available: UserServiceInstance.profile.available,
+      };
+
+      this.socket.emit(ACTIONS.JOIN_LOBBY, joinLobbyRequest, ({ onlineUsers, busyUsers }) => {
         console.log("> You've joined the the Waiting Lobby");
 
         this.onlineUsers = onlineUsers;
@@ -223,6 +224,16 @@ class SocketService {
     const requestData: APNCallTimeout = { call_id: callId, user_id: userId };
     this.socket.emit(ACTIONS.APN_CALL_TIMEOUT, requestData, () => {
       console.log("> APN_CALL_TIMEOUT event success");
+    });
+  }
+
+  public toggleAvailabilityStatus = () => {
+    const request: SetCallAvailabilityRequest = {
+      available: !UserServiceInstance.profile.available,
+    };
+
+    this.socket.emit(ACTIONS.SET_CALL_AVAILABILITY, request, () => {
+      UserServiceInstance.profile.available = !UserServiceInstance.profile.available;
     });
   }
 

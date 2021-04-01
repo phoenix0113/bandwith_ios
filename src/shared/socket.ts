@@ -29,7 +29,8 @@ export enum ACTIONS {
   SEND_APN_DEVICE_ID="sendApnDeviceId",
   MAKE_APN_CALL="makeApnCall",
   APN_CALL_TIMEOUT="apnCallTimeout",
-  CANCEL_APN_CALL="cancelApnCall"
+  CANCEL_APN_CALL="cancelApnCall",
+  SET_CALL_AVAILABILITY="setCallAvailability",
 }
 
 /**
@@ -95,7 +96,9 @@ export interface ParticipantData {
   participant_image: string;
 }
 
-export type JoinLobbyRequest = SelfData
+export interface JoinLobbyRequest extends SelfData {
+  available: boolean;
+}
 
 export interface JoinLobbyResponse {
   onlineUsers: Array<string>;
@@ -137,6 +140,10 @@ export interface APNCallTimeout extends APNCallRequest {
 }
 
 export type APNCallCancel = APNCallTimeout;
+
+export interface SetCallAvailabilityRequest {
+  available: boolean;
+}
 
 /**
  * Notifications (works in "lobby" room)

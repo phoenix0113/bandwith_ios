@@ -42,6 +42,7 @@ import {
   APNCallRequest,
   APNCallCancel,
   APNCallTimeout,
+  SetCallAvailabilityRequest,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -155,6 +156,11 @@ export interface CallSocket extends SocketIOClient.Socket {
   emit(
     type: ACTIONS.APN_CALL_TIMEOUT,
     data: APNCallTimeout,
+    callback: () => void
+  ): this
+  emit(
+    type: ACTIONS.SET_CALL_AVAILABILITY,
+    data: SetCallAvailabilityRequest,
     callback: () => void
   ): this
   emit(

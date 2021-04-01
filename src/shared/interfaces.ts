@@ -33,6 +33,7 @@ export interface UserProfileRequest {
 
 export interface UserProfileResponse extends RegistrationRequest, UserProfileRequest, Document {
   hints?: UserHint[];
+  available: boolean;
 }
 
 // TODO: most likely some user data has to be here
@@ -69,7 +70,9 @@ export interface BasicResponse {
   success: boolean;
 }
 
-export interface User extends Document, RegistrationRequest, UserProfileRequest {}
+export interface User extends Document, RegistrationRequest, UserProfileRequest {
+  available: boolean;
+}
 
 export interface Contact extends Document, CreateContactRequest {}
 
