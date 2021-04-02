@@ -2,6 +2,7 @@ import { createContext } from "react";
 import { v4 as uuid } from "uuid";
 import {observable, makeObservable, action, runInAction, toJS} from "mobx";
 import { Alert } from "react-native";
+import KeepAwake from "react-native-keep-awake";
 
 import { AVCoreCall, CallType } from "./avcoreCall";
 import { LobbyCallResponse, SocketServiceInstance } from "./socket";
@@ -26,6 +27,7 @@ class OutgoingCallService extends AVCoreCall {
   public makeCall = (userId: string = null) => {
     const callId = uuid();
     SocketServiceInstance.inCall = true;
+    KeepAwake.activate();
 
     SocketServiceInstance.socket.emit(
       ACTIONS.JOIN_CALL,
@@ -248,6 +250,7 @@ class OutgoingCallService extends AVCoreCall {
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED);
 
       SocketServiceInstance.inCall = false;
+      KeepAwake.deactivate();
 
       logger.log("info", "outgoingCall.ts", "All listeners and trackers were cleaned", true, true);
 

@@ -3,6 +3,7 @@ import {
   observable, makeObservable, runInAction, action, reaction, toJS,
 } from "mobx";
 import { Alert } from "react-native";
+import KeepAwake from "react-native-keep-awake";
 
 import { SocketServiceInstance, LobbyCallEventDataExtended } from "./socket";
 import { AVCoreCall, CallType } from "./avcoreCall";
@@ -27,6 +28,8 @@ class IncomingCallService extends AVCoreCall {
       (incomingCallData) => {
         if (incomingCallData) {
           SocketServiceInstance.inCall = true;
+          KeepAwake.activate();
+
           logger.log("info", "incomingCall.ts", `Call is being initialized... Current status: ${this.status}`);
           if (this.status !== IncomingCallStatus.INCOMING) {
             this.status = IncomingCallStatus.INCOMING;
@@ -211,6 +214,7 @@ class IncomingCallService extends AVCoreCall {
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED);
 
       SocketServiceInstance.inCall = false;
+      KeepAwake.deactivate();
 
       logger.log("info", "incomingCall.ts", "All listeners and trackers were cleaned", true);
 
