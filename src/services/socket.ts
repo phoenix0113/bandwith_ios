@@ -7,11 +7,12 @@ import { UserServiceInstance } from "./user";
 import { ContactsServiceInstance } from "./contacts";
 import { NotificationServiceInstance } from "./notifications";
 import { APNServiceInstance } from "./APNs";
+import { AppServiceInstance } from "./app";
 
 import { CallSocket } from "../interfaces/Socket";
 import { SERVER_BASE_URL } from "../utils/constants";
 import {
- ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest, SetCallAvailabilityRequest,
+ ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest, SetCallAvailabilityRequest, SetOnlineStatus,
 } from "../shared/socket";
 import { NotificationTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
@@ -28,6 +29,8 @@ export interface LobbyCallResponse extends MakeLobbyCallResponse {
 }
 
 class SocketService {
+  public inCall = false;
+
   public socket: CallSocket = null;
 
   @observable incomingCallData: LobbyCallEventDataExtended = null;
@@ -56,6 +59,27 @@ class SocketService {
         if (this.socket) {
           this.sendTestNotification();
         }
+      }
+    );
+
+    reaction(
+      () => AppServiceInstance.appState,
+      () => {
+        if (AppServiceInstance.appState === "inactive") {
+          console.log("> Skipping status 'inactive'. New online status won't be send");
+          return;
+        }
+
+        if (!UserServiceInstance.profile?.available) {
+          console.log("> You set status 'Offline'. New online status won't be send");
+          return;
+        }
+        if (this.inCall) {
+          console.log("> You're in a call. New online status won't be send");
+          return;
+        }
+
+        this.sendNewOnlineStatus();
       }
     );
   }
@@ -355,6 +379,16 @@ class SocketService {
 
     SocketServiceInstance.socket.emit(ACTIONS.SEND_APN_DEVICE_ID, request, () => {
       console.log("> APN token has been send to the server. Test notification will be send soon");
+    });
+  }
+
+  private sendNewOnlineStatus = () => {
+    const request: SetOnlineStatus = {
+      onlineStatus: AppServiceInstance.appState === "active" ? "online" : "offline",
+    };
+
+    this.socket.emit(ACTIONS.SET_ONLINE_STATUS, request, () => {
+      console.log(`> New online status was sent: ${request.onlineStatus}`);
     });
   }
 }

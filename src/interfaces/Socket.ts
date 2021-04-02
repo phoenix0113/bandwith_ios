@@ -43,6 +43,7 @@ import {
   APNCallCancel,
   APNCallTimeout,
   SetCallAvailabilityRequest,
+  SetOnlineStatus,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -161,6 +162,11 @@ export interface CallSocket extends SocketIOClient.Socket {
   emit(
     type: ACTIONS.SET_CALL_AVAILABILITY,
     data: SetCallAvailabilityRequest,
+    callback: () => void
+  ): this
+  emit(
+    type: ACTIONS.SET_ONLINE_STATUS,
+    data: SetOnlineStatus,
     callback: () => void
   ): this
   emit(

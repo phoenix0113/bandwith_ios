@@ -31,6 +31,7 @@ export enum ACTIONS {
   APN_CALL_TIMEOUT="apnCallTimeout",
   CANCEL_APN_CALL="cancelApnCall",
   SET_CALL_AVAILABILITY="setCallAvailability",
+  SET_ONLINE_STATUS="setOnlineStatus",
 }
 
 /**
@@ -143,6 +144,10 @@ export type APNCallCancel = APNCallTimeout;
 
 export interface SetCallAvailabilityRequest {
   available: boolean;
+}
+
+export interface SetOnlineStatus {
+  onlineStatus: UserStatus;
 }
 
 /**

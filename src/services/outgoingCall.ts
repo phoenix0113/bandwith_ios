@@ -25,6 +25,7 @@ class OutgoingCallService extends AVCoreCall {
 
   public makeCall = (userId: string = null) => {
     const callId = uuid();
+    SocketServiceInstance.inCall = true;
 
     SocketServiceInstance.socket.emit(
       ACTIONS.JOIN_CALL,
@@ -245,6 +246,8 @@ class OutgoingCallService extends AVCoreCall {
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED);
+
+      SocketServiceInstance.inCall = false;
 
       logger.log("info", "outgoingCall.ts", "All listeners and trackers were cleaned", true, true);
 

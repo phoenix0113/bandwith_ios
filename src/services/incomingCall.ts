@@ -26,6 +26,7 @@ class IncomingCallService extends AVCoreCall {
       () => SocketServiceInstance.incomingCallData,
       (incomingCallData) => {
         if (incomingCallData) {
+          SocketServiceInstance.inCall = true;
           logger.log("info", "incomingCall.ts", `Call is being initialized... Current status: ${this.status}`);
           if (this.status !== IncomingCallStatus.INCOMING) {
             this.status = IncomingCallStatus.INCOMING;
@@ -208,6 +209,8 @@ class IncomingCallService extends AVCoreCall {
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.PARTICIPANT_DISCONNECTED);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.SELF_DISCONNECTED);
       SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.CALL_ALREADY_FINISHED);
+
+      SocketServiceInstance.inCall = false;
 
       logger.log("info", "incomingCall.ts", "All listeners and trackers were cleaned", true);
 
