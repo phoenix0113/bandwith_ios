@@ -17,6 +17,7 @@ import {
 import { NotificationTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
 import { createAddToFriednsInvitation, createInvitationAcceptedNotification, createMissedCallNotification, createRemovedFromContactsNotification } from "../shared/utils";
+import { logOnServerRequest } from "../axios/routes/logs";
 
 export interface LobbyCallEventDataExtended extends LobbyCallEventData {
   isFriend: boolean;
@@ -27,6 +28,8 @@ export interface LobbyCallResponse extends MakeLobbyCallResponse {
   onCancelHandler?: (callId: string, userId: string) => void;
   onTimeoutHandler?: (callId: string, userId: string) => void;
 }
+
+let connectInterval = null;
 
 class SocketService {
   public inCall = false;
@@ -57,7 +60,7 @@ class SocketService {
       () => APNServiceInstance.token,
       () => {
         if (this.socket) {
-          this.sendTestNotification();
+          this.sendAPNToken();
         }
       }
     );
@@ -82,6 +85,31 @@ class SocketService {
         this.sendNewOnlineStatus();
       }
     );
+
+    reaction(
+      () => APNServiceInstance.incomingCallData,
+      (incomingCallData) => {
+        if (!incomingCallData) {
+          return;
+        }
+
+        connectInterval = setInterval(() => {
+          if (AppServiceInstance.appState === "background") {
+            logOnServerRequest({log: "[CLIENT] [APN] waiting for app"});
+          } else {
+            if (this.socket && this.socket.connected) {
+              logOnServerRequest({log: "[CLIENT] [APN] triggered after app state is active in reaction"});
+
+              this.initializeIncomingCall(incomingCallData);
+            }
+            if (connectInterval) {
+              clearInterval(connectInterval);
+              connectInterval = null;
+            }
+          }
+        }, 250);
+      }
+    );
   }
 
   private init = () => {
@@ -90,7 +118,7 @@ class SocketService {
     }) as CallSocket;
 
     if (APNServiceInstance.token) {
-      this.sendTestNotification();
+      this.sendAPNToken();
     }
 
     this.socket.on("connect", () => {
@@ -105,8 +133,12 @@ class SocketService {
         console.log("> You've joined the the Waiting Lobby");
 
         // check if we have an incoming call from APN
-        // may need additional "reaction" to track it in some cases
         if (APNServiceInstance.incomingCallData) {
+          logOnServerRequest({log: "[CLIENT] [APN] triggered after lobby_join"});
+          if (connectInterval) {
+            clearInterval(connectInterval);
+            connectInterval = null;
+          }
           this.initializeIncomingCall(APNServiceInstance.incomingCallData);
         }
 
@@ -373,7 +405,7 @@ class SocketService {
     }
   }
 
-  private sendTestNotification = () => {
+  private sendAPNToken = () => {
     const request: SendAPNDeviceIdRequest = {
       apnDeviceId: APNServiceInstance.token,
     };
