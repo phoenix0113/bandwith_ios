@@ -6,6 +6,7 @@ import { UserServiceInstance } from "./user";
 
 import { checkNotificationsRequest, getNotificationListRequest, removeNotificationRequest } from "../axios/routes/notifications";
 import { Notification, NotificationTypes } from "../shared/interfaces";
+import { showUnexpectedErrorAlert } from "../utils/notifications";
 
 class NotificationService {
   @observable notifications: Array<Notification> = [];
@@ -28,7 +29,7 @@ class NotificationService {
       console.log("> Fetching notification list");
       this.notifications = await getNotificationListRequest() || [];
     } catch (err) {
-      Alert.alert("Notification", err.message);
+      showUnexpectedErrorAlert("fetchUserNotifications()", err.message);
     }
   }
 
@@ -38,7 +39,7 @@ class NotificationService {
         this.notifications = this.notifications.filter((n) => n._id !== id);
       }
     } catch (err) {
-      Alert.alert("Notification", err.message);
+      showUnexpectedErrorAlert("deleteNotification()", err.message);
     }
   }
 
@@ -59,7 +60,7 @@ class NotificationService {
         }
       }
     } catch (err) {
-      Alert.alert("Notification", err.message);
+      showUnexpectedErrorAlert("checkNotificationsStatus()", err.message);
     }
   }
 

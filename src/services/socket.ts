@@ -18,6 +18,7 @@ import { NotificationTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
 import { createAddToFriednsInvitation, createInvitationAcceptedNotification, createMissedCallNotification, createRemovedFromContactsNotification } from "../shared/utils";
 import { logOnServerRequest } from "../axios/routes/logs";
+import { showUnexpectedErrorAlert } from "../utils/notifications";
 
 export interface LobbyCallEventDataExtended extends LobbyCallEventData {
   isFriend: boolean;
@@ -244,7 +245,7 @@ class SocketService {
 
     this.socket.emit(ACTIONS.MAKE_APN_CALL, requestData, (data) => {
       if ("errorId" in data) {
-        Alert.alert("Error", data.error);
+        Alert.alert("APN call error", data.error);
         callback(null, true);
       } else {
         console.log(`> Trying to make APN call to ${data.participant_name}`);
@@ -298,7 +299,7 @@ class SocketService {
         if ("errorId" in data) {
           // TODO: playing of the audio
           // this.stopAudio();
-          Alert.alert("Notification", data.error);
+          Alert.alert("Lobby call error", data.error);
           callback(data);
         } else {
           console.log(`> Trying to call to ${data.participant_name}`);
@@ -371,7 +372,7 @@ class SocketService {
         );
       }
     } catch (err) {
-      Alert.alert("Notification", err.message);
+      showUnexpectedErrorAlert("addContactAndNotify()", err.message);
     }
   };
 
@@ -397,10 +398,10 @@ class SocketService {
 
         return true;
       }
-      Alert.alert("Notification", "Something went wrong while deleting a contact");
+      showUnexpectedErrorAlert("removeContactAndNotify()", "Something went wrong while deleting a contact");
       return false;
     } catch (err) {
-      Alert.alert("Notification", err.message);
+      showUnexpectedErrorAlert("removeContactAndNotify()", err.message);
       return false;
     }
   }

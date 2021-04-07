@@ -1,7 +1,9 @@
 import { makeObservable, observable } from "mobx";
 import { createContext } from "react";
-import { AppState } from "react-native";
+import { Alert, AppState } from "react-native";
 import CallDetectorManager from "react-native-call-detection";
+import NetInfo, { NetInfoState, NetInfoStateType } from "@react-native-community/netinfo";
+
 import { AppStatusType, CallDetectorStatusType } from "../shared/socket";
 
 const MINIMAL_TIME = 100; // in milliseconds
@@ -12,6 +14,16 @@ class AppService {
   @observable callDetectorStatus: CallDetectorStatusType = null;
 
   @observable appState: AppStatusType = null;
+
+  @observable netConnected: boolean = null;
+
+  @observable netAccessible: boolean = null;
+
+  @observable netOldType: NetInfoStateType = null;
+
+  @observable netCurrentType: NetInfoStateType = null;
+
+  @observable canReconnect: boolean = null;
 
   private lastCallStatusTriggerTime: number = null;
 
@@ -25,9 +37,11 @@ class AppService {
     AppState.addEventListener("change", this.handleAppStateChange);
 
     this.callDetector = new CallDetectorManager(this.handlePhoneCallState, false);
+
+    NetInfo.addEventListener(this.handleNetworkChange);
   }
 
-  handleAppStateChange = (nextAppState: AppStatusType): void => {
+  private handleAppStateChange = (nextAppState: AppStatusType): void => {
     if (this.appState.match(/inactive|background/) && nextAppState === "active") {
       console.log("App has come to the foreground!");
     }
@@ -36,7 +50,7 @@ class AppService {
     console.log(`> AppState: ${this.appState}`);
   }
 
-  handlePhoneCallState = (status: CallDetectorStatusType) => {
+  private handlePhoneCallState = (status: CallDetectorStatusType) => {
     console.log(`> CallManagerStatus: ${status}`);
 
     // Workaround of problem when "Incoming" status was fired
@@ -51,6 +65,30 @@ class AppService {
       this.callDetectorStatus = status;
       this.lastCallStatusTriggerTime = Date.now();
     }
+  }
+
+  private handleNetworkChange = (state: NetInfoState) => {
+    this.netAccessible = state.isInternetReachable;
+    this.netConnected = state.isConnected;
+
+    this.netOldType = this.netCurrentType;
+    this.netCurrentType = state.type;
+
+    this.canReconnect = this.checkReconnect();
+  }
+
+  private checkReconnect = (): boolean => {
+    return !!this.netConnected && !!this.netAccessible &&
+      (this.netCurrentType === NetInfoStateType.cellular || this.netCurrentType === NetInfoStateType.wifi);
+  }
+
+  public hasNetworkProblems = () => {
+    return !this.netConnected || !this.netAccessible ||
+      (this.netCurrentType !== NetInfoStateType.cellular && this.netCurrentType !== NetInfoStateType.wifi);
+  }
+
+  public showNetworkStats = () => {
+    Alert.alert("Network stats", `Connected: ${this.netConnected}.\nAccessible: ${this.netAccessible}.\nType: ${this.netCurrentType}`);
   }
 
   // TODO: call it when needed

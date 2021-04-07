@@ -149,7 +149,7 @@ export const BasicText = styled.Text<BasicTextProps>`
   letter-spacing: ${({letterSpacing}) => letterSpacing || "0px"};
   color: ${({color}) => color || COLORS.WHITE};
   text-align: ${({textAlign}) => textAlign || "center"};
-  margin: ${({margin}) => margin || 0}
+  margin: ${({margin}) => margin || 0};
 `;
 
 export const BasicSafeAreaView = styled.SafeAreaView`
@@ -161,5 +161,6 @@ export const SpinnerOverlayText = StyleSheet.create({
   text: {
     color: COLORS.WHITE,
     fontSize: 20,
+    textAlign: "center",
   },
 });

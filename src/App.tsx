@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
-import React, { useContext, useMemo } from "react";
-import { StatusBar } from "react-native";
+import React, { useContext, useEffect, useMemo } from "react";
+import { Alert, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {configure} from "mobx";
@@ -15,6 +15,7 @@ import { COLORS, SpinnerOverlayText } from "./components/styled";
 /**
  * Initializing all the necessary services
  */
+import { AppServiceContext } from "./services/app";
 import { UserServiceInstance } from "./services/user";
 import { APNServiceContext } from "./services/APNs";
 import "./services/contacts";
@@ -24,23 +25,44 @@ import "./services/media";
 import "./services/outgoingCall";
 import "./services/incomingCall";
 import "./services/logger";
-import "./services/app";
 
 configure({ enforceActions: "never" });
-UserServiceInstance.init();
+let servicesInitialized = false;
 
 const App = observer(() => {
   const { incomingCallData } = useContext(APNServiceContext);
 
-  const visible = useMemo(() => !!incomingCallData, [incomingCallData]);
+  const { netAccessible, netConnected, netCurrentType, netOldType } = useContext(AppServiceContext);
+
+  useEffect(() => {
+    if (!servicesInitialized && netAccessible === true && netConnected === true) {
+      console.log("> Initializing core services...");
+      UserServiceInstance.init();
+      servicesInitialized = true;
+    }
+  }, [netAccessible, netConnected]);
+
+  useEffect(() => {
+    // Alert.alert("Net", `Old: ${netOldType}. Current: ${netCurrentType}`);
+  }, [netCurrentType]);
+
+  const spinnerText = useMemo(() => {
+    if (incomingCallData) {
+      return "Proceeding to the call...";
+    }
+    if (netAccessible === false || netConnected === false) {
+      return "You're offline. Check your connection.";
+    }
+    return null;
+  }, [incomingCallData, netAccessible, netConnected]);
 
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="light-content"/>
 
       <Spinner
-        visible={visible}
-        textContent={"Proceeding to the call..."}
+        visible={!!spinnerText}
+        textContent={spinnerText}
         textStyle={SpinnerOverlayText.text}
         size="large"
         color={COLORS.WHITE}

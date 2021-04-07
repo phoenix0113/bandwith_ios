@@ -6,12 +6,17 @@ import { UserServiceInstance } from "./user";
 import { getContactListRequest } from "../axios/routes/contacts";
 import { ContactItem } from "../shared/interfaces";
 import { UserStatus } from "../shared/socket";
+import { AppServiceInstance } from "./app";
+import { ServiceStatus } from "../interfaces/global";
+import { Alert } from "react-native";
 
 export interface ContactItemWithStatus extends ContactItem {
   status: UserStatus;
 }
 
 class ContactsService {
+  private serviceStatus: ServiceStatus = ServiceStatus.IDLE;
+
   @observable contacts: Array<ContactItemWithStatus> = [];
 
   constructor() {
@@ -21,11 +26,44 @@ class ContactsService {
       () => UserServiceInstance.profile,
       (profile) => {
         if (profile && !this.contacts.length) {
-          this.fetchUserContacts();
+          this.init();
+        }
+      }
+    );
+
+    reaction(
+      () => AppServiceInstance.canReconnect,
+      () => {
+        if (
+          AppServiceInstance.canReconnect
+          && UserServiceInstance.profile
+          && (this.serviceStatus === ServiceStatus.IDLE || this.serviceStatus === ServiceStatus.ERROR)
+        ) {
+          // service should be initialized, but it is not.
+          // most likely due to previous connection problems. Reinitializing it
+          Alert.alert("Net", "Reinitializing...");
+          this.init();
         }
       }
     );
   }
+
+  public init = async () => {
+    this.serviceStatus = ServiceStatus.INITIALIZING;
+
+    try {
+      await this.fetchUserContacts();
+      this.serviceStatus = ServiceStatus.INITIALIZED;
+    } catch (err) {
+      if (!AppServiceInstance.netAccessible) {
+        console.error("Error due to internet connection: ", err);
+      } else {
+        Alert.alert("Contacts init error", err.message);
+      }
+      this.serviceStatus = ServiceStatus.ERROR;
+    }
+  }
+
 
   public fetchUserContacts = async (
     onlineUsers?: Array<string>,

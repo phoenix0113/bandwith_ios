@@ -6,6 +6,7 @@ import { Alert } from "react-native";
 
 import { MediaType } from "../interfaces/global";
 import { Kinds } from "../shared/socket";
+import { showUnexpectedErrorAlert } from "../utils/notifications";
 
 class MediaService {
   private ringtone: Sound = null;
@@ -133,7 +134,7 @@ class MediaService {
       return true;
     } catch (err) {
       // TODO: success handler for "permission denied"
-      Alert.alert("Notification", err.message);
+      showUnexpectedErrorAlert("requestMediaPermissions()", err.message);
       return false;
     }
   };

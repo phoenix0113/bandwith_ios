@@ -11,6 +11,8 @@ import { loginRequest, registerRequest, userProfileRequest, avcoreCredentialsReq
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
 import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID } from "../utils/constants";
+import { AppServiceInstance } from "./app";
+import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
@@ -26,6 +28,8 @@ class UserService {
 
   @observable avcoreCloudClient: CloudClient = null;
 
+  private onReconnectActions: Array<Function> = [];
+
   constructor () {
     makeObservable(this);
 
@@ -37,6 +41,20 @@ class UserService {
           this.initializeAvcoreCloudClient();
         } else {
           navigateToScreen("Welcome");
+        }
+      }
+    );
+
+    reaction(
+      () => AppServiceInstance.canReconnect,
+      (canReconnect) => {
+         if (this.onReconnectActions.length && canReconnect) {
+          Alert.alert("Network reconnection handler", `Calling ${this.onReconnectActions.length} scheduled actions`);
+
+          this.onReconnectActions.forEach((func) => {
+            func();
+          });
+          this.onReconnectActions = [];
         }
       }
     );
@@ -55,8 +73,14 @@ class UserService {
       // empty string in place of firebaseToken is just for compatibility
       this.profile = await userProfileRequest({firebaseToken: ""});
       console.log("> Fetched user profile:", this.profile.name);
+
+      Alert.alert("Fetched user profile"); // TODO: remove this
     } catch (err) {
-      console.error(`>> FetchUserData error: ${err.message}`);
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.fetchUserData);
+      } else {
+        showUnexpectedErrorAlert("fetchUserData()", err.message);
+      }
     }
   }
 
@@ -74,7 +98,11 @@ class UserService {
       setBearerToken(token);
       this.fetchUserData();
     } catch (err) {
-      console.error(`>> Login error: ${err.message}`);
+      if (!AppServiceInstance.netAccessible) {
+        showNetworkErrorAlert();
+      } else {
+        showUnexpectedErrorAlert("login()", err.message);
+      }
     }
   }
 
@@ -93,13 +121,13 @@ class UserService {
       this.fetchUserData();
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert("Process Cancelled");
+        Alert.alert("Google Authentication", "Process Cancelled");
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        Alert.alert("Process in progress");
+        Alert.alert("Google Authentication", "Process in progress");
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        Alert.alert("Play services are not available");
+        Alert.alert("Google Authentication", "Play services are not available");
       } else {
-        Alert.alert("Something else went wrong... ", error.toString());
+        Alert.alert("Google Authentication", `Unexpected error: ${error.toString()}`);
       }
     }
   }
@@ -123,7 +151,11 @@ class UserService {
       this.saveTokenToStotage(token);
       setBearerToken(this.token);
     } catch (err) {
-      console.error(`>> Register error: ${err.message}`);
+      if (AppServiceInstance.hasNetworkProblems()) {
+        showNetworkErrorAlert();
+      } else {
+        showUnexpectedErrorAlert("register()", err.message);
+      }
     }
   }
 
@@ -173,11 +205,21 @@ class UserService {
 
         this.avcoreCloudClient = new CloudClient(this.cloud.url, this.cloud.token);
         console.log("> Avcore CloudClient has been initialized");
+        Alert.alert("Avcore was initiliazed"); // TODO: remove this
       }
     } catch (err) {
       console.error(err);
-      Alert.alert("Notification", err.message);
+      if (AppServiceInstance.hasNetworkProblems()) {
+        Alert.alert("erro due to intenet"); // TODO: remove this
+        this.scheduleActions(this.initializeAvcoreCloudClient);
+      } else {
+        showUnexpectedErrorAlert("initializeAvcoreCloudClient()", err.message);
+      }
     }
+  }
+
+  private scheduleActions = (action: Function) => {
+    this.onReconnectActions.push(action);
   }
 }
 

@@ -5,6 +5,7 @@ import { UserServiceInstance } from "./user";
 
 import { logOnServerRequest, sendLogsRequest } from "../axios/routes/logs";
 import { SEND_LOGS_THRESHOLD } from "../utils/constants";
+import { showUnexpectedErrorAlert } from "../utils/notifications";
 
 interface LogItem {
   date: string;
@@ -70,8 +71,7 @@ class LoggerService {
         logs,
       });
     } catch (err) {
-      console.log(err);
-      Alert.alert("Notification", err.message);
+      showUnexpectedErrorAlert("logger.send()", err.message);
     }
   }
 

@@ -3,3 +3,10 @@ export enum MediaType {
   MICRO,
   VOLUME,
 }
+
+export enum ServiceStatus {
+  IDLE,
+  INITIALIZING,
+  INITIALIZED,
+  ERROR,
+}
