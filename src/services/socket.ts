@@ -45,6 +45,8 @@ class SocketService {
 
   @observable socketReconnectionTimestamp: number = null;
 
+  public socketDisconnected = false;
+
   constructor() {
     makeObservable(this);
 
@@ -126,6 +128,10 @@ class SocketService {
       this.sendAPNToken();
     }
 
+    this.socket.on("disconnect", () => {
+      this.socketDisconnected = true;
+    });
+
     this.socket.on("connect", () => {
       const joinLobbyRequest: JoinLobbyRequest = {
         self_id: UserServiceInstance.profile._id,
@@ -135,7 +141,10 @@ class SocketService {
       };
 
       this.socket.emit(ACTIONS.JOIN_LOBBY, joinLobbyRequest, ({ onlineUsers, busyUsers }) => {
-        this.socketReconnectionTimestamp = Date.now();
+        runInAction(() => {
+          this.socketReconnectionTimestamp = Date.now();
+          this.socketDisconnected = false;
+        });
 
         console.log("> You've joined the the Waiting Lobby");
 

@@ -126,7 +126,9 @@ export class AVCoreCall {
       () => AppServiceInstance.callConnectionLostTimestamp && AppServiceInstance.canReconnect && SocketServiceInstance.socketReconnectionTimestamp,
       () => {
         if (!this.reconnectionTimestamp || AppServiceInstance.callConnectionLostTimestamp > this.reconnectionTimestamp) {
-          this.isReconnecting = true;
+          if (SocketServiceInstance.socketDisconnected) {
+            this.isReconnecting = true;
+          }
           if (this.callId && this.localStreamId && AppServiceInstance.canReconnect && AppServiceInstance.callConnectionLostTimestamp) {
             if (SocketServiceInstance.socketReconnectionTimestamp > AppServiceInstance.callConnectionLostTimestamp) {
               this.onReconnect();
@@ -142,6 +144,7 @@ export class AVCoreCall {
 
     SocketServiceInstance.socket.emit(ACTIONS.JOIN_CALL_SILENT, requestData, () => {
       this.reconnectionTimestamp = Date.now();
+      AppServiceInstance.clearCallTimestamp();
 
       this.stopStreaming(() => {
         this.startStreaming();
@@ -169,7 +172,6 @@ export class AVCoreCall {
   }
 
   protected startStreaming = async (): Promise<void> => {
-    AppServiceInstance.clearCallTimestamp();
     try {
       const kinds = MediaServiceInstance.generateKindsFromMedia();
 
