@@ -843,13 +843,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Bandwwith/Bandwwith.entitlements;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bandwwith/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.04;
+				MARKETING_VERSION = 1.05;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -872,13 +872,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Bandwwith/Bandwwith.entitlements;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 6TT7A7VZ6Y;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bandwwith/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.04;
+				MARKETING_VERSION = 1.05;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

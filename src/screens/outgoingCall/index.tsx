@@ -22,6 +22,7 @@ export const OutgoingCallPage = observer((): JSX.Element => {
     resetOutgoingCall,
     participantAppStatus,
     participantCallDetectorStatus,
+    isReconnecting,
   } = useContext(OutgoingCallServiceContext);
 
   switch (status) {
@@ -51,6 +52,7 @@ export const OutgoingCallPage = observer((): JSX.Element => {
           callId={callId}
           participantAppStatus={participantAppStatus}
           participantCallStatus={participantCallDetectorStatus}
+          isReconnecting={isReconnecting}
         />
       );
     default:

@@ -43,6 +43,8 @@ class SocketService {
 
   @observable busyUsers: Array<string> = [];
 
+  @observable socketReconnectionTimestamp: number = null;
+
   constructor() {
     makeObservable(this);
 
@@ -116,6 +118,8 @@ class SocketService {
   private init = () => {
     this.socket = SocketIO(SERVER_BASE_URL, {
       query: `auth_token=${UserServiceInstance.token}&socketId=${UserServiceInstance.profile._id}-socket`,
+      transports: ["websocket"],
+      upgrade: false,
     }) as CallSocket;
 
     if (APNServiceInstance.token) {
@@ -131,6 +135,8 @@ class SocketService {
       };
 
       this.socket.emit(ACTIONS.JOIN_LOBBY, joinLobbyRequest, ({ onlineUsers, busyUsers }) => {
+        this.socketReconnectionTimestamp = Date.now();
+
         console.log("> You've joined the the Waiting Lobby");
 
         // check if we have an incoming call from APN
@@ -151,58 +157,58 @@ class SocketService {
 
         ContactsServiceInstance.updateContactListStatus(onlineUsers, busyUsers);
       });
+    });
 
-      this.socket.on(CLIENT_ONLY_ACTIONS.LOBBY_CALL, (data) => {
-        this.initializeIncomingCall(data);
-      });
+    this.socket.on(CLIENT_ONLY_ACTIONS.LOBBY_CALL, (data) => {
+      this.initializeIncomingCall(data);
+    });
 
-      this.socket.on(CLIENT_ONLY_ACTIONS.NOTIFICATION, (notification) => {
-        console.log(`> You've got notifications from ${notification.user.name}. Notification: `, notification);
+    this.socket.on(CLIENT_ONLY_ACTIONS.NOTIFICATION, (notification) => {
+      console.log(`> You've got notifications from ${notification.user.name}. Notification: `, notification);
 
-        switch (notification.type) {
-          case NotificationTypes.ACCEPTED_INVITATION: {
-            ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+      switch (notification.type) {
+        case NotificationTypes.ACCEPTED_INVITATION: {
+          ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
 
-            NotificationServiceInstance.onMutualInvitationAcceptance(notification);
-            break;
-          }
-          case NotificationTypes.REMOVED_FROM_CONTACTS:
-            ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
-            break;
-          default:
-            NotificationServiceInstance.addNotification(notification);
+          NotificationServiceInstance.onMutualInvitationAcceptance(notification);
+          break;
         }
-      });
+        case NotificationTypes.REMOVED_FROM_CONTACTS:
+          ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+          break;
+        default:
+          NotificationServiceInstance.addNotification(notification);
+      }
+    });
 
-      this.socket.on(CLIENT_ONLY_ACTIONS.USER_STATUS, ({ status, user_id }) => {
-        if (status === "online") {
-          const oldStatus = this.busyUsers.indexOf(user_id);
-          if (oldStatus !== -1) {this.busyUsers.splice(oldStatus, 1);}
+    this.socket.on(CLIENT_ONLY_ACTIONS.USER_STATUS, ({ status, user_id }) => {
+      if (status === "online") {
+        const oldStatus = this.busyUsers.indexOf(user_id);
+        if (oldStatus !== -1) {this.busyUsers.splice(oldStatus, 1);}
 
-          const alreadyInOnline = this.onlineUsers.indexOf(user_id);
-          if (alreadyInOnline === -1) {this.onlineUsers.push(user_id);}
-        } else if (status === "busy") {
-          const oldStatus = this.onlineUsers.indexOf(user_id);
-          if (oldStatus !== -1) {this.onlineUsers.splice(oldStatus, 1);}
+        const alreadyInOnline = this.onlineUsers.indexOf(user_id);
+        if (alreadyInOnline === -1) {this.onlineUsers.push(user_id);}
+      } else if (status === "busy") {
+        const oldStatus = this.onlineUsers.indexOf(user_id);
+        if (oldStatus !== -1) {this.onlineUsers.splice(oldStatus, 1);}
 
-          this.busyUsers.push(user_id);
-        } else if (status === "offline") {
-          const oldOnlineStatus = this.onlineUsers.indexOf(user_id);
-          if (oldOnlineStatus !== -1) {
-            this.onlineUsers.splice(oldOnlineStatus, 1);
-          } else {
-            const oldBusyStatus = this.busyUsers.indexOf(user_id);
-            if (oldBusyStatus !== -1) {this.busyUsers.splice(oldBusyStatus, 1);}
-          }
+        this.busyUsers.push(user_id);
+      } else if (status === "offline") {
+        const oldOnlineStatus = this.onlineUsers.indexOf(user_id);
+        if (oldOnlineStatus !== -1) {
+          this.onlineUsers.splice(oldOnlineStatus, 1);
+        } else {
+          const oldBusyStatus = this.busyUsers.indexOf(user_id);
+          if (oldBusyStatus !== -1) {this.busyUsers.splice(oldBusyStatus, 1);}
         }
+      }
 
-        if (ContactsServiceInstance.isContact(user_id)) {
-          ContactsServiceInstance.updateContactStatus(user_id, status);
-        }
+      if (ContactsServiceInstance.isContact(user_id)) {
+        ContactsServiceInstance.updateContactStatus(user_id, status);
+      }
 
-        console.log("> Online users in lobby changed: ", toJS(this.onlineUsers));
-        console.log("> Busy users in lobby changed: ", toJS(this.busyUsers));
-      });
+      console.log("> Online users in lobby changed: ", toJS(this.onlineUsers));
+      console.log("> Busy users in lobby changed: ", toJS(this.busyUsers));
     });
   }
 

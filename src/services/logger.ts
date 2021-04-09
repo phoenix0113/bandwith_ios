@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { Alert } from "react-native";
 
 import { UserServiceInstance } from "./user";
+import { AppServiceInstance } from "./app";
 
 import { logOnServerRequest, sendLogsRequest } from "../axios/routes/logs";
 import { SEND_LOGS_THRESHOLD } from "../utils/constants";
@@ -45,23 +45,25 @@ class LoggerService {
       console.log(`> ${message}`);
     }
 
-    if (shouldShowUser) {
-      if (type === "error") {
-        Alert.alert("Notification", message);
-      }
-      Alert.alert("Notification", message);
-    }
+    // if (shouldShowUser) {
+    //   if (type === "error") {
+    //     Alert.alert("Notification", message);
+    //   }
+    //   Alert.alert("Notification", message);
+    // }
 
     this.stringifiedLogs = `${this.stringifiedLogs}${fullLog}`;
 
-    if (this.logs.length >= SEND_LOGS_THRESHOLD || forceSend) {
-      console.log("> Sending logs: ", this.logs);
+    // if (this.logs.length >= SEND_LOGS_THRESHOLD || forceSend) {
+    //   console.log("> Sending logs: ", this.logs);
 
-      this.send(this.stringifiedLogs);
+    //   if (AppServiceInstance.hasNetworkProblems() !== true) {
+    //     this.send(this.stringifiedLogs);
 
-      this.logs = [];
-      this.stringifiedLogs = "";
-    }
+    //     this.logs = [];
+    //     this.stringifiedLogs = "";
+    //   }
+    // }
   }
 
   private send = async (logs: string): Promise<void> => {

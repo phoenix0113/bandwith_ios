@@ -1,4 +1,4 @@
-import { makeObservable, observable } from "mobx";
+import { makeObservable, observable, action } from "mobx";
 import { createContext } from "react";
 import { Alert, AppState } from "react-native";
 import CallDetectorManager from "react-native-call-detection";
@@ -24,6 +24,8 @@ class AppService {
   @observable netCurrentType: NetInfoStateType = null;
 
   @observable canReconnect: boolean = null;
+
+  @observable callConnectionLostTimestamp: number = null;
 
   private lastCallStatusTriggerTime: number = null;
 
@@ -67,7 +69,7 @@ class AppService {
     }
   }
 
-  private handleNetworkChange = (state: NetInfoState) => {
+  @action handleNetworkChange = (state: NetInfoState) => {
     this.netAccessible = state.isInternetReachable;
     this.netConnected = state.isConnected;
 
@@ -75,6 +77,14 @@ class AppService {
     this.netCurrentType = state.type;
 
     this.canReconnect = this.checkReconnect();
+
+    if (state.isInternetReachable === false || this.netOldType !== this.netCurrentType) {
+      this.callConnectionLostTimestamp = Date.now();
+    }
+  }
+
+  public clearCallTimestamp = () => {
+    this.callConnectionLostTimestamp = null;
   }
 
   private checkReconnect = (): boolean => {
@@ -88,7 +98,7 @@ class AppService {
   }
 
   public showNetworkStats = () => {
-    Alert.alert("Network stats", `Connected: ${this.netConnected}.\nAccessible: ${this.netAccessible}.\nType: ${this.netCurrentType}`);
+    Alert.alert("Network stats", `Connected: ${this.netConnected}.\nAccessible: ${this.netAccessible}.\nType: ${this.netCurrentType}\nCan reconnect: ${this.canReconnect}`);
   }
 
   // TODO: call it when needed

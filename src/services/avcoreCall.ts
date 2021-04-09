@@ -14,7 +14,7 @@ import { AppServiceInstance } from "./app";
 
 import {
   ACTIONS, AppStatus, AppStatusType, CallDetectorStatus,
-  CallDetectorStatusType, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData,
+  CallDetectorStatusType, CLIENT_ONLY_ACTIONS, Kinds, LAYOUT, MixerLayoutData, JoinCallSilent,
 } from "../shared/socket";
 
 export enum CallType {
@@ -24,6 +24,11 @@ export enum CallType {
 
 interface TrackEvent {
   track: MediaStreamTrack;
+}
+
+interface CloseSubscribedStreamCallback {
+  streamId: string;
+  kinds: Kinds;
 }
 
 export class AVCoreCall {
@@ -49,6 +54,8 @@ export class AVCoreCall {
 
   private remoteStream: MediaStream = null;
 
+  private remoteKinds: Kinds = null;
+
   @observable remoteVideoStream: MediaStream = null;
 
   private oldAudioTracks: Array<MediaStreamTrack> = [];
@@ -58,6 +65,10 @@ export class AVCoreCall {
   @observable participantAppStatus: AppStatusType = null;
 
   @observable participantCallDetectorStatus: CallDetectorStatusType = null;
+
+  @observable isReconnecting = false;
+
+  private reconnectionTimestamp: number = null;
 
   constructor(type: CallType) {
     this.callType = type;
@@ -110,6 +121,36 @@ export class AVCoreCall {
         }
       }
     );
+
+    reaction(
+      () => AppServiceInstance.callConnectionLostTimestamp && AppServiceInstance.canReconnect && SocketServiceInstance.socketReconnectionTimestamp,
+      () => {
+        if (!this.reconnectionTimestamp || AppServiceInstance.callConnectionLostTimestamp > this.reconnectionTimestamp) {
+          this.isReconnecting = true;
+          if (this.callId && this.localStreamId && AppServiceInstance.canReconnect && AppServiceInstance.callConnectionLostTimestamp) {
+            if (SocketServiceInstance.socketReconnectionTimestamp > AppServiceInstance.callConnectionLostTimestamp) {
+              this.onReconnect();
+            }
+          }
+        }
+      }
+    );
+  }
+
+  protected onReconnect = () => {
+    const requestData: JoinCallSilent = {callId: this.callId};
+
+    SocketServiceInstance.socket.emit(ACTIONS.JOIN_CALL_SILENT, requestData, () => {
+      this.reconnectionTimestamp = Date.now();
+
+      this.stopStreaming(() => {
+        this.startStreaming();
+      });
+
+      this.closeSubscribedStream((data) => {
+        this.subscribeToStream(data.kinds, data.streamId);
+      });
+    });
   }
 
   protected trackViewers = (): void => {
@@ -128,6 +169,7 @@ export class AVCoreCall {
   }
 
   protected startStreaming = async (): Promise<void> => {
+    AppServiceInstance.clearCallTimestamp();
     try {
       const kinds = MediaServiceInstance.generateKindsFromMedia();
 
@@ -174,32 +216,20 @@ export class AVCoreCall {
         if (this.callType === CallType.OUTGOING) {
           this.sendMixerLayout();
         }
+        this.isReconnecting = false;
       });
     } catch (err) {
       logger.log("error", "avcoreCall.ts", err.message, true, true, true);
     }
   }
 
-  @action protected stopStreaming = (callback?: () => void): void => {
+  @action stopStreaming = (callback?: () => void): void => {
     if (this.capture) {
       this.capture.close();
     }
     this.capture = null;
 
     logger.log("info", "avcoreCall.ts", "Capture was closed. Emiting STREAM_STOP", true);
-
-    SocketServiceInstance.socket.emit(ACTIONS.STREAM_STOP, {
-      callId: this.callId,
-      stream: this.localStreamId,
-    }, () => {
-      logger.log("info", "avcoreCall.ts", `You've stopped streaming of ${this.localStreamId}`, true, true);
-
-      this.localStreamId = null;
-
-      if (this.callType === CallType.OUTGOING) {
-        this.sendMixerLayout();
-      }
-    });
 
     if (this.localStream) {
       this.localStream.getTracks().forEach((track) => track.stop());
@@ -218,9 +248,21 @@ export class AVCoreCall {
 
     this.stopOldAudioTracks();
 
-    if (callback) {
-      callback();
-    }
+    SocketServiceInstance.socket.emit(ACTIONS.STREAM_STOP, {
+      callId: this.callId,
+      stream: this.localStreamId,
+    }, () => {
+      logger.log("info", "avcoreCall.ts", `You've stopped streaming of ${this.localStreamId}`, true, true);
+
+      this.localStreamId = null;
+
+      if (this.callType === CallType.OUTGOING) {
+        this.sendMixerLayout();
+      }
+      if (callback) {
+        callback();
+      }
+    });
   }
 
   private updateStreaming = async (kinds: Kinds) => {
@@ -288,35 +330,39 @@ export class AVCoreCall {
   }
 
   private onAddTrack = ({ track }: TrackEvent): void => {
-    logger.log("info", "avcoreCall.ts", "[onAddTrack] adding track to the remote stream", true);
+    if (this.remoteStream) {
+      logger.log("info", "avcoreCall.ts", "[onAddTrack] adding track to the remote stream", true);
 
-    if (track.kind === "audio") {
-      logger.log("info", "avcoreCall.ts", `[onAddTrack] Received new audio track. Setting 'enabled' to ${MediaServiceInstance.volume}`, true);
-      track.enabled = MediaServiceInstance.volume;
-    }
+      if (track.kind === "audio") {
+        logger.log("info", "avcoreCall.ts", `[onAddTrack] Received new audio track. Setting 'enabled' to ${MediaServiceInstance.volume}`, true);
+        track.enabled = MediaServiceInstance.volume;
+      }
 
-    this.remoteStream.addTrack(track);
+      this.remoteStream.addTrack(track);
 
-    this.remoteStream = new MediaStream(this.remoteStream.getTracks());
+      this.remoteStream = new MediaStream(this.remoteStream.getTracks());
 
-    InCallManager.setForceSpeakerphoneOn(true);
+      InCallManager.setForceSpeakerphoneOn(true);
 
-    const videoTracks = this.remoteStream.getVideoTracks();
-    if (videoTracks.length) {
-      logger.log("info", "avcoreCall.ts", "[onAddTrack] video tracks are present. Updating remote video stream", true);
-      this.remoteVideoStream = new MediaStream(videoTracks);
+      const videoTracks = this.remoteStream.getVideoTracks();
+      if (videoTracks.length) {
+        logger.log("info", "avcoreCall.ts", "[onAddTrack] video tracks are present. Updating remote video stream", true);
+        this.remoteVideoStream = new MediaStream(videoTracks);
+      }
     }
   }
 
   private onRemoveTrack = ({ track }: TrackEvent): void => {
-    logger.log("info", "avcoreCall.ts", "[onRemoveTrack] removing track from the remote stream", true);
+    if (this.remoteStream) {
+      logger.log("info", "avcoreCall.ts", "[onRemoveTrack] removing track from the remote stream", true);
 
-    this.remoteStream.removeTrack(track);
+      this.remoteStream.removeTrack(track);
 
-    const videoTracks = this.remoteStream.getVideoTracks();
-    if (!videoTracks.length) {
-      logger.log("info", "avcoreCall.ts", "[onRemoveTrack] all video tracks were removed. Setting remote video stream to 'null'", true);
-      this.remoteVideoStream = null;
+      const videoTracks = this.remoteStream.getVideoTracks();
+      if (!videoTracks.length) {
+        logger.log("info", "avcoreCall.ts", "[onRemoveTrack] all video tracks were removed. Setting remote video stream to 'null'", true);
+        this.remoteVideoStream = null;
+      }
     }
   }
 
@@ -347,6 +393,7 @@ export class AVCoreCall {
       runInAction(() => {
         this.remoteStream = stream;
         this.remoteStreamId = streamId;
+        this.remoteKinds = kinds;
         this.playback = playback;
       });
 
@@ -365,6 +412,7 @@ export class AVCoreCall {
       this.playback.updateKinds(kinds);
       logger.log("info", "avcoreCall.ts", `You've updated subscribed stream with id ${streamId}. Playing: [${kinds}]`, true, true);
 
+      this.remoteKinds = kinds;
       if (this.remoteStreamId !== streamId) {
         this.remoteStreamId = streamId;
       }
@@ -374,10 +422,16 @@ export class AVCoreCall {
     }
   }
 
-  protected closeSubscribedStream = (): void => {
+  protected closeSubscribedStream = (callback?: (data: CloseSubscribedStreamCallback) => void): void => {
     logger.log("info", "avcoreCall.ts", `Closing subscribed stream ${this.remoteStreamId}`, true, true);
 
+    const callbackData: CloseSubscribedStreamCallback = {
+      kinds: this.remoteKinds,
+      streamId: this.remoteStreamId,
+    };
+
     this.remoteStreamId = null;
+    this.remoteKinds = null;
     this.remoteStream = null;
     if (this.playback) {
       this.playback.close();
@@ -385,6 +439,9 @@ export class AVCoreCall {
     }
     if (this.callType === CallType.OUTGOING) {
       this.sendMixerLayout();
+    }
+    if (callback) {
+      callback(callbackData);
     }
   }
 

@@ -44,6 +44,7 @@ import {
   APNCallTimeout,
   SetCallAvailabilityRequest,
   SetOnlineStatus,
+  JoinCallSilent,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -212,6 +213,11 @@ export interface CallSocket extends SocketIOClient.Socket {
   emit(
     type: ACTIONS.SEND_APN_DEVICE_ID,
     data: SendAPNDeviceIdRequest,
+    callback: () => void,
+  ): this
+  emit(
+    type: ACTIONS.JOIN_CALL_SILENT,
+    data: JoinCallSilent,
     callback: () => void,
   ): this
 }

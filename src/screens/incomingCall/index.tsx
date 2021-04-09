@@ -22,6 +22,7 @@ export const IncomingCallScreen = observer((): JSX.Element => {
     resetIncomingCall,
     participantAppStatus,
     participantCallDetectorStatus,
+    isReconnecting,
   } = useContext(IncomingCallServiceContext);
 
   switch (status) {
@@ -51,6 +52,7 @@ export const IncomingCallScreen = observer((): JSX.Element => {
           playback={playback}
           participantAppStatus={participantAppStatus}
           participantCallStatus={participantCallDetectorStatus}
+          isReconnecting={isReconnecting}
         />
       );
     default:

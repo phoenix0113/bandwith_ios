@@ -9,7 +9,7 @@ import { BasicText, PageWrapper, BasicSafeAreaView } from "../../styled";
 import {
   CallPageNavigation, NavigationCenterContent, BottomNavigationItem,
   CallPageBottomNavigation, CallParticipant, CallWrapper, CallVideo,
-  TouchableNavigationItem,
+  TouchableNavigationItem, ReconnectionWrapper,
 } from "./styled";
 
 import CameraOffIcon from "../../../assets/images/call/CameraOff.svg";
@@ -38,6 +38,7 @@ interface IProps {
   callId: string;
   participantAppStatus: AppStatusType;
   participantCallStatus: CallDetectorStatusType;
+  isReconnecting: boolean;
 }
 
 export const OngoingCallComponent = observer(({
@@ -48,6 +49,7 @@ export const OngoingCallComponent = observer(({
   type,
   participantAppStatus,
   participantCallStatus,
+  isReconnecting,
 }: IProps): JSX.Element => {
   const {
     camera, volume, micro, toggleMedia, toggleCameraMode,
@@ -71,6 +73,10 @@ export const OngoingCallComponent = observer(({
         </CallPageNavigation>
 
         <CallWrapper>
+          {isReconnecting && <ReconnectionWrapper>
+            <BasicText>Reconnecting...</BasicText>
+          </ReconnectionWrapper>}
+
           <CallParticipant>
             {localStream && <CallVideo objectFit="cover" streamURL={localStream.toURL()} />}
           </CallParticipant>
