@@ -49,7 +49,6 @@ class UserService {
       () => AppServiceInstance.canReconnect,
       (canReconnect) => {
          if (this.onReconnectActions.length && canReconnect) {
-          // Alert.alert("Network reconnection handler", `Calling ${this.onReconnectActions.length} scheduled actions`);
 
           this.onReconnectActions.forEach((func) => {
             func();
@@ -73,8 +72,6 @@ class UserService {
       // empty string in place of firebaseToken is just for compatibility
       this.profile = await userProfileRequest({firebaseToken: ""});
       console.log("> Fetched user profile:", this.profile.name);
-
-      // Alert.alert("Fetched user profile"); // TODO: remove this
     } catch (err) {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.fetchUserData);
@@ -205,7 +202,6 @@ class UserService {
 
         this.avcoreCloudClient = new CloudClient(this.cloud.url, this.cloud.token);
         console.log("> Avcore CloudClient has been initialized");
-        // Alert.alert("Avcore was initiliazed"); // TODO: remove this
       }
     } catch (err) {
       console.error(err);

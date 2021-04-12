@@ -33,6 +33,7 @@ export enum ACTIONS {
   CANCEL_APN_CALL="cancelApnCall",
   SET_CALL_AVAILABILITY="setCallAvailability",
   SET_ONLINE_STATUS="setOnlineStatus",
+  GET_LOBBY_USERS_STATUSES="getLobbyUsersStatuses",
 }
 
 /**
@@ -149,6 +150,11 @@ export interface SetCallAvailabilityRequest {
 
 export interface SetOnlineStatus {
   onlineStatus: UserStatus;
+}
+
+export interface GetUserStatusesListResponse {
+  onlineUsers: Array<string>;
+  busyUsers: Array<string>;
 }
 
 /**

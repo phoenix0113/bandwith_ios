@@ -7,15 +7,14 @@ import { getContactListRequest } from "../axios/routes/contacts";
 import { ContactItem } from "../shared/interfaces";
 import { UserStatus } from "../shared/socket";
 import { AppServiceInstance } from "./app";
-import { ServiceStatus } from "../interfaces/global";
-import { Alert } from "react-native";
+import { showUnexpectedErrorAlert } from "../utils/notifications";
 
 export interface ContactItemWithStatus extends ContactItem {
   status: UserStatus;
 }
 
 class ContactsService {
-  private serviceStatus: ServiceStatus = ServiceStatus.IDLE;
+  private onReconnectActions: Array<Function> = [];
 
   @observable contacts: Array<ContactItemWithStatus> = [];
 
@@ -25,45 +24,25 @@ class ContactsService {
     reaction(
       () => UserServiceInstance.profile,
       (profile) => {
-        if (profile && !this.contacts.length) {
-          this.init();
+        if (profile) {
+          this.fetchUserContacts();
         }
       }
     );
 
     reaction(
       () => AppServiceInstance.canReconnect,
-      () => {
-        if (
-          AppServiceInstance.canReconnect
-          && UserServiceInstance.profile
-          && (this.serviceStatus === ServiceStatus.IDLE || this.serviceStatus === ServiceStatus.ERROR)
-        ) {
-          // service should be initialized, but it is not.
-          // most likely due to previous connection problems. Reinitializing it
-          Alert.alert("Net", "Reinitializing...");
-          this.init();
+      (canReconnect) => {
+         if (UserServiceInstance.profile && this.onReconnectActions.length && canReconnect) {
+
+          this.onReconnectActions.forEach((func) => {
+            func();
+          });
+          this.onReconnectActions = [];
         }
       }
     );
   }
-
-  public init = async () => {
-    this.serviceStatus = ServiceStatus.INITIALIZING;
-
-    try {
-      await this.fetchUserContacts();
-      this.serviceStatus = ServiceStatus.INITIALIZED;
-    } catch (err) {
-      if (!AppServiceInstance.netAccessible) {
-        console.error("Error due to internet connection: ", err);
-      } else {
-        Alert.alert("Contacts init error", err.message);
-      }
-      this.serviceStatus = ServiceStatus.ERROR;
-    }
-  }
-
 
   public fetchUserContacts = async (
     onlineUsers?: Array<string>,
@@ -90,7 +69,11 @@ class ContactsService {
         };
       });
     } catch (err) {
-      console.error(`>> FetchUserContacts error: ${err.message}`);
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.fetchUserContacts);
+      } else {
+        showUnexpectedErrorAlert("fetchUserContacts()", err.message);
+      }
     }
   }
 
@@ -118,6 +101,10 @@ class ContactsService {
   }
 
   public isContact = (userId: string): boolean => !!this.contacts.find((c) => c._id === userId)
+
+  private scheduleActions = (action: Function) => {
+    this.onReconnectActions.push(action);
+  }
 }
 
 export const ContactsServiceInstance = new ContactsService();

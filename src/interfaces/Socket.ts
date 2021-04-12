@@ -45,6 +45,8 @@ import {
   SetCallAvailabilityRequest,
   SetOnlineStatus,
   JoinCallSilent,
+  GetUserStatusesListResponse,
+  SocketData,
 } from "../shared/socket";
 
 export interface CallSocket extends SocketIOClient.Socket {
@@ -169,6 +171,11 @@ export interface CallSocket extends SocketIOClient.Socket {
     type: ACTIONS.SET_ONLINE_STATUS,
     data: SetOnlineStatus,
     callback: () => void
+  ): this
+  emit(
+    type: ACTIONS.GET_LOBBY_USERS_STATUSES,
+    data: SocketData,
+    callback: (data: GetUserStatusesListResponse) => void
   ): this
   emit(
     type: ACTIONS.SEND_INVITATION,

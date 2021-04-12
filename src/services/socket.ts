@@ -12,7 +12,7 @@ import { AppServiceInstance } from "./app";
 import { CallSocket } from "../interfaces/Socket";
 import { SERVER_BASE_URL } from "../utils/constants";
 import {
- ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest, SetCallAvailabilityRequest, SetOnlineStatus,
+ ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest, SetCallAvailabilityRequest, SetOnlineStatus, SocketData,
 } from "../shared/socket";
 import { NotificationTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
@@ -115,6 +115,15 @@ class SocketService {
         }, 250);
       }
     );
+
+    reaction(
+      () => AppServiceInstance.canReconnect,
+      (canReconnect) => {
+        if (this.socket && canReconnect){
+          this.fetchUserStatuses();
+        }
+      }
+    );
   }
 
   private init = () => {
@@ -158,13 +167,7 @@ class SocketService {
           this.initializeIncomingCall(APNServiceInstance.incomingCallData);
         }
 
-        this.onlineUsers = onlineUsers;
-        this.busyUsers = busyUsers;
-
-        console.log("> Online users in the lobby: ", toJS(this.onlineUsers));
-        console.log("> Busy users in the lobby: ", toJS(this.busyUsers));
-
-        ContactsServiceInstance.updateContactListStatus(onlineUsers, busyUsers);
+        this.handleUserStatusesList(onlineUsers, busyUsers);
       });
     });
 
@@ -172,14 +175,16 @@ class SocketService {
       this.initializeIncomingCall(data);
     });
 
-    this.socket.on(CLIENT_ONLY_ACTIONS.NOTIFICATION, (notification) => {
+    this.socket.on(CLIENT_ONLY_ACTIONS.NOTIFICATION, async (notification) => {
       console.log(`> You've got notifications from ${notification.user.name}. Notification: `, notification);
 
       switch (notification.type) {
         case NotificationTypes.ACCEPTED_INVITATION: {
-          ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
-
           NotificationServiceInstance.onMutualInvitationAcceptance(notification);
+
+          await ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+          this.fetchUserStatuses();
+
           break;
         }
         case NotificationTypes.REMOVED_FROM_CONTACTS:
@@ -219,6 +224,23 @@ class SocketService {
       console.log("> Online users in lobby changed: ", toJS(this.onlineUsers));
       console.log("> Busy users in lobby changed: ", toJS(this.busyUsers));
     });
+  }
+
+  private fetchUserStatuses = () => {
+    const requestData: SocketData = { socketId: this.socket.id };
+    this.socket.emit(ACTIONS.GET_LOBBY_USERS_STATUSES, requestData, ({busyUsers, onlineUsers}) => {
+      this.handleUserStatusesList(onlineUsers, busyUsers);
+    });
+  }
+
+  private handleUserStatusesList = (onlineUsers: Array<string>, busyUsers: Array<string>) => {
+    this.onlineUsers = onlineUsers;
+    this.busyUsers = busyUsers;
+
+    console.log("> Online users in the lobby: ", toJS(this.onlineUsers));
+    console.log("> Busy users in the lobby: ", toJS(this.busyUsers));
+
+    ContactsServiceInstance.updateContactListStatus(onlineUsers, busyUsers);
   }
 
   private initializeIncomingCall = (data: LobbyCallEventData) => {
