@@ -12,7 +12,7 @@ export const ProfileImageWrapper = ({ src }: IProps): JSX.Element => {
     <ProfileWrapper>
       <ProfileMaskIcon />
       <ImgWrapperAbsolute>
-        <ProfileImage source={{ uri: src }} />
+        <ProfileImage source={{ uri: src || "DefaultProfileImage" }} />
       </ImgWrapperAbsolute>
     </ProfileWrapper>
   );

@@ -5,6 +5,7 @@ export const COLORS = {
   MAIN_DARK: "#0B131A",
   MAIN_LIGHT: "#0F1A23",
   GREY: "#908F9D",
+  GREY_SENT: "#6D7278",
   LIGHT_GREY: "#DEDEDE",
   WHITE: "#fff",
   WHITE_VAGUE: "#6D7278",
@@ -136,7 +137,7 @@ interface BasicTextProps {
   lineHeight?: string;
   fontWeight?: string;
   letterSpacing?: string;
-  textAlign?: string;
+  textAlign?: "left"|"center"|"right";
   margin?: string;
 }
 
@@ -164,3 +165,12 @@ export const SpinnerOverlayText = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export const BasicContentWrapper = styled.View`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+`;

@@ -29,7 +29,7 @@ export const HomeScreen = observer(() => {
           <Icon name="logout" size={20} color={COLORS.WHITE} />
         </LeftItem>
         <CenterItem />
-        <RightItem onPress={() => UserServiceInstance.logout()}>
+        <RightItem onPress={UserServiceInstance.logout}>
           <SwitchWrapper>
             <BasicText fontSize="15px" lineHeight="28px" margin="0 3px 0 0">
               {profile?.available ? "Online" : "Offline"}
