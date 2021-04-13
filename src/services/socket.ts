@@ -404,6 +404,8 @@ class SocketService {
           },
           () => {
             console.log("> Notifications (invitation accepted) has been sent");
+            ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+
             callback();
           },
         );

@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { observer } from "mobx-react";
+
+import { NotificationServiceContext } from "../../services/notifications";
 
 import { HomeScreen } from "../../screens/home";
 import { FeedScreen } from "../../screens/feed";
@@ -16,40 +19,55 @@ import { MainBottomTabsParamList } from "./types";
 
 const Tab = createBottomTabNavigator<MainBottomTabsParamList>();
 
-export const MainNavigation = () => (
-  <Tab.Navigator
-    backBehavior={"none"}
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused }) => {
-        switch (route.name) {
-          case "Home":
-            return <HomeIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
-          case "Feed":
-            return <FeedIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
-          case "Notifications":
-            return <NotificationsIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
-          case "ContactList":
-            return <ContactListIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
-        }
-      },
-    })}
-    tabBarOptions={{
-      inactiveBackgroundColor: COLORS.BLACK,
-      activeBackgroundColor: COLORS.BLACK,
-      activeTintColor: COLORS.WHITE,
-      inactiveTintColor: COLORS.WHITE,
-      style: {
-        backgroundColor: COLORS.BLACK,
-        borderTopColor: "transparent",
-      },
-      showLabel: false,
-    }}
-  >
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Feed" component={FeedScreen} />
-    <Tab.Screen name="Notifications" component={NotificationsScreen} />
-    <Tab.Screen name="ContactList" component={ContactListScreen} />
-  </Tab.Navigator>
-);
+export const MainNavigation = observer(() => {
+  const { notifications } = useContext(NotificationServiceContext);
+
+  const unreadCounter = useMemo(() => {
+    let counter = 0;
+    notifications.forEach((notification) => {
+      if (!notification.read) {
+        counter++;
+      }
+    });
+    return counter;
+  }, [notifications]);
+
+
+  return (
+    <Tab.Navigator
+      backBehavior={"none"}
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          switch (route.name) {
+            case "Home":
+              return <HomeIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
+            case "Feed":
+              return <FeedIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
+            case "Notifications":
+              return <NotificationsIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
+            case "ContactList":
+              return <ContactListIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
+          }
+        },
+      })}
+      tabBarOptions={{
+        inactiveBackgroundColor: COLORS.BLACK,
+        activeBackgroundColor: COLORS.BLACK,
+        activeTintColor: COLORS.WHITE,
+        inactiveTintColor: COLORS.WHITE,
+        style: {
+          backgroundColor: COLORS.BLACK,
+          borderTopColor: "transparent",
+        },
+        showLabel: false,
+      }}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ tabBarBadge: unreadCounter || null }} />
+      <Tab.Screen name="ContactList" component={ContactListScreen} />
+    </Tab.Navigator>
+  );
+});
 
 
