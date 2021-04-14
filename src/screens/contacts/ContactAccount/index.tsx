@@ -40,15 +40,13 @@ export const ContactAccountComponent = (
 
         <BasicText margin="0 0 10% 0" lineHeight="40px">{name}</BasicText>
 
-        {status === "online" && (
-          <BasicButton
-            width="100%"
-            onPress={() => callHandler(_id)}
-            backgroundColor={COLORS.WHITE}
-          >
-            <BasicButtonText color={COLORS.BLACK}>Make a Call</BasicButtonText>
-          </BasicButton>
-        )}
+        <BasicButton
+          width="100%"
+          onPress={() => callHandler(_id)}
+          backgroundColor={COLORS.WHITE}
+        >
+          <BasicButtonText color={COLORS.BLACK}>Make a Call</BasicButtonText>
+        </BasicButton>
 
         <BasicButton
           width="100%"

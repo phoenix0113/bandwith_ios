@@ -136,6 +136,7 @@ export interface SendAPNDeviceIdRequest {
 
 export interface APNCallRequest {
   call_id: string;
+  user_id: string | null;
 }
 
 export interface APNCallTimeout extends APNCallRequest {

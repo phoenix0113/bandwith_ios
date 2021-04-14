@@ -283,11 +283,45 @@ class SocketService {
     }
   }
 
+  public callSpecificUser = (
+    callId: string,
+    userId: string,
+    callback: (data: LobbyCallResponse | ErrorData, error?: boolean) => void,
+    isRandomCall = false,
+  ) => {
+    console.log(`MAKE_LOBBY_CALL to ${userId} (generated callId: ${callId})`);
+
+    if (this.onlineUsers.includes(userId)) {
+      console.log("> specific call via socket");
+      this.socket.emit(
+        ACTIONS.MAKE_LOBBY_CALL, { call_id: callId, _id: userId, isRandomCall }, (data) => {
+          if ("errorId" in data) {
+            Alert.alert("Lobby call error", data.error);
+            callback(data);
+          } else {
+            console.log(`> Trying to call to ${data.participant_name}`);
+            callback({
+              ...data,
+              isFriend: isRandomCall ? false : ContactsServiceInstance.isContact(data.participant_id),
+            });
+          }
+        },
+      );
+    } else {
+      console.log("> specific call via APN");
+      this.APNCall(callId, callback, userId);
+    }
+  }
+
   private APNCall = (
     callId: string,
     callback: (data: LobbyCallResponse | ErrorData, error?: boolean) => void,
+    userId = null,
   ) => {
-    const requestData: APNCallRequest = { call_id: callId };
+    const requestData: APNCallRequest = {
+      call_id: callId,
+      user_id: userId,
+    };
 
     this.socket.emit(ACTIONS.MAKE_APN_CALL, requestData, (data) => {
       if ("errorId" in data) {
@@ -333,31 +367,6 @@ class SocketService {
     });
   }
 
-  public callSpecificUser = (
-    callId: string,
-    userId: string,
-    callback: (data: LobbyCallResponse | ErrorData, error?: boolean) => void,
-    isRandomCall = false,
-  ) => {
-    console.log(`MAKE_LOBBY_CALL to ${userId} (generated callId: ${callId})`);
-    this.socket.emit(
-      ACTIONS.MAKE_LOBBY_CALL, { call_id: callId, _id: userId, isRandomCall }, (data) => {
-        if ("errorId" in data) {
-          // TODO: playing of the audio
-          // this.stopAudio();
-          Alert.alert("Lobby call error", data.error);
-          callback(data);
-        } else {
-          console.log(`> Trying to call to ${data.participant_name}`);
-          callback({
-            ...data,
-            isFriend: isRandomCall ? false : ContactsServiceInstance.isContact(data.participant_id),
-          });
-        }
-      },
-    );
-  }
-
   public canCallToUser = (userId: string): boolean => this.onlineUsers.includes(userId);
 
   // Notifications management
@@ -400,7 +409,6 @@ class SocketService {
   public addContactAndNotify = async (userId: string, callback: () => void) => {
     try {
       if (await addUserToContactListRequest({ contactPerson: userId })) {
-        Alert.alert("Notification", "User in your contacts now");
         this.socket.emit(
           ACTIONS.SEND_INVITATION_ACCEPTED,
           {
@@ -411,9 +419,11 @@ class SocketService {
               imageUrl: UserServiceInstance.profile.imageUrl,
             }),
           },
-          () => {
+          async () => {
+            Alert.alert("Notification", "User in your contacts now");
             console.log("> Notifications (invitation accepted) has been sent");
-            ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+            await ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+            this.fetchUserStatuses();
 
             callback();
           },
@@ -462,9 +472,10 @@ class SocketService {
     }
   }
 
-  public refetchContacts = () => {
+  public refetchContacts = async () => {
     try {
-      ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+      await ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+      this.fetchUserStatuses();
     } catch (err) {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.refetchContacts);
