@@ -7,3 +7,5 @@ export const USER_IS_OFFLINE = "Selected user is already offline";
 export const NOT_ABLE_TO_FIND_PARTICIPANT = "System wasn't able to find you a participant. Try again later";
 
 export const NO_APN_DEVICE_TOKEN_FOUND = "System wasn't able to find a device to call";
+
+export const USER_ENVIRONMENT_DOES_NOT_SUPPORT_APN = "User's environment doesn't support push notifications";
