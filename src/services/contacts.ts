@@ -2,11 +2,11 @@ import { makeObservable, observable, reaction } from "mobx";
 import { createContext } from "react";
 
 import { UserServiceInstance } from "./user";
+import { AppServiceInstance } from "./app";
 
 import { getContactListRequest } from "../axios/routes/contacts";
 import { ContactItem } from "../shared/interfaces";
 import { UserStatus } from "../shared/socket";
-import { AppServiceInstance } from "./app";
 import { showUnexpectedErrorAlert } from "../utils/notifications";
 
 export interface ContactItemWithStatus extends ContactItem {
@@ -33,7 +33,7 @@ class ContactsService {
     reaction(
       () => AppServiceInstance.canReconnect,
       (canReconnect) => {
-         if (UserServiceInstance.profile && this.onReconnectActions.length && canReconnect) {
+        if (UserServiceInstance.profile && this.onReconnectActions.length && canReconnect) {
 
           this.onReconnectActions.forEach((func) => {
             func();

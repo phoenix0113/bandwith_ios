@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useCallback } from "react";
 import { observer } from "mobx-react";
 import { FlatList } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -18,21 +18,28 @@ import DeleteIcon from "../../assets/images/notifications/Delete.svg";
 
 import { NotificationServiceContext, NotificationServiceInstance } from "../../services/notifications";
 import { SocketServiceInstance } from "../../services/socket";
+import { UserServiceInstance } from "../../services/user";
 
 export const NotificationsScreen = observer(() => {
   const { notifications } = useContext(NotificationServiceContext);
 
-  useFocusEffect(() => {
-    if (notifications?.length) {
-      NotificationServiceInstance.checkNotificationsStatus();
-    }
-  });
+  useFocusEffect(
+    useCallback(() => {
+      if (UserServiceInstance.profile) {
+        NotificationServiceInstance.fetchUserNotifications(() => {
+          if (notifications?.length) {
+            NotificationServiceInstance.checkNotificationsStatus();
+          }
+        });
+      }
+    }, [])
+  );
 
   const [invitationViewerId, setViewerInvitationId] = useState<string>(null);
   const [invitationViewerUser, setViewerInvitationUser] = useState<NotificationUser>(null);
 
   const handleDelete = (notification: Notification) => {
-    console.log(`> Notification with id ${notification._id} is about be removed`);
+    console.log(`> Notification with id ${notification._id} is about to be removed`);
     NotificationServiceInstance.deleteNotification(notification._id);
   };
 

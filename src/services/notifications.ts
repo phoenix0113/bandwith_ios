@@ -3,12 +3,15 @@ import { createContext } from "react";
 import { Alert } from "react-native";
 
 import { UserServiceInstance } from "./user";
+import { AppServiceInstance } from "./app";
 
 import { checkNotificationsRequest, getNotificationListRequest, removeNotificationRequest } from "../axios/routes/notifications";
 import { Notification, NotificationTypes } from "../shared/interfaces";
 import { showUnexpectedErrorAlert } from "../utils/notifications";
 
 class NotificationService {
+  private onReconnectActions: Array<Function> = [];
+
   @observable notifications: Array<Notification> = [];
 
   constructor() {
@@ -22,14 +25,32 @@ class NotificationService {
         }
       }
     );
+
+    reaction(
+      () => AppServiceInstance.canReconnect,
+      (canReconnect) => {
+         if (UserServiceInstance.profile && this.onReconnectActions.length && canReconnect) {
+
+          this.onReconnectActions.forEach((func) => {
+            func();
+          });
+          this.onReconnectActions = [];
+        }
+      }
+    );
   }
 
-  private fetchUserNotifications = async () => {
+  public fetchUserNotifications = async (callback?: () => void) => {
     try {
       console.log("> Fetching notification list");
       this.notifications = await getNotificationListRequest() || [];
+      if (callback) {callback();}
     } catch (err) {
-      showUnexpectedErrorAlert("fetchUserNotifications()", err.message);
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.fetchUserNotifications);
+      } else {
+        showUnexpectedErrorAlert("fetchUserNotifications()", err.message);
+      }
     }
   }
 
@@ -39,7 +60,11 @@ class NotificationService {
         this.notifications = this.notifications.filter((n) => n._id !== id);
       }
     } catch (err) {
-      showUnexpectedErrorAlert("deleteNotification()", err.message);
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.deleteNotification);
+      } else {
+        showUnexpectedErrorAlert("deleteNotification()", err.message);
+      }
     }
   }
 
@@ -60,7 +85,11 @@ class NotificationService {
         }
       }
     } catch (err) {
-      showUnexpectedErrorAlert("checkNotificationsStatus()", err.message);
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.checkNotificationsStatus);
+      } else {
+        showUnexpectedErrorAlert("checkNotificationsStatus()", err.message);
+      }
     }
   }
 
@@ -87,6 +116,10 @@ class NotificationService {
     runInAction(() => {
       this.notifications = [notification, ...this.notifications];
     });
+  }
+
+  private scheduleActions = (action: Function) => {
+    this.onReconnectActions.push(action);
   }
 }
 

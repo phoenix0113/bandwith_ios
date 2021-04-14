@@ -1,6 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useCallback } from "react";
 import { observer } from "mobx-react";
-import { ScrollView, Image } from "react-native";
+import { ScrollView } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { showUnexpectedErrorAlert } from "../../utils/notifications";
 
@@ -14,7 +15,8 @@ import { Contact, ContactContent, ContactListCOntainer, ContactImage } from "./s
 
 import { OutgoingCallServiceInstance } from "../../services/outgoingCall";
 import { ContactsServiceContext, ContactItemWithStatus } from "../../services/contacts";
-import { SocketServiceContext } from "../../services/socket";
+import { SocketServiceContext, SocketServiceInstance } from "../../services/socket";
+import { UserServiceInstance } from "../../services/user";
 
 
 import { UserStatus } from "../../shared/socket";
@@ -37,6 +39,14 @@ const getColor = (status: UserStatus): string => {
 export const ContactListScreen = observer(() => {
   const { removeContactAndNotify } = useContext(SocketServiceContext);
   const { contacts } = useContext(ContactsServiceContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (UserServiceInstance.profile) {
+        SocketServiceInstance.refetchContacts();
+      }
+    }, [])
+  );
 
   const [contactViewer, setContactViewer] = useState<ContactItemWithStatus>(null);
 

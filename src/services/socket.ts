@@ -33,6 +33,8 @@ export interface LobbyCallResponse extends MakeLobbyCallResponse {
 let connectInterval = null;
 
 class SocketService {
+  private onReconnectActions: Array<Function> = [];
+
   public inCall = false;
 
   public socket: CallSocket = null;
@@ -121,6 +123,13 @@ class SocketService {
       (canReconnect) => {
         if (this.socket && canReconnect){
           this.fetchUserStatuses();
+
+          if (UserServiceInstance.profile && this.onReconnectActions.length) {
+            this.onReconnectActions.forEach((func) => {
+              func();
+            });
+            this.onReconnectActions = [];
+          }
         }
       }
     );
@@ -411,7 +420,11 @@ class SocketService {
         );
       }
     } catch (err) {
-      showUnexpectedErrorAlert("addContactAndNotify()", err.message);
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.addContactAndNotify);
+      } else {
+        showUnexpectedErrorAlert("addContactAndNotify()", err.message);
+      }
     }
   };
 
@@ -440,11 +453,28 @@ class SocketService {
       showUnexpectedErrorAlert("removeContactAndNotify()", "Something went wrong while deleting a contact");
       return false;
     } catch (err) {
-      showUnexpectedErrorAlert("removeContactAndNotify()", err.message);
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.removeContactAndNotify);
+      } else {
+        showUnexpectedErrorAlert("removeContactAndNotify()", err.message);
+      }
       return false;
     }
   }
 
+  public refetchContacts = () => {
+    try {
+      ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+    } catch (err) {
+      if (!AppServiceInstance.netAccessible) {
+        this.scheduleActions(this.refetchContacts);
+      } else {
+        showUnexpectedErrorAlert("refetchContacts()", err.message);
+      }
+    }
+  }
+
+  // Other
   private sendAPNToken = () => {
     const request: SendAPNDeviceIdRequest = {
       apnDeviceId: APNServiceInstance.token,
@@ -463,6 +493,10 @@ class SocketService {
     this.socket.emit(ACTIONS.SET_ONLINE_STATUS, request, () => {
       console.log(`> New online status was sent: ${request.onlineStatus}`);
     });
+  }
+
+  private scheduleActions = (action: Function) => {
+    this.onReconnectActions.push(action);
   }
 }
 
