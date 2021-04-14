@@ -36,14 +36,20 @@ class OutgoingCallService extends AVCoreCall {
         console.log(`> You have joined room (as an initiator) with id ${callId}`);
 
         if (userId) {
-          SocketServiceInstance.callSpecificUser(callId, userId, (data) => {
-            this.handleCallCallback(data);
-            runInAction(() => {
-              this.callId = callId;
-              MediaServiceInstance.playRingtone();
-              navigateToScreen("OutgoingCall");
-              this.status = OutgoingCallStatus.WAITING_FOR_PARTICIPANT;
-            });
+          SocketServiceInstance.callSpecificUser(callId, userId, (data, error) => {
+            if (error) {
+              this.leaveCall(() => {
+                this.resetService();
+              });
+            } else {
+              this.handleCallCallback(data);
+              runInAction(() => {
+                this.callId = callId;
+                MediaServiceInstance.playRingtone();
+                navigateToScreen("OutgoingCall");
+                this.status = OutgoingCallStatus.WAITING_FOR_PARTICIPANT;
+              });
+            }
           });
         } else {
           SocketServiceInstance.callRandomUser(callId, (data, error) => {

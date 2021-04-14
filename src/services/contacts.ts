@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import { makeObservable, observable, reaction } from "mobx";
 import { createContext } from "react";
 
@@ -51,10 +52,22 @@ class ContactsService {
     try {
       console.log("> Fetching contact list");
 
+      const oldContacts = [...this.contacts];
+
       const contacts = await getContactListRequest();
 
       this.contacts = contacts.map((contact) => {
-        let status: UserStatus = "offline"; // setting a default value
+        let status: UserStatus;
+        if (oldContacts?.length) {
+          const oldContactObject = oldContacts.find((c) => c._id === contact._id);
+          if (oldContactObject) {
+            status = oldContactObject.status;
+          } else {
+            status = "offline"; // setting a default value
+          }
+        } else {
+          status = "offline"; // setting a default value
+        }
 
         if (onlineUsers?.length || busyUsers?.length) {
           this.contacts.forEach((c) => {

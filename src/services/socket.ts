@@ -191,7 +191,7 @@ class SocketService {
         case NotificationTypes.ACCEPTED_INVITATION: {
           NotificationServiceInstance.onMutualInvitationAcceptance(notification);
 
-          await ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+          await ContactsServiceInstance.fetchUserContacts();
           this.fetchUserStatuses();
 
           break;
@@ -422,7 +422,7 @@ class SocketService {
           async () => {
             Alert.alert("Notification", "User in your contacts now");
             console.log("> Notifications (invitation accepted) has been sent");
-            await ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+            await ContactsServiceInstance.fetchUserContacts();
             this.fetchUserStatuses();
 
             callback();
@@ -474,7 +474,7 @@ class SocketService {
 
   public refetchContacts = async () => {
     try {
-      await ContactsServiceInstance.fetchUserContacts(this.onlineUsers, this.busyUsers);
+      await ContactsServiceInstance.fetchUserContacts();
       this.fetchUserStatuses();
     } catch (err) {
       if (!AppServiceInstance.netAccessible) {
