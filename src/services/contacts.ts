@@ -1,6 +1,7 @@
 /* eslint-disable prefer-destructuring */
 import { makeObservable, observable, reaction } from "mobx";
 import { createContext } from "react";
+import Contacts from "react-native-contacts";
 
 import { UserServiceInstance } from "./user";
 import { AppServiceInstance } from "./app";
@@ -43,6 +44,47 @@ class ContactsService {
         }
       }
     );
+
+    this.importUserContacts();
+  }
+
+  private importUserContacts = async () => {
+    try {
+      const imported = await Contacts.getAll();
+      const importedData = [];
+      imported.forEach((contact) => {
+        let name = "";
+        if (contact.givenName) {
+          name = contact.givenName;
+        }
+        if (contact.middleName) {
+          name = `${name} ${contact.middleName}`;
+        }
+        if (contact.familyName) {
+          name = `${name} ${contact.familyName}`;
+        }
+        if (!name && contact.displayName) {
+          name = contact.displayName;
+        }
+
+        let phones = [];
+        contact.phoneNumbers.forEach((item) => {
+          phones.push(item.number.replace(/[^A-Z0-9]+/ig, ""));
+        });
+        if (name && phones.length) {
+          importedData.push({
+            name: name.trim(),
+            phones,
+          });
+        }
+      });
+
+      importedData.forEach((data) => {
+        console.log(`${data.name}: ${data.phones}`);
+      });
+    } catch (err) {
+      showUnexpectedErrorAlert("importUserContacts()", err.message, err);
+    }
   }
 
   public fetchUserContacts = async (

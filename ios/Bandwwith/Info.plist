@@ -54,6 +54,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera permission description</string>
+	<key>NSContactsUsageDescription</key>
+	<string>App needs permissions to your contacts in order to find them in app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>

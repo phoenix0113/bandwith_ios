@@ -22,6 +22,8 @@ target 'Bandwwith' do
   post_install do |installer|
     flipper_post_install(installer)
   end
+
+  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 end
 
 target 'Bandwwith-tvOS' do
