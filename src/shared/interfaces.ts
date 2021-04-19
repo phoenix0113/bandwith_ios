@@ -32,6 +32,8 @@ export interface UserProfileRequest {
 }
 
 export interface UserProfileResponse extends RegistrationRequest, UserProfileRequest, Document {
+  phone?: string;
+  verified?: boolean;
   hints?: UserHint[];
   available: boolean;
 }

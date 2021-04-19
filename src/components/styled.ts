@@ -139,6 +139,7 @@ interface BasicTextProps {
   letterSpacing?: string;
   textAlign?: "left"|"center"|"right";
   margin?: string;
+  underline?: boolean;
 }
 
 export const BasicText = styled.Text<BasicTextProps>`
@@ -151,6 +152,7 @@ export const BasicText = styled.Text<BasicTextProps>`
   color: ${({color}) => color || COLORS.WHITE};
   text-align: ${({textAlign}) => textAlign || "center"};
   margin: ${({margin}) => margin || 0};
+  text-decoration-line: ${({underline}) => underline ? "underline" : "none"};
 `;
 
 export const BasicSafeAreaView = styled.SafeAreaView`
@@ -166,10 +168,14 @@ export const SpinnerOverlayText = StyleSheet.create({
   },
 });
 
-export const BasicContentWrapper = styled.View`
+interface BasicContentWrapperProps {
+  justifyContent?: "center" | "space-between";
+}
+
+export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: ${({justifyContent}) => justifyContent || "center"};
   align-items: center;
   width: 100%;
   flex: 1;

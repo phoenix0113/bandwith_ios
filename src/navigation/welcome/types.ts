@@ -7,7 +7,18 @@ export type WelcomeStackParamList = {
   Main: undefined;
   IncomingCall: undefined;
   OutgoingCall: undefined;
+  PhoneSetup: undefined;
 };
+
+export enum WelcomeScreensEnum {
+  Welcome="Welcome",
+  Login="Login",
+  Registration="Registration",
+  Main="Main",
+  IncomingCall="IncomingCall",
+  OutgoingCall="OutgoingCall",
+  PhoneSetup="PhoneSetup",
+}
 
 export type WelcomeScreenNavigationProps = StackNavigationProp<
   WelcomeStackParamList,
@@ -37,4 +48,9 @@ export type IncomingCallScreenNavigationProps = StackNavigationProp<
 export type OutgoingCallScreenNavigationProps = StackNavigationProp<
   WelcomeStackParamList,
   "OutgoingCall"
+>;
+
+export type PhoneSetupScreenNavigationProps = StackNavigationProp<
+  WelcomeStackParamList,
+  "PhoneSetup"
 >;

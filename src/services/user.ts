@@ -10,6 +10,7 @@ import { CloudCredentials, UserProfileResponse } from "../shared/interfaces";
 import { loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest, authWithGoogleRequest } from "../axios/routes/user";
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
+import { WelcomeScreensEnum } from "../navigation/welcome/types";
 import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID } from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
@@ -34,10 +35,14 @@ class UserService {
     makeObservable(this);
 
     reaction(
-      () => this.token,
+      () => this.token && this.profile,
       () => {
-        if (this.token) {
-          navigateToScreen("Main");
+        if (this.token && this.profile) {
+          if (this.profile.phone && this.profile.verified) {
+            navigateToScreen(WelcomeScreensEnum.Main);
+          } else {
+            navigateToScreen(WelcomeScreensEnum.PhoneSetup);
+          }
           this.initializeAvcoreCloudClient();
         } else {
           navigateToScreen("Welcome");

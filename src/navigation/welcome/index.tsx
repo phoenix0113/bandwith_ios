@@ -9,7 +9,8 @@ import { LoginScreen } from "../../screens/login";
 import { RegistrationScreen } from "../../screens/registration";
 import { MainNavigation } from "../main";
 import { IncomingCallScreen } from "../../screens/incomingCall";
-import { OutgoingCallPage } from "../../screens/outgoingCall";
+import { OutgoingCallScreen } from "../../screens/outgoingCall";
+import { PhoneSetupScreen } from "../../screens/phoneSetup";
 
 import { UserServiceContext } from "../../services/user";
 
@@ -28,8 +29,9 @@ export const WelcomeNavigation = observer(() => {
       <WelcomeStack.Screen name="Login" component={LoginScreen}/>
       <WelcomeStack.Screen name="Registration" component={RegistrationScreen}/>
       <WelcomeStack.Screen name="Main" component={MainNavigation} />
+      <WelcomeStack.Screen name="PhoneSetup" component={PhoneSetupScreen} />
       <WelcomeStack.Screen name="IncomingCall" component={IncomingCallScreen} />
-      <WelcomeStack.Screen name="OutgoingCall" component={OutgoingCallPage} />
+      <WelcomeStack.Screen name="OutgoingCall" component={OutgoingCallScreen} />
     </WelcomeStack.Navigator>
   );
 });

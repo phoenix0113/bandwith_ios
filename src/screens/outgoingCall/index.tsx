@@ -10,7 +10,7 @@ import { OutgoingCallServiceContext } from "../../services/outgoingCall";
 import { OutgoingCallStatus } from "../../interfaces/call";
 
 
-export const OutgoingCallPage = observer((): JSX.Element => {
+export const OutgoingCallScreen = observer((): JSX.Element => {
   const {
     status,
     endCallHandler,
