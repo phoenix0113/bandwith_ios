@@ -23,6 +23,9 @@ export const PATH = {
   REC_COMMENTS: "rec-comments",
   LOGS: "logs",
   SERVER_SIDE: "serverSide",
+  SEND_SMS: "sendSms",
+  VERIFY_CODE: "verifyCode",
+  PHONE: "phone",
 };
 
 export const API = {
@@ -46,4 +49,7 @@ export const API = {
   RECORD_PUBLISH: `${PATH.API}/${PATH.RECORD}/${PATH.PUBLISH}`,
   SEND_LOGS: `${PATH.API}/${PATH.LOGS}`,
   LOG_ON_SERVER: `${PATH.API}/${PATH.LOGS}/${PATH.SERVER_SIDE}`,
+  SEND_SMS: `${PATH.API}/${PATH.USER}/${PATH.SEND_SMS}`,
+  VERIFY_CODE: `${PATH.API}/${PATH.USER}/${PATH.VERIFY_CODE}`,
+  UPDATE_PHONE: `${PATH.API}/${PATH.USER}/${PATH.PHONE}`,
 };

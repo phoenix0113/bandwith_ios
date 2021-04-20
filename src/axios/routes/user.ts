@@ -5,7 +5,8 @@ import { getError } from "../utils";
 import {
   AuthResponse, LoginRequest, AvcoreAuthResponse, CloudCredentials,
   OAuthGoogleRequest, RegistrationRequest, UserProfileRequest, UserProfileResponse,
-  SetReadHintRequest, SetReadHintResponse,
+  SetReadHintRequest, SetReadHintResponse, SendSMSRequest, BasicResponse, VerifyCodeRequest,
+  UpdatePhoneRequest,
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
@@ -67,6 +68,39 @@ export const avcoreCredentialsRequest = async (): Promise<CloudCredentials> => {
 export const setReadHintRequest = async (request: SetReadHintRequest): Promise<SetReadHintResponse> => {
   try {
     const response = await instance.post<SetReadHintResponse>(API.USER_HINTS, request);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const sendSMSRequest = async (request: SendSMSRequest): Promise<boolean> => {
+  try {
+    const response = await instance.post<BasicResponse>(API.SEND_SMS, request);
+
+    return !!response.data?.success;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const verifyCodeRequest = async (request: VerifyCodeRequest): Promise<boolean> => {
+  try {
+    const response = await instance.post<BasicResponse>(API.VERIFY_CODE, request);
+
+    return !!response.data?.success;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const updatePhoneRequest = async (request: UpdatePhoneRequest): Promise<UserProfileResponse> => {
+  try {
+    const response = await instance.post<UserProfileResponse>(API.UPDATE_PHONE, request);
 
     return response.data;
   } catch (err) {

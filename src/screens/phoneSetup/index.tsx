@@ -9,6 +9,8 @@ import {
 import { PhoneSetupStep } from "./SetupStep";
 import { PhoneVerificationStep } from "./VerificationStep";
 
+import { UserServiceInstance } from "../../services/user";
+
 export const PhoneSetupScreen = () => {
   const [phone, setPhone] = useState(null);
 
@@ -21,26 +23,23 @@ export const PhoneSetupScreen = () => {
     setSmsSentTime(null);
   };
 
-  const sendSms = (enteredPhone: string) => {
+  const sendSms = async (enteredPhone: string) => {
     console.log(`> Sending SMS to ${enteredPhone}`);
-    // actual request to the server
 
-    // if success
-    setPhone(enteredPhone);
-    setSmsSentTime(Date.now());
-    setStep(2);
-
-    // if  error
-    // Alert.alert("Wasn't able to send an SMS to this number");
+    if (await UserServiceInstance.sendVerificationSMS(enteredPhone)) {
+      setPhone(enteredPhone);
+      setSmsSentTime(Date.now());
+      setStep(2);
+    }
   };
 
-  const resendSms = () => {
-    // actual request to the server
+  const resendSms = async () => {
     console.log(`> Resending SMS to ${phone}`);
 
-    // if success
-    setSmsSentTime(Date.now());
-    Alert.alert("Code was sent");
+    if (await UserServiceInstance.sendVerificationSMS(phone)) {
+      setSmsSentTime(Date.now());
+      Alert.alert("Code was sent");
+    }
   };
 
   return (
@@ -60,7 +59,7 @@ export const PhoneSetupScreen = () => {
         {step === 1 ? (
           <PhoneSetupStep sendSms={sendSms} />
         ) : (
-          <PhoneVerificationStep smsSentTime={smsSentTime} resendSms={resendSms} />
+          <PhoneVerificationStep smsSentTime={smsSentTime} resendSms={resendSms} phone={phone} />
         )}
 
       </PageWrapper>

@@ -7,7 +7,10 @@ import { Alert } from "react-native";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 
 import { CloudCredentials, UserProfileResponse } from "../shared/interfaces";
-import { loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest, authWithGoogleRequest } from "../axios/routes/user";
+import {
+  loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest,
+  authWithGoogleRequest, sendSMSRequest, verifyCodeRequest, updatePhoneRequest,
+} from "../axios/routes/user";
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
 import { WelcomeScreensEnum } from "../navigation/welcome/types";
@@ -209,12 +212,45 @@ class UserService {
         console.log("> Avcore CloudClient has been initialized");
       }
     } catch (err) {
-      console.error(err);
       if (AppServiceInstance.hasNetworkProblems()) {
         this.scheduleActions(this.initializeAvcoreCloudClient);
       } else {
         showUnexpectedErrorAlert("initializeAvcoreCloudClient()", err.message);
       }
+    }
+  }
+
+  public sendVerificationSMS = async (phone: string): Promise<boolean> => {
+    try {
+      if (await sendSMSRequest({ phone })) {
+        return true;
+      }
+    } catch (err) {
+      showUnexpectedErrorAlert("sendVerificationSMS()", err.message);
+      return false;
+    }
+  }
+
+  public verifySMSCode = async (code: string, phone: string): Promise<void> => {
+    try {
+      if (await verifyCodeRequest({ code, phone })) {
+        console.log("> Code was accepted. Updating user profile");
+        this.updatePhoneNumber(phone);
+      } else {
+        Alert.alert("Verification Error", "Verification code is wrong or expired");
+      }
+    } catch (err) {
+      showUnexpectedErrorAlert("verifySMSCode()", err.message);
+    }
+  }
+
+  public updatePhoneNumber = async (phone: string): Promise<void> => {
+    try {
+      const updatedProfile = await updatePhoneRequest({ phone });
+      console.log("> Updated user profile: ", updatedProfile);
+      this.profile = updatedProfile;
+    } catch (err) {
+      showUnexpectedErrorAlert("verifySMSCode()", err.message);
     }
   }
 

@@ -6,15 +6,18 @@ import { CodeInput, HiddenInput, PressableStyled, ResendContainer } from "./styl
 
 import { TimerComponent } from "../../../components/Timer";
 
+import { UserServiceInstance } from "../../../services/user";
+
 interface IProps {
   smsSentTime: number;
   resendSms: () => void;
+  phone: string;
 }
 
 const CODE_LENGTH = 4;
 const WAIT_TILL_NEXT_SMS = 1000 * 60;
 
-export const PhoneVerificationStep = ({ smsSentTime, resendSms }: IProps) => {
+export const PhoneVerificationStep = ({ smsSentTime, resendSms, phone }: IProps) => {
   const [code, setCode] = useState("");
   const [containerIsFocused, setContainerIsFocused] = useState(false);
 
@@ -31,9 +34,13 @@ export const PhoneVerificationStep = ({ smsSentTime, resendSms }: IProps) => {
     setContainerIsFocused(false);
   };
 
-  const onSubmit = () => {
-    console.log("On submit");
-    // do some requests to backend here
+  const [disabledSubmit, setDisabledSubmit] = useState(false);
+
+  const onSubmit = async () => {
+    console.log(`> Verifying code ${code} for ${phone} number`);
+    setDisabledSubmit(true);
+    await UserServiceInstance.verifySMSCode(code, phone);
+    setDisabledSubmit(false);
   };
 
   const [showTimer, setShowTimer] = useState(false);
@@ -126,7 +133,7 @@ export const PhoneVerificationStep = ({ smsSentTime, resendSms }: IProps) => {
       <BasicButton
         width="100%"
         onPress={onSubmit}
-        disabled={code.length !== CODE_LENGTH}
+        disabled={code.length !== CODE_LENGTH || disabledSubmit}
       >
         <BasicButtonText>Verify</BasicButtonText>
       </BasicButton>
