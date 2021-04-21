@@ -1,16 +1,16 @@
 import React, { useContext, useMemo } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { observer } from "mobx-react";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 import { NotificationServiceContext } from "../../services/notifications";
 
 import { HomeScreen } from "../../screens/home";
-import { FeedScreen } from "../../screens/feed";
 import { NotificationsScreen } from "../../screens/notifications";
+import { ProfileScreen } from "../../screens/profile";
 import { ContactListScreen } from "../../screens/contacts";
 
 import HomeIcon from "../../assets/images/navigation/home.svg";
-import FeedIcon from "../../assets/images/navigation/feed.svg";
 import NotificationsIcon from "../../assets/images/navigation/notification.svg";
 import ContactListIcon from "../../assets/images/navigation/contacts.svg";
 
@@ -41,12 +41,12 @@ export const MainNavigation = observer(() => {
           switch (route.name) {
             case "Home":
               return <HomeIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
-            case "Feed":
-              return <FeedIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
             case "Notifications":
               return <NotificationsIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
             case "ContactList":
-              return <ContactListIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
+             return <ContactListIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
+            case "Profile":
+              return <Icon name="user-circle-o" size={24} color={focused ? COLORS.WHITE : COLORS.GREY} />;
           }
         },
       })}
@@ -63,9 +63,9 @@ export const MainNavigation = observer(() => {
       }}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Feed" component={FeedScreen} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ tabBarBadge: unreadCounter || null }} />
       <Tab.Screen name="ContactList" component={ContactListScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 });

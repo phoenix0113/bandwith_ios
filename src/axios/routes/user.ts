@@ -76,13 +76,24 @@ export const setReadHintRequest = async (request: SetReadHintRequest): Promise<S
   }
 };
 
-export const sendSMSRequest = async (request: SendSMSRequest): Promise<boolean> => {
+interface SendSMSResponse {
+  success: boolean;
+  error?: string;
+}
+
+export const sendSMSRequest = async (request: SendSMSRequest): Promise<SendSMSResponse> => {
   try {
     const response = await instance.post<BasicResponse>(API.SEND_SMS, request);
 
-    return !!response.data?.success;
+    return response.data;
   } catch (err) {
     const { response } = err as IAxiosError;
+    if (response.status === 409) {
+      return {
+        success: false,
+        error: "This phone is alrady in use",
+      };
+    }
     throw new Error(getError(response));
   }
 };

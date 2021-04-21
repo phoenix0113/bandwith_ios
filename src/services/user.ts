@@ -14,6 +14,7 @@ import {
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
 import { WelcomeScreensEnum } from "../navigation/welcome/types";
+import { MainScreensEnum } from "../navigation/main/types";
 import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID } from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
@@ -41,6 +42,7 @@ class UserService {
       () => this.token && this.profile,
       () => {
         if (this.token && this.profile) {
+          console.log(this.profile);
           if (this.profile.phone && this.profile.verified) {
             navigateToScreen(WelcomeScreensEnum.Main);
           } else {
@@ -222,8 +224,11 @@ class UserService {
 
   public sendVerificationSMS = async (phone: string): Promise<boolean> => {
     try {
-      if (await sendSMSRequest({ phone })) {
+      const response = await sendSMSRequest({ phone });
+      if (response.success){
         return true;
+      } else {
+        Alert.alert(response.error);
       }
     } catch (err) {
       showUnexpectedErrorAlert("sendVerificationSMS()", err.message);
@@ -252,6 +257,18 @@ class UserService {
     } catch (err) {
       showUnexpectedErrorAlert("verifySMSCode()", err.message);
     }
+  }
+
+  @observable phoneEditMode = false;
+
+  public editPhone = () => {
+    navigateToScreen(WelcomeScreensEnum.PhoneSetup);
+    this.phoneEditMode = true;
+  }
+
+  public cancelPhoneEditing = () => {
+    this.phoneEditMode = false;
+    navigateToScreen(MainScreensEnum.Profile);
   }
 
   private scheduleActions = (action: Function) => {

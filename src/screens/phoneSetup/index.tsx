@@ -47,7 +47,17 @@ export const PhoneSetupScreen = () => {
       <PageWrapper>
 
         <NavigationBar>
-          <LeftItem />
+          <LeftItem>
+            <NavigationText
+              color={COLORS.ALTERNATIVE}
+              onPress={
+                UserServiceInstance.phoneEditMode
+                  ? () => UserServiceInstance.cancelPhoneEditing()
+                  : () => UserServiceInstance.logout()}
+              >
+              {UserServiceInstance.phoneEditMode ? "Cancel" : "Logout"}
+            </NavigationText>
+          </LeftItem>
           <CenterItem>
             <NavigationText>{step === 1 ? "Enter your phone" : "Enter the code from SMS"}</NavigationText>
           </CenterItem>

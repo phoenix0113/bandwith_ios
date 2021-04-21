@@ -16,7 +16,7 @@ export const createForbiddenError = (
   response: IAxiosErrorResponse,
 ): string => `You have no rights to access ${response.config.baseURL}${response.config.url}`;
 
-export const getError = (response: IAxiosErrorResponse): string => {
+export const getError = (response: IAxiosErrorResponse, target?: string): string => {
   if (!response?.status) {
     return "Unexpected error";
   }
@@ -29,6 +29,7 @@ export const getError = (response: IAxiosErrorResponse): string => {
       return createUrlNotFoundError(response);
     case 400:
     case 409:
+      return `This ${target} is already in use`;
     case 457:
       return response.data.error || (response.data as unknown) as string;
     default:
