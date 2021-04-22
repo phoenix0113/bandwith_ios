@@ -6557,6 +6557,11 @@ react-native-loading-spinner-overlay@^2.0.0:
   dependencies:
     prop-types "^15.6.2"
 
+react-native-pager-view@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.1.4.tgz#b7c24d2c3b9e0e6562583f647f0fd4b9de3c3032"
+  integrity sha512-tIEpix0p1jq7n5f1PYwUxe1zKk6V3hVjoX7m2KzqCmalTI6RAWDmW/y9irTXDw1JjoXQjD8VrBKL3NtK82tesA==
+
 react-native-phone-number-input@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/react-native-phone-number-input/-/react-native-phone-number-input-2.0.1.tgz#4527b2732907bccfdd1c17b57b129783cc126fc3"
@@ -6622,6 +6627,11 @@ react-native-svg@^12.1.0:
   dependencies:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
+
+react-native-tab-view@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.0.1.tgz#7ed8c5c4a0bb48fa8895e612d26e6d545ed03447"
+  integrity sha512-L7qXtYz5Z+NdWyu38zaJrlHA/8H6rNFRZXe3ydym12UEEPPoefbVZ71b9YK2O6QP0u4pUlzMpMVM/Lsz2DJ4jg==
 
 react-native-vector-icons@^8.1.0:
   version "8.1.0"

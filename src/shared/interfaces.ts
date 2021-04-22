@@ -90,6 +90,8 @@ export interface BasicResponse {
 
 export interface User extends Document, RegistrationRequest, UserProfileRequest, UserExtraData {}
 
+export type ContactType = "in-app"|"imported";
+
 export interface Contact extends Document, CreateContactRequest {}
 
 export interface CreateContactRequest {

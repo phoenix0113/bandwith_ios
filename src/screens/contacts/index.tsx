@@ -1,48 +1,32 @@
 import React, { useState, useContext, useCallback } from "react";
 import { observer } from "mobx-react";
-import { ScrollView } from "react-native";
+import { View, TouchableOpacity, Animated } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { TabView } from "react-native-tab-view";
 
 import { showUnexpectedErrorAlert } from "../../utils/notifications";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, BasicText,
-  RightItem, NavigationText, BasicSafeAreaView, COLORS,
- } from "../../components/styled";
+ CenterItem, LeftItem, NavigationBar, RightItem, NavigationText, BasicSafeAreaView,
+} from "../../components/styled";
 import { ContactAccountComponent } from "./ContactAccount";
+import { ContactListComponent } from "./ContactList";
 
-import { Contact, ContactContent, ContactListCOntainer, ContactImage } from "./styled";
+import { tabBarStyles } from "./styled";
 
 import { OutgoingCallServiceInstance } from "../../services/outgoingCall";
 import { ContactsServiceContext, ContactItemWithStatus } from "../../services/contacts";
 import { SocketServiceContext, SocketServiceInstance } from "../../services/socket";
 import { UserServiceInstance } from "../../services/user";
 
-
-import { UserStatus } from "../../shared/socket";
-
-const getContactNumber = (index: number) => `0${index + 1}`.slice(-2);
-
-const getColor = (status: UserStatus): string => {
-  switch (status) {
-    case "online":
-      return COLORS.ALTERNATIVE;
-    case "offline":
-      return COLORS.GREY;
-    case "busy":
-      return COLORS.ORANGE;
-    default:
-      return COLORS.GREY;
-  }
-};
-
 export const ContactListScreen = observer(() => {
-  const { removeContactAndNotify } = useContext(SocketServiceContext);
   const { contacts } = useContext(ContactsServiceContext);
+
+  const { removeContactAndNotify } = useContext(SocketServiceContext);
 
   useFocusEffect(
     useCallback(() => {
-      if (UserServiceInstance.profile) {
+      if (UserServiceInstance.profile && SocketServiceInstance.socket) {
         SocketServiceInstance.refetchContacts();
       }
     }, [])
@@ -73,6 +57,24 @@ export const ContactListScreen = observer(() => {
     closeViewer();
   };
 
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "inapp", title: "In-app contacts" },
+    { key: "imported", title: "Imported contacts" },
+  ]);
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case "inapp":
+        return <ContactListComponent contacts={contacts} handleContactClick={handleContactClick} type="in-app" />;
+      case "imported":
+        return <ContactListComponent contacts={contacts} handleContactClick={handleContactClick} type="imported"/>;
+      default:
+        return null;
+    }
+  };
+
+
   if (contactViewer) {
     return (
       <ContactAccountComponent
@@ -87,38 +89,47 @@ export const ContactListScreen = observer(() => {
     );
   }
 
-
   return (
     <BasicSafeAreaView>
-      <PageWrapper>
+      <NavigationBar>
+        <LeftItem />
+        <CenterItem>
+          <NavigationText>My Contacts</NavigationText>
+        </CenterItem>
+        <RightItem />
+      </NavigationBar>
 
-        <NavigationBar>
-          <LeftItem />
-          <CenterItem>
-            <NavigationText>My Contacts</NavigationText>
-          </CenterItem>
-          <RightItem />
-        </NavigationBar>
+      <TabView
+      renderTabBar={(props) => {
+        const inputRange = props.navigationState.routes.map((x, i) => i);
 
-        <ContactListCOntainer>
-        <ScrollView>
-          {!!contacts.length && contacts.map((contact, index) => (
-            <Contact onPress={() => handleContactClick(contact)} key={contact._id}>
-              <BasicText fontSize="12px" lineHeight="14px" letterSpacing="0.26px">{getContactNumber(index)}</BasicText>
-              <ContactImage source={{ uri: contact.imageUrl || "DefaultProfileImage" }} />
-              <ContactContent>
-                <BasicText textAlign="left" fontWeight="700" fontSize="14px" lineHeight="24px" letterSpacing="0.26px">{contact.name}</BasicText>
-                <BasicText textAlign="left" fontSize="12px" lineHeight="14px" letterSpacing="0.26px" color={getColor(contact.status)}>
-                  {contact.status}
-                </BasicText>
-              </ContactContent>
-            </Contact>
-          ))}
-        </ScrollView>
-        </ContactListCOntainer>
+        return (
+          <View style={tabBarStyles.tabBar}>
+            {props.navigationState.routes.map((route, i) => {
+              const opacity = props.position.interpolate({
+                inputRange,
+                outputRange: inputRange.map((inputIndex) =>
+                  inputIndex === i ? 1 : 0.5
+                ),
+              });
 
-      </PageWrapper>
+              return (
+                <TouchableOpacity
+                  key={i}
+                  style={tabBarStyles.tabItem}
+                  onPress={() => setIndex(i)}>
+                    <Animated.Text style={{ opacity, ...tabBarStyles.tabText }}>{route.title}</Animated.Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        );
+      }}
+      navigationState={{ index, routes }}
+      onIndexChange={setIndex}
+      renderScene={renderScene}
+    />
+
     </BasicSafeAreaView>
   );
 });
-
