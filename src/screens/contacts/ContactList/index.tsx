@@ -1,24 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ScrollView } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Spinner from "react-native-loading-spinner-overlay";
+import { observer } from "mobx-react";
 
-import { BasicText, COLORS } from "../../../components/styled";
-import { Contact, ContactContent, ContactListContainer, ContactImage } from "./styled";
+import { BasicText, COLORS, SpinnerOverlayText } from "../../../components/styled";
+import { Contact, ContactContent, ContactListContainer, ContactImage, ActionsOverlayContainer } from "./styled";
 
-import { ContactItemWithStatus } from "../../../services/contacts";
+import { ContactItemWithStatus, ContactsServiceContext, ContactsServiceInstance } from "../../../services/contacts";
 import { ContactType } from "../../../shared/interfaces";
 import { UserStatus } from "../../../shared/socket";
 
-const item: Omit<ContactItemWithStatus, "_id"> = {
-  name: "Serhii Pyrozhenko",
-  status: "online",
-  imageUrl: null,
-};
+// const item: Omit<ContactItemWithStatus, "_id"> = {
+//   name: "Serhii Pyrozhenko",
+//   status: "online",
+//   imageUrl: null,
+// };
 
-const items = [];
+// const items = [];
 
-for (let i = 0; i < 30; i++) {
-  items.push({...item, _id: i});
-}
+// for (let i = 0; i < 5; i++) {
+//   items.push({...item, _id: i});
+// }
 
 const getContactNumber = (index: number) => `0${index + 1}`.slice(-2);
 
@@ -42,11 +45,30 @@ interface IProps {
   type: ContactType;
 }
 
-export const ContactListComponent = ({ contacts, handleContactClick, type }: IProps)  => {
+export const ContactListComponent = observer(({ contacts, handleContactClick, type }: IProps)  => {
+  const { isImporting } = useContext(ContactsServiceContext);
+
   return (
     <ContactListContainer>
+      {type === "imported" && (
+        <ActionsOverlayContainer onPress={ContactsServiceInstance.importUserContacts}>
+          <Icon name="refresh" size={45} color={COLORS.ALTERNATIVE} />
+        </ActionsOverlayContainer>
+      )}
+
+      <Spinner
+        visible={isImporting}
+        textContent="Importing..."
+        textStyle={SpinnerOverlayText.text}
+        size="large"
+        color={COLORS.WHITE}
+        overlayColor={COLORS.BLACK}
+        animation="fade"
+      />
+
+
       <ScrollView>
-        {!!items.length && items.map((contact, index) => (
+        {!!contacts.length && contacts.map((contact, index) => (
           <Contact onPress={() => handleContactClick(contact)} key={contact._id}>
             <BasicText fontSize="12px" lineHeight="14px" letterSpacing="0.26px">{getContactNumber(index)}</BasicText>
             <ContactImage source={{ uri: contact.imageUrl || "DefaultProfileImage" }} />
@@ -61,4 +83,4 @@ export const ContactListComponent = ({ contacts, handleContactClick, type }: IPr
       </ScrollView>
     </ContactListContainer>
   );
-};
+});

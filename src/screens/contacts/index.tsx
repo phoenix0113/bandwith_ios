@@ -100,35 +100,35 @@ export const ContactListScreen = observer(() => {
       </NavigationBar>
 
       <TabView
-      renderTabBar={(props) => {
-        const inputRange = props.navigationState.routes.map((x, i) => i);
+        renderTabBar={(props) => {
+          const inputRange = props.navigationState.routes.map((x, i) => i);
 
-        return (
-          <View style={tabBarStyles.tabBar}>
-            {props.navigationState.routes.map((route, i) => {
-              const opacity = props.position.interpolate({
-                inputRange,
-                outputRange: inputRange.map((inputIndex) =>
-                  inputIndex === i ? 1 : 0.5
-                ),
-              });
+          return (
+            <View style={tabBarStyles.tabBar}>
+              {props.navigationState.routes.map((route, i) => {
+                const opacity = props.position.interpolate({
+                  inputRange,
+                  outputRange: inputRange.map((inputIndex) =>
+                    inputIndex === i ? 1 : 0.5
+                  ),
+                });
 
-              return (
-                <TouchableOpacity
-                  key={i}
-                  style={tabBarStyles.tabItem}
-                  onPress={() => setIndex(i)}>
-                    <Animated.Text style={{ opacity, ...tabBarStyles.tabText }}>{route.title}</Animated.Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        );
-      }}
-      navigationState={{ index, routes }}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-    />
+                return (
+                  <TouchableOpacity
+                    key={i}
+                    style={tabBarStyles.tabItem}
+                    onPress={() => setIndex(i)}>
+                      <Animated.Text style={{ opacity, ...tabBarStyles.tabText }}>{route.title}</Animated.Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          );
+        }}
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+      />
 
     </BasicSafeAreaView>
   );

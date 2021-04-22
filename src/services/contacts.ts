@@ -20,6 +20,8 @@ class ContactsService {
 
   @observable contacts: Array<ContactItemWithStatus> = [];
 
+  @observable isImporting = false;
+
   constructor() {
     makeObservable(this);
 
@@ -45,10 +47,12 @@ class ContactsService {
       }
     );
 
+    // TODO: make it one time by introducing "imported" field to profile
     this.importUserContacts();
   }
 
-  private importUserContacts = async () => {
+  public importUserContacts = async () => {
+    this.isImporting = true;
     try {
       const imported = await Contacts.getAll();
       const importedData = [];
@@ -82,8 +86,11 @@ class ContactsService {
       importedData.forEach((data) => {
         console.log(`${data.name}: ${data.phones}`);
       });
+      // TODO: actual request to the server
     } catch (err) {
       showUnexpectedErrorAlert("importUserContacts()", err.message, err);
+    } finally {
+      this.isImporting = false;
     }
   }
 

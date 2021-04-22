@@ -1,9 +1,9 @@
 import "react-native-gesture-handler";
 import React, { useContext, useEffect, useMemo } from "react";
-import { Alert, StatusBar } from "react-native";
+import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {configure} from "mobx";
+import { configure } from "mobx";
 import "react-native-get-random-values";
 import Spinner from "react-native-loading-spinner-overlay";
 import { observer } from "mobx-react";
@@ -42,10 +42,6 @@ const App = observer(() => {
     }
   }, [netAccessible, netConnected]);
 
-  useEffect(() => {
-    // Alert.alert("Net", `Old: ${netOldType}. Current: ${netCurrentType}`);
-  }, [netCurrentType]);
-
   const spinnerText = useMemo(() => {
     if (incomingCallData) {
       return "Proceeding to the call...";
@@ -67,6 +63,7 @@ const App = observer(() => {
         size="large"
         color={COLORS.WHITE}
         overlayColor={COLORS.BLACK}
+        animation="fade"
        />
 
       <NavigationContainer ref={navigationRef}>
