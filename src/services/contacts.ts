@@ -2,12 +2,13 @@
 import { makeObservable, observable, reaction } from "mobx";
 import { createContext } from "react";
 import Contacts from "react-native-contacts";
+import { Alert } from "react-native";
 
 import { UserServiceInstance } from "./user";
 import { AppServiceInstance } from "./app";
 
-import { getContactListRequest } from "../axios/routes/contacts";
-import { ContactItem } from "../shared/interfaces";
+import { getContactListRequest, importContactsRequest } from "../axios/routes/contacts";
+import { ContactImportItem, ContactItem } from "../shared/interfaces";
 import { UserStatus } from "../shared/socket";
 import { showUnexpectedErrorAlert } from "../utils/notifications";
 
@@ -30,6 +31,12 @@ class ContactsService {
       (profile) => {
         if (profile) {
           this.fetchUserContacts();
+
+          if (!profile.contactsImported && !this.isImporting) {
+            this.importUserContacts();
+          } else {
+            console.log("> Contacts have been already imported");
+          }
         }
       }
     );
@@ -46,16 +53,16 @@ class ContactsService {
         }
       }
     );
-
-    // TODO: make it one time by introducing "imported" field to profile
-    this.importUserContacts();
   }
 
   public importUserContacts = async () => {
+    console.log("> Contacts import initiated");
     this.isImporting = true;
+
     try {
       const imported = await Contacts.getAll();
-      const importedData = [];
+      const importedData: Array<ContactImportItem> = [];
+
       imported.forEach((contact) => {
         let name = "";
         if (contact.givenName) {
@@ -79,6 +86,7 @@ class ContactsService {
           importedData.push({
             name: name.trim(),
             phones,
+            recordId: contact.recordID,
           });
         }
       });
@@ -86,7 +94,22 @@ class ContactsService {
       importedData.forEach((data) => {
         console.log(`${data.name}: ${data.phones}`);
       });
-      // TODO: actual request to the server
+
+      const response = await importContactsRequest({ contacts: importedData });
+      console.log("> Contacts import were performed. Response: ", response);
+
+
+      if (response.updated) {
+        Alert.alert("Contacts were imported", `Found ${response.profile.contacts.length} contacts with an installed app`);
+      } else if (!response.updated && !UserServiceInstance.profile.contactsImported) {
+        Alert.alert("Contacts were imported", "No one of your contacts has an app yet");
+      } else if (!response.updated && UserServiceInstance.profile.contacts.length > response.profile.contacts.length) {
+        Alert.alert("Contacts were imported", `Removed ${UserServiceInstance.profile.contacts.length} contacts from the list since they are no longer correspond to user's app`);
+      } else {
+        Alert.alert("Contacts already up to date");
+      }
+
+      UserServiceInstance.profile = response.profile;
     } catch (err) {
       showUnexpectedErrorAlert("importUserContacts()", err.message, err);
     } finally {

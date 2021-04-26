@@ -2,7 +2,10 @@ import { instance } from "../instance";
 import { IAxiosError } from "../interfaces";
 import { getError } from "../utils";
 
-import { CreateContactRequest, RemoveContactRequest, GetContactListResponse, ContactItem, BasicResponse } from "../../shared/interfaces";
+import {
+  CreateContactRequest, RemoveContactRequest, GetContactListResponse,
+  ContactItem, BasicResponse, ImportContactsRequest, ImportContactsResponse,
+} from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
 export const getContactListRequest = async (): Promise<Array<ContactItem>> => {
@@ -34,6 +37,19 @@ export const removeUserFromContactListRequest = async (
     const response = await instance.delete<BasicResponse>(`${API.USER_CONTACTS}/${request.contactPerson}`);
 
     return !!response.data.success;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const importContactsRequest = async (
+  request: ImportContactsRequest
+): Promise<ImportContactsResponse> => {
+  try {
+    const response = await instance.post<ImportContactsResponse>(API.IMPORT_CONTACTS, request);
+
+    return response.data;
   } catch (err) {
     const { response } = err as IAxiosError;
     throw new Error(getError(response));

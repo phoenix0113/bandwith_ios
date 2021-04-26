@@ -11,18 +11,6 @@ import { ContactItemWithStatus, ContactsServiceContext, ContactsServiceInstance 
 import { ContactType } from "../../../shared/interfaces";
 import { UserStatus } from "../../../shared/socket";
 
-// const item: Omit<ContactItemWithStatus, "_id"> = {
-//   name: "Serhii Pyrozhenko",
-//   status: "online",
-//   imageUrl: null,
-// };
-
-// const items = [];
-
-// for (let i = 0; i < 5; i++) {
-//   items.push({...item, _id: i});
-// }
-
 const getContactNumber = (index: number) => `0${index + 1}`.slice(-2);
 
 const getColor = (status: UserStatus): string => {
@@ -48,11 +36,13 @@ interface IProps {
 export const ContactListComponent = observer(({ contacts, handleContactClick, type }: IProps)  => {
   const { isImporting } = useContext(ContactsServiceContext);
 
+  console.log(contacts);
+
   return (
     <ContactListContainer>
       {type === "imported" && (
         <ActionsOverlayContainer onPress={ContactsServiceInstance.importUserContacts}>
-          <Icon name="refresh" size={45} color={COLORS.ALTERNATIVE} />
+          <Icon name="refresh" size={35} color={COLORS.WHITE} />
         </ActionsOverlayContainer>
       )}
 

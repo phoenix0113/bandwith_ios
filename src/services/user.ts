@@ -42,7 +42,6 @@ class UserService {
       () => this.token && this.profile,
       () => {
         if (this.token && this.profile) {
-          console.log(this.profile);
           if (this.profile.phone && this.profile.verified) {
             navigateToScreen(WelcomeScreensEnum.Main);
           } else {

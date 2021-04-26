@@ -17,10 +17,12 @@ import { tabBarStyles } from "./styled";
 import { OutgoingCallServiceInstance } from "../../services/outgoingCall";
 import { ContactsServiceContext, ContactItemWithStatus } from "../../services/contacts";
 import { SocketServiceContext, SocketServiceInstance } from "../../services/socket";
-import { UserServiceInstance } from "../../services/user";
+import { UserServiceContext, UserServiceInstance } from "../../services/user";
 
 export const ContactListScreen = observer(() => {
   const { contacts } = useContext(ContactsServiceContext);
+
+  const { profile } = useContext(UserServiceContext);
 
   const { removeContactAndNotify } = useContext(SocketServiceContext);
 
@@ -68,7 +70,7 @@ export const ContactListScreen = observer(() => {
       case "inapp":
         return <ContactListComponent contacts={contacts} handleContactClick={handleContactClick} type="in-app" />;
       case "imported":
-        return <ContactListComponent contacts={contacts} handleContactClick={handleContactClick} type="imported"/>;
+        return <ContactListComponent contacts={profile.contacts} handleContactClick={handleContactClick} type="imported"/>;
       default:
         return null;
     }

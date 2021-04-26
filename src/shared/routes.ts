@@ -26,6 +26,7 @@ export const PATH = {
   SEND_SMS: "sendSms",
   VERIFY_CODE: "verifyCode",
   PHONE: "phone",
+  IMPORT: "contactsImport",
 };
 
 export const API = {
@@ -52,4 +53,5 @@ export const API = {
   SEND_SMS: `${PATH.API}/${PATH.USER}/${PATH.SEND_SMS}`,
   VERIFY_CODE: `${PATH.API}/${PATH.USER}/${PATH.VERIFY_CODE}`,
   UPDATE_PHONE: `${PATH.API}/${PATH.USER}/${PATH.PHONE}`,
+  IMPORT_CONTACTS: `${PATH.API}/${PATH.CONTACTS}/${PATH.IMPORT}`,
 };

@@ -31,10 +31,18 @@ export interface UserProfileRequest {
   firebaseToken: string;
 }
 
+export interface ImportedContactItem {
+  recordId: string;
+  name: string;
+  user: ContactItem;
+}
+
 interface UserExtraData {
   available: boolean;
   phone: string;
   verified: boolean;
+  contactsImported: boolean;
+  contacts: ImportedContactItem[];
 }
 
 export interface UserProfileResponse extends RegistrationRequest, UserProfileRequest, Document, UserExtraData {
@@ -110,6 +118,25 @@ export interface GetContactListResponse {
 export interface RemoveContactRequest {
   contactPerson: string;
 }
+
+/**
+ * Contacts import
+ */
+export interface ContactImportItem {
+  phones: Array<string>;
+  name: string;
+  recordId: string;
+}
+
+export interface ImportContactsRequest {
+  contacts: Array<ContactImportItem>;
+}
+
+export interface ImportContactsResponse {
+  updated: boolean;
+  profile: UserProfileResponse
+}
+//
 
 export interface GetUserDataResponse extends Document {
   name: string;
