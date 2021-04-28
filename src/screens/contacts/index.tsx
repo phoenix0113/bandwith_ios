@@ -11,20 +11,17 @@ import {
 } from "../../components/styled";
 import { ContactAccountComponent } from "./ContactAccount";
 import { ContactListComponent } from "./ContactList";
+import { ImportedContactListComponent } from "./ImportedContactList";
 
 import { tabBarStyles } from "./styled";
 
 import { OutgoingCallServiceInstance } from "../../services/outgoingCall";
 import { ContactsServiceContext, ContactItemWithStatus } from "../../services/contacts";
-import { SocketServiceContext, SocketServiceInstance } from "../../services/socket";
-import { UserServiceContext, UserServiceInstance } from "../../services/user";
+import { SocketServiceInstance } from "../../services/socket";
+import { UserServiceInstance } from "../../services/user";
 
 export const ContactListScreen = observer(() => {
-  const { contacts } = useContext(ContactsServiceContext);
-
-  const { profile } = useContext(UserServiceContext);
-
-  const { removeContactAndNotify } = useContext(SocketServiceContext);
+  const { contacts, importedContacts } = useContext(ContactsServiceContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -46,7 +43,7 @@ export const ContactListScreen = observer(() => {
 
   const deleteContact = async (_id: string) => {
     try {
-      if (await removeContactAndNotify(_id)) {
+      if (await SocketServiceInstance.removeContactAndNotify(_id)) {
         closeViewer();
       }
     } catch (err) {
@@ -68,9 +65,9 @@ export const ContactListScreen = observer(() => {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "inapp":
-        return <ContactListComponent contacts={contacts} handleContactClick={handleContactClick} type="in-app" />;
+        return <ContactListComponent contacts={contacts} handleContactClick={handleContactClick} />;
       case "imported":
-        return <ContactListComponent contacts={profile.contacts} handleContactClick={handleContactClick} type="imported"/>;
+        return <ImportedContactListComponent contacts={importedContacts} handleContactClick={handleContactClick} />;
       default:
         return null;
     }

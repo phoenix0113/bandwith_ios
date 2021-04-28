@@ -52,6 +52,8 @@ class SocketService {
   constructor() {
     makeObservable(this);
 
+    ContactsServiceInstance.requestStatusUpdate = this.fetchUserStatuses;
+
     reaction(
       () => UserServiceInstance.profile,
       (profile) => {
