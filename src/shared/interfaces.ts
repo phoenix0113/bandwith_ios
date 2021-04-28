@@ -51,11 +51,16 @@ export interface UserProfileResponse extends RegistrationRequest, UserProfileReq
 
 export interface SendSMSRequest {
   phone: string;
+  request_id?: string;
+}
+
+export interface NexmoResponse extends BasicResponse {
+  request_id: string;
 }
 
 export interface VerifyCodeRequest {
   code: string;
-  phone: string;
+  request_id: string;
 }
 
 export interface UpdatePhoneRequest {

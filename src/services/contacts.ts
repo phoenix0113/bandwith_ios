@@ -108,12 +108,14 @@ class ContactsService {
       console.log("> Contacts import were performed. Response: ", response);
 
 
-      if (response.updated) {
-        Alert.alert("Contacts were imported", `Found ${response.profile.contacts.length} contacts with an installed app`);
+      const difference = response.profile.contacts.length - UserServiceInstance.profile.contacts.length;
+
+      if (response.updated && difference > 0) {
+        Alert.alert("Contacts were imported", `Found ${difference} new contacts with an installed app`);
       } else if (!response.updated && !UserServiceInstance.profile.contactsImported) {
         Alert.alert("Contacts were imported", "No one of your contacts has an app yet");
-      } else if (!response.updated && UserServiceInstance.profile.contacts.length > response.profile.contacts.length) {
-        Alert.alert("Contacts were imported", `Removed ${UserServiceInstance.profile.contacts.length} contacts from the list since they are no longer correspond to user's app`);
+      } else if (!response.updated && difference < 0) {
+        Alert.alert("Contacts were imported", `Removed ${Math.abs(difference)} contacts from the list since they are no longer correspond to user's app`);
       } else {
         Alert.alert("Contacts already up to date");
       }
@@ -235,7 +237,9 @@ class ContactsService {
     this.contacts = this.contacts.filter((c) => c._id !== userId);
   }
 
-  public isContact = (userId: string): boolean => !!this.contacts.find((c) => c._id === userId)
+  public isContact = (userId: string): boolean => !!this.contacts.find((c) => c._id === userId);
+
+  public isImportedContact = (userId: string): boolean => !!this.importedContacts.find((ic) => ic.user._id === userId);
 
   private scheduleActions = (action: Function) => {
     this.onReconnectActions.push(action);

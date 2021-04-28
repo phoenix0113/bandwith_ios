@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Alert } from "react-native";
+import { observer } from "mobx-react";
 
 import {
   CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem,
@@ -9,13 +10,23 @@ import {
 import { PhoneSetupStep } from "./SetupStep";
 import { PhoneVerificationStep } from "./VerificationStep";
 
-import { UserServiceInstance } from "../../services/user";
+import { UserServiceInstance, UserServiceContext } from "../../services/user";
 
-export const PhoneSetupScreen = () => {
+export const PhoneSetupScreen = observer(() => {
   const [phone, setPhone] = useState(null);
 
   const [step, setStep] = useState(1);
   const [smsSentTime, setSmsSentTime] = useState<number>(null);
+
+  const { previouslySetPhone } = useContext(UserServiceContext);
+
+  useEffect(() => {
+    if (previouslySetPhone) {
+      setPhone(previouslySetPhone);
+      setStep(2);
+      setSmsSentTime(Date.now());
+    }
+  }, [previouslySetPhone]);
 
   const onEdit = () => {
     setStep(1);
@@ -75,4 +86,4 @@ export const PhoneSetupScreen = () => {
       </PageWrapper>
     </BasicSafeAreaView>
   );
-};
+});

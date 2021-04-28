@@ -228,7 +228,7 @@ class SocketService {
         }
       }
 
-      if (ContactsServiceInstance.isContact(user_id)) {
+      if (ContactsServiceInstance.isContact(user_id) || ContactsServiceInstance.isImportedContact(user_id)) {
         ContactsServiceInstance.updateContactStatus(user_id, status);
       }
 
@@ -238,6 +238,10 @@ class SocketService {
   }
 
   private fetchUserStatuses = () => {
+    if (!this.socket?.id) {
+      console.log("> Skipping fetchUserStatuses(). Reason: Socket is not initialized yet");
+      return;
+    }
     const requestData: SocketData = { socketId: this.socket.id };
     this.socket.emit(ACTIONS.GET_LOBBY_USERS_STATUSES, requestData, ({busyUsers, onlineUsers}) => {
       this.handleUserStatusesList(onlineUsers, busyUsers);
@@ -260,7 +264,7 @@ class SocketService {
     runInAction(() => {
       this.incomingCallData = {
         ...data,
-        isFriend: ContactsServiceInstance.isContact(data.caller_id),
+        isFriend: ContactsServiceInstance.isContact(data.caller_id) || ContactsServiceInstance.isImportedContact(data.caller_id),
       };
       APNServiceInstance.resetIncomingCallData();
     });
@@ -304,7 +308,10 @@ class SocketService {
             console.log(`> Trying to call to ${data.participant_name}`);
             callback({
               ...data,
-              isFriend: isRandomCall ? false : ContactsServiceInstance.isContact(data.participant_id),
+              isFriend: isRandomCall
+                ? false
+                : (ContactsServiceInstance.isContact(data.participant_id)
+                  || ContactsServiceInstance.isImportedContact(data.participant_id)),
             });
           }
         },

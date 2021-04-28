@@ -19,6 +19,7 @@ import { OutgoingCallServiceInstance } from "../../services/outgoingCall";
 import { ContactsServiceContext, ContactItemWithStatus } from "../../services/contacts";
 import { SocketServiceInstance } from "../../services/socket";
 import { UserServiceInstance } from "../../services/user";
+import { ContactType } from "../../shared/interfaces";
 
 export const ContactListScreen = observer(() => {
   const { contacts, importedContacts } = useContext(ContactsServiceContext);
@@ -32,13 +33,16 @@ export const ContactListScreen = observer(() => {
   );
 
   const [contactViewer, setContactViewer] = useState<ContactItemWithStatus>(null);
+  const [selectedContactType, setSelectedContactType] = useState<ContactType>(null);
 
   const closeViewer = () => {
     setContactViewer(null);
+    setSelectedContactType(null);
   };
 
-  const handleContactClick = (contact: ContactItemWithStatus) => {
+  const handleContactClick = (contact: ContactItemWithStatus, type: ContactType) => {
     setContactViewer(contact);
+    setSelectedContactType(type);
   };
 
   const deleteContact = async (_id: string) => {
@@ -80,10 +84,10 @@ export const ContactListScreen = observer(() => {
         _id={contactViewer._id}
         imageUrl={contactViewer.imageUrl}
         name={contactViewer.name}
-        status={contactViewer.status}
         deleteHandler={deleteContact}
         callHandler={callContact}
         closeHandler={closeViewer}
+        type={selectedContactType}
       />
     );
   }

@@ -6,7 +6,7 @@ import {
   AuthResponse, LoginRequest, AvcoreAuthResponse, CloudCredentials,
   OAuthGoogleRequest, RegistrationRequest, UserProfileRequest, UserProfileResponse,
   SetReadHintRequest, SetReadHintResponse, SendSMSRequest, BasicResponse, VerifyCodeRequest,
-  UpdatePhoneRequest,
+  UpdatePhoneRequest, NexmoResponse,
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
@@ -78,12 +78,13 @@ export const setReadHintRequest = async (request: SetReadHintRequest): Promise<S
 
 interface SendSMSResponse {
   success: boolean;
+  request_id: string;
   error?: string;
 }
 
 export const sendSMSRequest = async (request: SendSMSRequest): Promise<SendSMSResponse> => {
   try {
-    const response = await instance.post<BasicResponse>(API.SEND_SMS, request);
+    const response = await instance.post<NexmoResponse>(API.SEND_SMS, request);
 
     return response.data;
   } catch (err) {
@@ -91,20 +92,39 @@ export const sendSMSRequest = async (request: SendSMSRequest): Promise<SendSMSRe
     if (response.status === 409) {
       return {
         success: false,
+        request_id: null,
         error: "This phone is alrady in use",
+      };
+    }
+    if (response.status === 457) {
+      return {
+        success: false,
+        request_id: null,
+        error: response.data.error,
       };
     }
     throw new Error(getError(response));
   }
 };
 
-export const verifyCodeRequest = async (request: VerifyCodeRequest): Promise<boolean> => {
+interface VerifyCodeResponse {
+  success: boolean;
+  error?: string;
+}
+
+export const verifyCodeRequest = async (request: VerifyCodeRequest): Promise<VerifyCodeResponse> => {
   try {
     const response = await instance.post<BasicResponse>(API.VERIFY_CODE, request);
 
-    return !!response.data?.success;
+    return response.data;
   } catch (err) {
     const { response } = err as IAxiosError;
+    if (response.status === 457) {
+      return {
+        success: false,
+        error: response.data.error,
+      };
+    }
     throw new Error(getError(response));
   }
 };

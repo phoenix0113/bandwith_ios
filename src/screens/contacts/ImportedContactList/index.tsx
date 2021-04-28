@@ -9,11 +9,11 @@ import { Contact, ContactContent, ContactListContainer, ContactImage, ActionsOve
 
 import { ContactItemWithStatus, ContactsServiceContext, ContactsServiceInstance, ImportedContactItemWithStatus } from "../../../services/contacts";
 import { getColor, getContactNumber } from "../utils";
-
+import { ContactType } from "../../../shared/interfaces";
 
 interface IProps {
   contacts: Array<ImportedContactItemWithStatus>;
-  handleContactClick: (contact: ContactItemWithStatus) => void;
+  handleContactClick: (contact: ContactItemWithStatus, type: ContactType) => void;
 }
 
 export const ImportedContactListComponent = observer(({ contacts, handleContactClick }: IProps)  => {
@@ -37,7 +37,7 @@ export const ImportedContactListComponent = observer(({ contacts, handleContactC
 
       <ScrollView>
         {!!contacts.length && contacts.map((contact, index) => (
-          <Contact onPress={() => handleContactClick(contact.user)} key={contact.user._id}>
+          <Contact onPress={() => handleContactClick(contact.user, "imported")} key={contact.user._id}>
             <BasicText fontSize="12px" lineHeight="14px" letterSpacing="0.26px">{getContactNumber(index)}</BasicText>
             <ContactImage source={{ uri: contact.user.imageUrl || "DefaultProfileImage" }} />
             <ContactContent>
