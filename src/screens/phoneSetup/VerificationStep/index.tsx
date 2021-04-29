@@ -12,12 +12,13 @@ interface IProps {
   smsSentTime: number;
   resendSms: () => void;
   phone: string;
+  countryCode: string;
 }
 
 const CODE_LENGTH = 4;
 const WAIT_TILL_NEXT_SMS = 1000 * 60;
 
-export const PhoneVerificationStep = ({ smsSentTime, resendSms, phone }: IProps) => {
+export const PhoneVerificationStep = ({ smsSentTime, resendSms, phone, countryCode }: IProps) => {
   const [code, setCode] = useState("");
   const [containerIsFocused, setContainerIsFocused] = useState(false);
 
@@ -39,7 +40,7 @@ export const PhoneVerificationStep = ({ smsSentTime, resendSms, phone }: IProps)
   const onSubmit = async () => {
     console.log(`> Verifying code ${code} for ${phone} number`);
     setDisabledSubmit(true);
-    await UserServiceInstance.verifySMSCode(code, phone);
+    await UserServiceInstance.verifySMSCode(code, phone, countryCode);
     setDisabledSubmit(false);
   };
 

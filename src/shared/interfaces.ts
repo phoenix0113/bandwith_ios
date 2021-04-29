@@ -40,6 +40,7 @@ export interface ImportedContactItem {
 interface UserExtraData {
   available: boolean;
   phone: string;
+  countryCode: string;
   verified: boolean;
   contactsImported: boolean;
   contacts: ImportedContactItem[];
@@ -65,6 +66,7 @@ export interface VerifyCodeRequest {
 
 export interface UpdatePhoneRequest {
   phone: string;
+  countryCode: string;
 }
 
 // TODO: most likely some user data has to be here

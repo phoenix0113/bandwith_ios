@@ -1,4 +1,4 @@
-import { makeObservable, observable, reaction } from "mobx";
+import { makeObservable, observable, reaction, runInAction } from "mobx";
 import md5 from "md5";
 import AsyncStorage from "@react-native-community/async-storage";
 import { createContext } from "react";
@@ -15,7 +15,7 @@ import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
 import { WelcomeScreensEnum } from "../navigation/welcome/types";
 import { MainScreensEnum } from "../navigation/main/types";
-import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID } from "../utils/constants";
+import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE } from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
 
@@ -27,6 +27,7 @@ GoogleSignin.configure({
 interface SmsRequest {
   phone: string;
   requestId: string;
+  countryCode: string;
 }
 
 class UserService {
@@ -75,19 +76,23 @@ class UserService {
   }
 
   @observable previouslySetPhone: string = null;
+  @observable previouslySetCountryCode: string = null;
 
   // check if already set up the phone number and sent verification code
   private checkPhoneVerificationProcess = async () => {
-    const { requestId, phone } = await this.getSMSRequestFromStorage();
+    const { requestId, phone, countryCode } = await this.getSMSRequestFromStorage();
 
 
-    if (phone && requestId) {
-      this.previouslySetPhone = phone;
-      this.nexmoRequestId = requestId;
-      if (this.profile.verified && this.profile.phone) {
-        this.phoneEditMode = true;
-        navigateToScreen(WelcomeScreensEnum.PhoneSetup);
-      }
+    if (phone && requestId && countryCode) {
+      runInAction(() => {
+        this.previouslySetPhone = phone;
+        this.previouslySetCountryCode = countryCode;
+        this.nexmoRequestId = requestId;
+        if (this.profile.verified && this.profile.phone) {
+          this.phoneEditMode = true;
+          navigateToScreen(WelcomeScreensEnum.PhoneSetup);
+        }
+      });
     }
   }
 
@@ -246,14 +251,14 @@ class UserService {
 
   private nexmoRequestId: string = null;
 
-  public sendVerificationSMS = async (phone: string): Promise<boolean> => {
+  public sendVerificationSMS = async (phone: string, countryCode: string): Promise<boolean> => {
     try {
       const { requestId } = await this.getSMSRequestFromStorage();
       const response = await sendSMSRequest({ phone, request_id: requestId });
 
       if (response.success){
         this.nexmoRequestId = response.request_id;
-        this.saveSMSRequestToStorage(response.request_id, phone);
+        this.saveSMSRequestToStorage(response.request_id, phone, countryCode);
         return true;
       } else {
         Alert.alert(response.error);
@@ -264,7 +269,7 @@ class UserService {
     }
   }
 
-  public verifySMSCode = async (code: string, phone: string): Promise<void> => {
+  public verifySMSCode = async (code: string, phone: string, countryCode: string): Promise<void> => {
     try {
       const response = await verifyCodeRequest({ code, request_id: this.nexmoRequestId });
       if (response.success) {
@@ -273,7 +278,7 @@ class UserService {
         this.removeSMSRequestFromStorage();
         this.previouslySetPhone = null;
 
-        this.updatePhoneNumber(phone);
+        this.updatePhoneNumber(phone, countryCode);
       } else {
         Alert.alert("Verification Error", response.error);
       }
@@ -282,9 +287,9 @@ class UserService {
     }
   }
 
-  public updatePhoneNumber = async (phone: string): Promise<void> => {
+  public updatePhoneNumber = async (phone: string, countryCode: string): Promise<void> => {
     try {
-      const updatedProfile = await updatePhoneRequest({ phone });
+      const updatedProfile = await updatePhoneRequest({ phone, countryCode });
       console.log("> Updated user profile: ", updatedProfile);
       this.profile = updatedProfile;
     } catch (err) {
@@ -292,10 +297,11 @@ class UserService {
     }
   }
 
-  private saveSMSRequestToStorage = async (requestId: string, phone: string) => {
+  private saveSMSRequestToStorage = async (requestId: string, phone: string, countryCode: string) => {
     try {
       await AsyncStorage.setItem(SMS_REQUEST_ID, requestId);
       await AsyncStorage.setItem(SMS_PHONE, phone);
+      await AsyncStorage.setItem(COUNTRY_CODE, countryCode);
       console.log(`> RequestId was saved: ${requestId.substring(0, 10)}`);
     } catch (err) {
       console.error(`>> saveTokenToStorage() error: ${err.message}`);
@@ -306,6 +312,7 @@ class UserService {
     try {
       await AsyncStorage.removeItem(SMS_REQUEST_ID);
       await AsyncStorage.removeItem(SMS_PHONE);
+      await AsyncStorage.removeItem(COUNTRY_CODE);
       console.log("> RequestId was removed from the storage");
     } catch (err) {
       console.error(`>> removeTokenFromStorage() error: ${err.message}`);
@@ -316,18 +323,21 @@ class UserService {
     try {
       const requestId = await AsyncStorage.getItem(SMS_REQUEST_ID);
       const phone = await AsyncStorage.getItem(SMS_PHONE);
+      const countryCode = await AsyncStorage.getItem(COUNTRY_CODE);
 
-      if (phone && requestId) {
-        console.log(`> Found requestId for phone ${phone}: ${requestId.substring(0, 10)}`);
+      if (phone && requestId && countryCode) {
+        console.log(`> Found requestId for phone ${phone} (${countryCode}): ${requestId.substring(0, 10)}`);
         return {
           requestId,
           phone,
+          countryCode,
         };
       } else {
         console.log("> Didn't find any SMS request or phone number");
         return {
           requestId: null,
           phone: null,
+          countryCode: null,
         };
       }
 

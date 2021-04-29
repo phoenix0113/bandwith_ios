@@ -7,7 +7,7 @@ import { InputValidationText, styles } from "./../styled";
 import { InputGroup } from "../../login/styled";
 
 interface IProps {
-  sendSms: (phone: string) => void;
+  sendSms: (phone: string, countryCode: string) => void;
 }
 
 export const PhoneSetupStep = ({ sendSms }: IProps) => {
@@ -26,7 +26,7 @@ export const PhoneSetupStep = ({ sendSms }: IProps) => {
   };
 
   const onSubmit = async () => {
-    sendSms(formattedPhone);
+    sendSms(formattedPhone, phoneInput.current.getCountryCode());
   };
 
   return (

@@ -14,19 +14,21 @@ import { UserServiceInstance, UserServiceContext } from "../../services/user";
 
 export const PhoneSetupScreen = observer(() => {
   const [phone, setPhone] = useState(null);
+  const [countryCode, setCountryCode] = useState(null);
 
   const [step, setStep] = useState(1);
   const [smsSentTime, setSmsSentTime] = useState<number>(null);
 
-  const { previouslySetPhone } = useContext(UserServiceContext);
+  const { previouslySetPhone, previouslySetCountryCode } = useContext(UserServiceContext);
 
   useEffect(() => {
-    if (previouslySetPhone) {
+    if (previouslySetPhone && previouslySetCountryCode) {
       setPhone(previouslySetPhone);
+      setCountryCode(previouslySetCountryCode);
       setStep(2);
       setSmsSentTime(Date.now());
     }
-  }, [previouslySetPhone]);
+  }, [previouslySetPhone, previouslySetPhone]);
 
   const onEdit = () => {
     setStep(1);
@@ -34,10 +36,11 @@ export const PhoneSetupScreen = observer(() => {
     setSmsSentTime(null);
   };
 
-  const sendSms = async (enteredPhone: string) => {
+  const sendSms = async (enteredPhone: string, enteredCountryCode: string) => {
     console.log(`> Sending SMS to ${enteredPhone}`);
 
-    if (await UserServiceInstance.sendVerificationSMS(enteredPhone)) {
+    if (await UserServiceInstance.sendVerificationSMS(enteredPhone, enteredCountryCode)) {
+      setCountryCode(enteredCountryCode);
       setPhone(enteredPhone);
       setSmsSentTime(Date.now());
       setStep(2);
@@ -47,7 +50,7 @@ export const PhoneSetupScreen = observer(() => {
   const resendSms = async () => {
     console.log(`> Resending SMS to ${phone}`);
 
-    if (await UserServiceInstance.sendVerificationSMS(phone)) {
+    if (await UserServiceInstance.sendVerificationSMS(phone, countryCode)) {
       setSmsSentTime(Date.now());
       Alert.alert("Code was sent");
     }
@@ -80,7 +83,7 @@ export const PhoneSetupScreen = observer(() => {
         {step === 1 ? (
           <PhoneSetupStep sendSms={sendSms} />
         ) : (
-          <PhoneVerificationStep smsSentTime={smsSentTime} resendSms={resendSms} phone={phone} />
+          <PhoneVerificationStep smsSentTime={smsSentTime} resendSms={resendSms} phone={phone} countryCode={countryCode} />
         )}
 
       </PageWrapper>
