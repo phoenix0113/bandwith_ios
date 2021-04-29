@@ -114,7 +114,7 @@ class ContactsService {
         Alert.alert("Contacts were imported", `Found ${difference} new contacts with an installed app`);
       } else if (!response.updated && !UserServiceInstance.profile.contactsImported) {
         Alert.alert("Contacts were imported", "No one of your contacts has an app yet");
-      } else if (!response.updated && difference < 0) {
+      } else if (difference < 0) {
         Alert.alert("Contacts were imported", `Removed ${Math.abs(difference)} contacts from the list since they are no longer correspond to user's app`);
       } else {
         Alert.alert("Contacts already up to date");

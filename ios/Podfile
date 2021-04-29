@@ -21,6 +21,13 @@ target 'Bandwwith' do
   use_flipper!({ 'Flipper-Folly' => '2.3.0' }) # update this part
   post_install do |installer|
     flipper_post_install(installer)
+
+    ## Fix for Flipper-Folly on iOS 14.5
+    find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h",
+      "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+
+    find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h",
+      "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
   end
 
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
@@ -36,3 +43,16 @@ target 'Bandwwith-tvOS' do
 end
 
 pod 'Firebase/Analytics'
+
+def find_and_replace(dir, findstr, replacestr)
+  Dir[dir].each do |name|
+      text = File.read(name)
+      replace = text.gsub(findstr,replacestr)
+      if text != replace
+          puts "Fix: " + name
+          File.open(name, "w") { |file| file.puts replace }
+          STDOUT.flush
+      end
+  end
+  Dir[dir + '*/'].each(&method(:find_and_replace))
+end
