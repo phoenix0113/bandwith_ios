@@ -41,7 +41,8 @@ export const ImportedContactListComponent = observer(({ contacts, handleContactC
             <BasicText fontSize="12px" lineHeight="14px" letterSpacing="0.26px">{getContactNumber(index)}</BasicText>
             <ContactImage source={{ uri: contact.user.imageUrl || "DefaultProfileImage" }} />
             <ContactContent>
-              <BasicText textAlign="left" fontWeight="700" fontSize="14px" lineHeight="24px" letterSpacing="0.26px">{contact.name}</BasicText>
+              <BasicText textAlign="left" fontWeight="700" fontSize="14px" lineHeight="14px" letterSpacing="0.26px">{contact.name}</BasicText>
+              <BasicText margin="4px 0 3px 0" textAlign="left" fontSize="12px" lineHeight="12px" color={COLORS.GREY}>{`@${contact.user.name}`}</BasicText>
               <BasicText textAlign="left" fontSize="12px" lineHeight="14px" letterSpacing="0.26px" color={getColor(contact.user.status)}>
                 {contact.user.status}
               </BasicText>
