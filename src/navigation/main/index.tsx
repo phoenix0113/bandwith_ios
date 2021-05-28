@@ -9,10 +9,12 @@ import { HomeScreen } from "../../screens/home";
 import { NotificationsScreen } from "../../screens/notifications";
 import { ProfileScreen } from "../../screens/profile";
 import { ContactListScreen } from "../../screens/contacts";
+import { FeedScreen } from "../../screens/feed";
 
 import HomeIcon from "../../assets/images/navigation/home.svg";
 import NotificationsIcon from "../../assets/images/navigation/notification.svg";
 import ContactListIcon from "../../assets/images/navigation/contacts.svg";
+import FeedIcon from "../../assets/images/navigation/feed.svg";
 
 import { COLORS } from "../../components/styled";
 import { MainBottomTabsParamList } from "./types";
@@ -47,6 +49,8 @@ export const MainNavigation = observer(() => {
              return <ContactListIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
             case "Profile":
               return <Icon name="user-circle-o" size={24} color={focused ? COLORS.WHITE : COLORS.GREY} />;
+            case "Feed":
+              return <FeedIcon fill={focused ? COLORS.WHITE : COLORS.GREY} />;
           }
         },
       })}
@@ -66,6 +70,7 @@ export const MainNavigation = observer(() => {
       <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ tabBarBadge: unreadCounter || null }} />
       <Tab.Screen name="ContactList" component={ContactListScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Feed" component={FeedScreen} />
     </Tab.Navigator>
   );
 });

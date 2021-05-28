@@ -30,7 +30,6 @@ target 'Bandwwith' do
       "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
   end
 
-  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 end
 
 target 'Bandwwith-tvOS' do
