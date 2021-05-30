@@ -24,3 +24,7 @@ export const GOOGLE_CLIENT_ID = "145536000163-qjfeu4edovl197fsv86kor0li68uhdl0.a
 export const CALL_FINISHED_REDIRECT_TIMER = 59;
 
 export const OUTGOING_CALL_SECONDS = 30;
+
+export const NAVIGATOR_SHARE_ERROR = "Your browser doesn't support Social Share";
+
+export const COMMENTS_LOAD_LIMIT = 20;

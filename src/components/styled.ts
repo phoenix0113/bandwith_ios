@@ -180,3 +180,26 @@ export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
   width: 100%;
   flex: 1;
 `;
+
+export const CallPageToolbar = styled.View`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  bottom: 16%;
+  z-index: ${Z_INDEX.MIDDLE};
+
+  & > * {
+    padding: 16px;
+  }
+
+`;
+
+export const CommonImgWrapper = styled.TouchableOpacity<ICommonImgWrapperProps>`
+  cursor: pointer;
+  width: ${({ width }) => width || "auto"};
+`;
+
+interface ICommonImgWrapperProps {
+  width?: string;
+}

@@ -1,95 +1,146 @@
 import styled from "styled-components/native";
-import { COLORS } from "../../components/styled";
-import { Dimensions } from "react-native";
+import { COLORS, Z_INDEX } from "../../components/styled";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+interface FeedScrollableWrapperProps {
+  hidden?: boolean;
+}
 
-export const FeedPageContentWrapper = styled.View`
+interface VideoWrapperProps {
+  withoutBorder?: boolean;
+  sharedRecording?: boolean;
+}
+
+interface BasicContentWrapperProps {
+  justifyContent?: "center" | "space-between";
+}
+
+export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
   position: relative;
   display: flex;
-  width: ${windowWidth};
-  height: ${windowHeight};
-  position: relative;
-  background-color: #000000;
-  zIndex: 0;
+  flex-direction: column;
+  justify-content: ${({justifyContent}) => justifyContent || "center"};
+  align-items: center;
+  width: 100%;
+  flex: 1;
+  border: 2px solid grey;
 `;
 
-export const ProfileContent = styled.View`
-  position: absolute;
-  width: 200;
-  height: 30;
+
+export const VideoWrapper = styled.View<VideoWrapperProps>`
+  display: flex;
+  width: 100%;
+  flex: 1;
+  z-index: ${({ sharedRecording }) => (sharedRecording ? Z_INDEX.HIGH : 1)};
+  height: 100%;
+`;
+
+export const AddToFriendsWrapper = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
-  top: 104;
-  left: 20;
+  position: absolute;
+  z-index: ${Z_INDEX.MIDDLE};
+  top: 10%;
+  left: 20px;
   border-radius: 22.5px;
   padding: 5px 8px;
-  background-color: #1F2123;
-  zIndex: 1;
+  background: ${COLORS.BLACK};
 `;
 
-export const ProfilePhoto = styled.Image`
-  width: 30;
-  height: 30;
-  border-radius: 50;
+export const AddToFriendIcon = styled.Image`
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
 `;
 
-export const ProfileText = styled.View`
+export const AddToFriendContent = styled.View`
   display: flex;
   flex-direction: column;
-  padding: 0px 10px;
+  padding: 0 10px;
 `;
 
-export const ProfileName = styled.Text`
+interface ContentTextProps {
+  isTitle?: boolean;
+}
+
+export const ContentText = styled.Text<ContentTextProps>`
   font-style: normal;
   font-weight: normal;
   font-size: 10px;
-  color: #ffffff;
-  line-height: 11.72px;
+  line-height: 13px;
+  color: ${({ isTitle }) => (isTitle ? COLORS.ALTERNATIVE : COLORS.WHITE)};
 `;
 
-export const ProfileLevel = styled.Text`
-  font-style: normal;
-  font-weight: normal;
-  font-size: 10px;
-  color: #ffffff;
-  opacity: 0.3;
-  line-height: 11.72px;
-`;
-
-export const AddFollowButton = styled.View`
-  display: flex;
-  width: 60;
-  height: 20;
-  marginLeft: auto;
+export const CommonImgWrapper = styled.TouchableOpacity`
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #ffffff;
-  border-radius: 24;
 `;
 
-export const AddFollowText = styled.Text`
-  font-size: 12px;
-  line-height: 14px;
-  color: #E020A9;
-  text-align: center;
-  margin: auto;
-`;
-
-export const VideoContent = styled.View`
+export const FeedPlayerContentWrapper = styled.View`
   position: absolute;
-  top: 0;
-  left: 0;
+  z-index: ${Z_INDEX.MIDDLE};
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-export const PlayPauseButtonContent = styled.View`
-  position: absolute;
-  top: 50%;
-  left: 50%;
+export const FeedPlayerToolTip = styled.TouchableOpacity`
 `;
 
-export const PlayPauseButton = styled.Image`
+interface ToolTipImgWrapperProps {
+  opacity: 1|0;
+}
+
+export const ToolTipImgWrapper = styled.TouchableOpacity<ToolTipImgWrapperProps>`
+  cursor: pointer;
   width: 25vw;
-  opacity: 1;
-  transition: opacity 0.35s ease-in 0s;
+  opacity: ${({ opacity }) => opacity};
+  transition: opacity 0.35s ease-in;
+`;
+
+/**
+ * Single feed
+ */
+export const SharedFeedItemWrapper = styled.View`
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: scroll;
+  background-color: ${COLORS.MAIN_LIGHT};
+`;
+
+export const CommentsFeedItemWrapper = styled.TouchableOpacity`
+  width: 54px;
+  height: 54px;
+  border-radius: 27px;
+  background-color: #ffffff;
+  right: 10%;
+  margin: 10px 0;
+`;
+
+
+export const BackToFeedButton = styled.View`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: ${Z_INDEX.MIDDLE};
+`;
+
+export const RecordUserWrapper = styled.View`
+  position: absolute;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  top: 10%;
+  left: 20px;
+  border-radius: 22.5px;
+  padding: 5px 8px;
+  background: rgb(0, 0, 0);
+  z-index: ${Z_INDEX.HIGH};
 `;
