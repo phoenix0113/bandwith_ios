@@ -12,6 +12,7 @@ import { BasicContentWrapper } from "./styled";
 
 import { SharedFeedItemComponent } from "./SharedItem";
 import { RecordUserComponent } from "./FeedUser";
+import { CommentsComponent } from "../../components/Comments";
 
 const DATA = [
   {
@@ -58,6 +59,10 @@ export const FeedScreen = observer(() => {
   const showComments = () => setOpenedComments(true);
   const hideComments = () => setOpenedComments(false);
 
+  const hide = () => {
+
+  }
+
   const openRecordUser = (user: RecordUser) => {
     console.log("here");
     setRecordUser(user);
@@ -100,6 +105,17 @@ export const FeedScreen = observer(() => {
           /> :
           <></>
         }
+
+        {
+          (true) ?
+          <CommentsComponent
+            visible={true}
+            id={"1"}
+            hide={hide}
+          /> :
+          <></>
+        }
+
         <FlatList
           data={DATA}
           renderItem={renderItem}

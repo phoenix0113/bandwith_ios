@@ -115,7 +115,7 @@ export const FeedVideoComponent = observer(({
             source={{uri: feedItemLink}}
             resizeMode="cover"
             style={styled.feedVideo}
-            paused={feedItemStatus}
+            paused={!feedItemStatus}
           />
 
           <CallPageToolbar>
