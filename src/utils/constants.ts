@@ -28,3 +28,7 @@ export const OUTGOING_CALL_SECONDS = 30;
 export const NAVIGATOR_SHARE_ERROR = "Your browser doesn't support Social Share";
 
 export const COMMENTS_LOAD_LIMIT = 20;
+
+export const RECORDINGS_LOAD_LIMIT = 5;
+
+export const LOAD_MORE_RECORDINGS_THRESHOLD = 3;

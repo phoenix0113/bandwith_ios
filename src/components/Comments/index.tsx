@@ -1,7 +1,9 @@
 import React, { ChangeEvent, useState, useContext, useEffect } from "react";
 import { observer } from "mobx-react";
+// import { CloseOutlined } from "@ant-design/icons";
 import { ScrollView } from "react-native";
-// import { StyledTextArea } from "react-native-textarea";
+// import InfiniteScroll from "react-infinite-scroll-component";
+// import { Spin } from "antd";
 
 import {
   CommentsBlock, CommentsBlockHeader, CommentContentText, CommentListWrapper, CloseOutlined, TotalCommentsAmount, CommentText,
@@ -91,7 +93,7 @@ export const CommentsComponent = observer((
         <InputWrapper>
           <CommentText
             underlineColorAndroid="transparent"
-            placeholder={"Type Something in Text Area."}
+            placeholder={"Leave Comment..."}
             placeholderTextColor={"#ffffff"}
             numberOfLines={50}
             multiline={true}

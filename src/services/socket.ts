@@ -1,6 +1,7 @@
 import { createContext } from "react";
 import SocketIO from "socket.io-client";
-import { makeObservable, observable, reaction, runInAction, toJS } from "mobx";
+import { makeObservable, observable, reaction, runInAction, toJS, action } from "mobx";
+import { CloudClient } from "avcore/client";
 import { Alert } from "react-native";
 
 import { UserServiceInstance } from "./user";
@@ -11,11 +12,15 @@ import { AppServiceInstance } from "./app";
 
 import { CallSocket } from "../interfaces/Socket";
 import { SERVER_BASE_URL } from "../utils/constants";
+import { GlobalServiceStatus, ActionStatus } from "../interfaces/global";
+
 import {
- ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest, SetCallAvailabilityRequest, SetOnlineStatus, SocketData,
+  ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, 
+  SendAPNDeviceIdRequest, SetCallAvailabilityRequest, SetOnlineStatus, SocketData, UserStatus, 
 } from "../shared/socket";
-import { NotificationTypes } from "../shared/interfaces";
+import { NotificationTypes, ContactItem, UserProfileResponse, Notification, CloudCredentials, HintTypes } from "../shared/interfaces";
 import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
+import { setReadHintRequest } from "../axios/routes/user";
 import { createAddToFriednsInvitation, createInvitationAcceptedNotification, createMissedCallNotification, createRemovedFromContactsNotification } from "../shared/utils";
 import { logOnServerRequest } from "../axios/routes/logs";
 import { showUnexpectedErrorAlert } from "../utils/notifications";
@@ -24,22 +29,39 @@ export interface LobbyCallEventDataExtended extends LobbyCallEventData {
   isFriend: boolean;
 }
 
+export interface ContactItemWithStatus extends ContactItem {
+  status: UserStatus;
+}
+
 export interface LobbyCallResponse extends MakeLobbyCallResponse {
   isFriend: boolean;
   onCancelHandler?: (callId: string, userId: string) => void;
   onTimeoutHandler?: (callId: string, userId: string) => void;
 }
 
+const DUMMY_ENDPOINT = "/token";
 let connectInterval = null;
 
 class SocketService {
+  @observable serviceStatus: GlobalServiceStatus = GlobalServiceStatus.IDLE;
+
   private onReconnectActions: Array<Function> = [];
 
   public inCall = false;
 
   public socket: CallSocket = null;
 
+  @observable token: string = null;
+
+  @observable notifications: Array<Notification> = [];
+
+  @observable action: ActionStatus = null;
+
   @observable incomingCallData: LobbyCallEventDataExtended = null;
+
+  @observable profile: UserProfileResponse = null;
+
+  @observable contacts: Array<ContactItemWithStatus> = [];
 
   @observable onlineUsers: Array<string> = [];
 
@@ -47,7 +69,21 @@ class SocketService {
 
   @observable socketReconnectionTimestamp: number = null;
 
+  @observable avcoreCloudClient: CloudClient = null;
+
+  @observable camera = true;
+
+  @observable micro = true;
+
+  @observable volume = true;
+
+  @observable incommingCallData: LobbyCallEventDataExtended = null;
+
+  public cloud: CloudCredentials = null;
+
   public socketDisconnected = false;
+
+  public currentCommentRoomSubscribtion = null;
 
   constructor() {
     makeObservable(this);
@@ -137,9 +173,17 @@ class SocketService {
     );
   }
 
+  public updateHintAndProfile = async (type: HintTypes) => {
+    try {
+      this.profile = await setReadHintRequest({ type });
+    } catch (err) {
+      showUnexpectedErrorAlert("Update Hint And Profile", err.message);
+    }
+  }
+
   private init = () => {
     this.socket = SocketIO(SERVER_BASE_URL, {
-      query: `auth_token=${UserServiceInstance.token}&socketId=${UserServiceInstance.profile._id}-socket`,
+      query: `auth_token=${UserServiceInstance.token}&socketId=${UserServiceInstance.profile?._id}-socket`,
       transports: ["websocket"],
       upgrade: false,
     }) as CallSocket;
@@ -378,6 +422,23 @@ class SocketService {
 
   public canCallToUser = (userId: string): boolean => this.onlineUsers.includes(userId);
 
+  /**
+   * Recordings
+   */
+  public joinRecordingCommentsRoom = (recordingId: string): void => {
+    this.socket.emit(ACTIONS.JOIN_RECORDING_COMMENTS_ROOM, { recordingId }, () => {
+      this.currentCommentRoomSubscribtion = recordingId;
+      console.log(`You've joined comments room for recording ${recordingId}`);
+    });
+  }
+
+  public leaveRecordingCommentsRoom = (recordingId: string): void => {
+    this.socket.emit(ACTIONS.LEAVE_RECORDING_COMMENTS_ROOM, { recordingId }, () => {
+      this.currentCommentRoomSubscribtion = null;
+      console.log(`You've left comments room for recording ${recordingId}`);
+    });
+  }
+
   // Notifications management
   public sendAddToFriendInvitation = (
     target_id: string,
@@ -413,6 +474,7 @@ class SocketService {
     });
   }
 
+  public isContact = (userId: string): boolean => !!this.contacts.find((c) => c._id === userId)
 
   // Contact list managements
   public addContactAndNotify = async (userId: string, callback: () => void) => {
@@ -491,6 +553,36 @@ class SocketService {
       } else {
         showUnexpectedErrorAlert("refetchContacts()", err.message);
       }
+    }
+  }
+
+  public removeContact = async (userId: string): Promise<boolean> => {
+    try {
+      if (await removeUserFromContactListRequest({ contactPerson: userId })) {
+        this.contacts = this.contacts.filter((c) => c._id !== userId);
+
+        this.socket.emit(
+          ACTIONS.SEND_REMOVED_FROM_CONTACTS,
+          {
+            target_id: userId,
+            notification: createRemovedFromContactsNotification({
+              _id: this.profile._id,
+              name: this.profile.name,
+              imageUrl: this.profile.imageUrl,
+            }),
+          },
+          () => {
+            console.log("> User was removed from your contact list");
+          },
+        );
+
+        return true;
+      }
+      showUnexpectedErrorAlert("Something went wrong while deleting a contact", "");
+      return false;
+    } catch (err) {
+      showUnexpectedErrorAlert("Remove Contacts", err.message);
+      return false;
     }
   }
 

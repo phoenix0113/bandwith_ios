@@ -1,61 +1,51 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
+import { View } from "react-native";
 
 import { observer } from "mobx-react";
-import { StyleSheet } from "react-native";
-import { FeedVideoComponent } from "../FeedVideo";
-import { RecordUser } from "../../../shared/interfaces";
-
 import { VideoWrapper } from "../styled";
 
+import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
+
+import { FeedStorageContext } from "../../../services/feed";
+
+import { FeedVideoComponent } from "../FeedVideo";
+
 interface IProps {
-  id: string;
-  photo: string;
-  name: string;
-  level: string;
-  link: string;
-  openedComments: boolean;
-  shareStatus: boolean;
+  // observer: IntersectionObserver;
+  recording: GetRecordResponse;
+  showComments: () => void;
+  shareCall: (recording: GetRecordResponse) => void;
   openRecordUser: (user: RecordUser) => void;
 }
 
-export const FeedItemComponent  = observer(({ id, photo, name, level, link, openedComments, shareStatus, openRecordUser }: IProps) => {
-  const [feedItemID, setFeedItemID] = useState("");
-  const [feedItemPhoto, setFeedItemPhoto] = useState("");
-  const [feedItemName, setFeedItemName] = useState("");
-  const [feedItemLevel, setFeedItemLevel] = useState("");
-  const [feedItemLink, setFeedItemLink] = useState("");
-  const [feedItemStatus, setFeedItemStatus] = useState(false);
-  const [feedItemCommentsStatus, setFeedItemCommentsStatus] = useState(false);
-  const [feedItemShareStatus, setFeedItemShareStatus] = useState(false);
+export const FeedItemComponent  = observer((
+  { recording, openRecordUser, shareCall, showComments }: IProps) => {
+  
+  const [itemRef, setItemRef] = useState<View>(null);
 
-  useEffect(() => {
-    setFeedItemID(id);
-    setFeedItemPhoto(photo);
-    setFeedItemName(name);
-    setFeedItemLevel(level);
-    setFeedItemLink(link);
-    setFeedItemStatus(false);
-    setFeedItemCommentsStatus(openedComments);
-    setFeedItemShareStatus(shareStatus);
-  }, [id, photo, name, level, link, openedComments, shareStatus]);
+  const { currentRecording } = useContext(FeedStorageContext);
+
+  // useEffect(() => {
+  //   if (itemRef) {
+  //     observer.observe(itemRef);
+  //   }
+
+  //   return () => {
+  //     if (itemRef) {
+  //       observer.unobserve(itemRef);
+  //     }
+  //   };
+  // }, [observer, itemRef]);
 
   return (
-    <VideoWrapper>
-      {
-        (id !== "") ?
-          <FeedVideoComponent
-            id={feedItemID}
-            photo={feedItemPhoto}
-            name={feedItemName}
-            level={feedItemLevel}
-            link={feedItemLink}
-            status={false}
-            feedItemCommentsStatus={feedItemCommentsStatus}
-            feedItemShareStatus={feedItemShareStatus}
-            openRecordUser={openRecordUser}
-          /> :
-          <></>
-      }
+    <VideoWrapper key={recording?._id} ref={setItemRef}>
+      <FeedVideoComponent
+        recording={recording}
+        showComments={showComments}
+        shareCall={shareCall}
+        openRecordUser={openRecordUser}
+        currentRecording={currentRecording}
+      />
     </VideoWrapper>
   )
 });

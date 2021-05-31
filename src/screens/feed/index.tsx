@@ -1,72 +1,141 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { RecordUser } from "../../shared/interfaces";
-import { FeedItemComponent } from "./FeedItem";
-
+import { FlatList, StyleSheet, Share, ShareContent } from "react-native";
+// import { useHistory, useLocation } from "react-router-dom";
+// import { parse } from "query-string";
+// import { Utils } from "avcore/client";
 import {
   NavigationBar, LeftItem, CenterItem, RightItem, PageWrapper, NavigationText, BasicSafeAreaView,
 } from "../../components/styled";
+// import { BottomNavigationComponent } from "../../components/BottomNavigation";
+import { CommentsComponent } from "../../components/Comments";
 
 import { BasicContentWrapper } from "./styled";
 
+import { FeedItemComponent } from "./FeedItem";
+import { HintComponent } from "../../components/Hint";
+
+import { GetRecordResponse, RecordUser } from "../../shared/interfaces";
+
+import { FeedStorageContext } from "../../services/feed";
+import { showUnexpectedErrorAlert } from "../../utils/notifications";
+import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../utils/constants";
+import { Params, Routes } from "../../utils/routes";
 import { SharedFeedItemComponent } from "./SharedItem";
 import { RecordUserComponent } from "./FeedUser";
-import { CommentsComponent } from "../../components/Comments";
-
-const DATA = [
-  {
-    id: "1",
-    photo: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-    name: "Luis Andres 1",
-    level: "Level 1",
-    video: "https://samplelib.com/lib/preview/mp4/sample-15s.mp4",
-  },
-  {
-    id: "2",
-    photo: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-    name: "Luis Andres 2",
-    level: "Level 2",
-    video: "https://samplelib.com/lib/preview/mp4/sample-15s.mp4",
-  },
-  {
-    id: "3",
-    photo: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-    name: "Luis Andres 3",
-    level: "Level 3",
-    video: "https://samplelib.com/lib/preview/mp4/sample-15s.mp4",
-  },
-  {
-    id: "4",
-    photo: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-    name: "Luis Andres 4",
-    level: "Level 4",
-    video: "https://samplelib.com/lib/preview/mp4/sample-15s.mp4",
-  },
-  {
-    id: "5",
-    photo: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-    name: "Luis Andres 5",
-    level: "Level 5",
-    video: "https://samplelib.com/lib/preview/mp4/sample-15s.mp4",
-  },
-]
 
 export const FeedScreen = observer(() => {
-  const [recordUser, setRecordUser] = useState<RecordUser>(null);
+  const {
+    currentRecording,
+    sharedRecording,
+    recordings,
+    loadRecordings,
+    // setCurrentRecording,
+    fetchSharedRecording,
+    cleanSharedRecording,
+  } = useContext(FeedStorageContext);
+
+  recordings.map((recording) => {
+    console.log(recording.user);
+  })
+
+  // const { search } = useLocation();
+  // const history = useHistory();
+  const [sharedRecordingId, setSharedRecordingId] = useState(null);
+  
+  // useEffect(() => {
+  //   if (search) {
+  //     const parsed = parse(search);
+  //     console.log("> Parsed search params: ", parsed);
+  //     setSharedRecordingId(parsed[Params.RECORDING_ID]);
+  //   }
+  // }, [search]);
+
+  useEffect(() => {
+    if (sharedRecordingId) {
+      fetchSharedRecording(sharedRecordingId);
+    }
+  }, [sharedRecordingId]);
 
   const [openedComments, setOpenedComments] = useState(false);
   const showComments = () => setOpenedComments(true);
   const hideComments = () => setOpenedComments(false);
 
-  const hide = () => {
+  const shareCall = (recording: GetRecordResponse) => {
+    if (!Share.share) {
+      showUnexpectedErrorAlert(NAVIGATOR_SHARE_ERROR, "");
+    }
 
-  }
+    const shareCallData: ShareContent = {
+      title: `Check out ${recording.user?.name}'s recording`,
+      url: `${SERVER_BASE_URL}${Routes.FEED}?${Params.RECORDING_ID}=${recording._id}`,
+    };
 
+    // const result = await Share.share({
+    //   message: `Check out ${recording.user?.name}'s recording`,
+    //   url: `${SERVER_BASE_URL}${Routes.FEED}?${Params.RECORDING_ID}=${recording._id}`
+    // });
+
+    Share.share(shareCallData);
+  };
+
+  const [recordUser, setRecordUser] = useState<RecordUser>(null);
   const openRecordUser = (user: RecordUser) => {
-    console.log("here");
     setRecordUser(user);
   };
+  const closeRecordUser = () => {
+    setRecordUser(null);
+  };
+
+  const backToFeed = () => {
+    // history.push({ search: null });
+    cleanSharedRecording();
+  };
+
+  const scrollableRef = useRef<HTMLDivElement>(null);
+
+  const [videoObserver, setVideoObserver] = useState(null);
+
+  useEffect(() => {
+    loadRecordings();
+  })
+
+  // useEffect(() => {
+  //   if (scrollableRef.current) {
+  //     const createdObserver = new IntersectionObserver((entries) => {
+  //       console.log("Interaction observer event's entries: ", entries);
+
+  //       entries.forEach((entry) => {
+  //         console.log(`Is safari: ${Utils.isSafari}, entry is intersecting: ${entry.isIntersecting}`);
+
+  //         if (entry.isIntersecting) {
+  //           console.log(`Entry is intersecting ${entry.target?.id}.`);
+  //           setCurrentRecording(entry.target.id);
+  //         } else if (Utils.isSafari) {
+  //           console.log(`For some reason, entry is not intersecting. May need a new method. Scrolling from ${entry.target.id} to the bottom`);
+  //         }
+  //       });
+  //     }, { threshold: 0.8, root: scrollableRef.current });
+
+  //     console.log("Created observer: ", createdObserver);
+
+  //     setVideoObserver(createdObserver);
+  //   }
+  // }, [scrollableRef]);
+
+  // useEffect(() => {
+  //   if (scrollableRef?.current && currentRecording) {
+  //     console.log(`> Scrolling into ${currentRecording._id}`);
+
+  //     const nodes = scrollableRef.current.querySelectorAll(".video_wrapper");
+
+  //     nodes.forEach((n) => {
+  //       if (n.id === currentRecording._id) {
+  //         n.scrollIntoView();
+  //       }
+  //     });
+  //   }
+  // }, [scrollableRef]);
 
   const [shareStatus, setShareStatus] = useState(false);
 
@@ -74,14 +143,12 @@ export const FeedScreen = observer(() => {
     return (
       <BasicContentWrapper>
         <FeedItemComponent
-          id={item.id}
-          photo={item.photo}
-          name={item.name}
-          level={item.level}
-          link={item.video}
-          openedComments={openedComments}
-          shareStatus={shareStatus}
+          key={item._id}
+          // observer={videoObserver}
           openRecordUser={openRecordUser}
+          recording={item}
+          shareCall={shareCall}
+          showComments={showComments}
         />
       </BasicContentWrapper>
     );
@@ -97,35 +164,46 @@ export const FeedScreen = observer(() => {
           <RightItem />
         </NavigationBar>
 
-        {
-          (false) ?
+         {recordUser && (
           <RecordUserComponent
-            photo={"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"}
-            name={"Luis Andres 1"}
-          /> :
-          <></>
-        }
+            closeHandler={closeRecordUser}
+            user={recordUser}
+          />
+        )}
 
-        {
-          (true) ?
+        <HintComponent page={Routes.FEED} />
+
+        {openedComments && (
           <CommentsComponent
-            visible={true}
-            id={"1"}
-            hide={hide}
-          /> :
-          <></>
-        }
+            id={currentRecording?._id}
+            visible={openedComments}
+            hide={hideComments}
+            isRecording
+          />
+        )}
+
+        {sharedRecording && (
+          <SharedFeedItemComponent
+            key={sharedRecording._id}
+            openRecordUser={openRecordUser}
+            recording={sharedRecording}
+            showComments={showComments}
+            backToFeed={backToFeed}
+          />
+        )}
 
         <FlatList
-          data={DATA}
+          data={recordings}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           style={styled.flatlist}
         />
       </PageWrapper>
     </BasicSafeAreaView>
   )
 });
+
+export default FeedScreen;
 
 const styled = StyleSheet.create({
   flatlist: {

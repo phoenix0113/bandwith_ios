@@ -31,9 +31,10 @@ export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
 export const VideoWrapper = styled.View<VideoWrapperProps>`
   display: flex;
   width: 100%;
+  height: ${windowHeight * 0.78}px;
   flex: 1;
   z-index: ${({ sharedRecording }) => (sharedRecording ? Z_INDEX.HIGH : 1)};
-  height: 100%;
+  border: none;
 `;
 
 export const AddToFriendsWrapper = styled.View`
@@ -135,10 +136,12 @@ export const BackToFeedButton = styled.View`
 export const RecordUserWrapper = styled.View`
   position: absolute;
   width: ${windowWidth}px;
+  height: 100%;
   flex: 1;
   top: 0;
   left: 0;
   z-index: ${Z_INDEX.HIGH};
+  background-color: rgb(11, 19, 26);
 `;
 
 interface NavigationBarProps {

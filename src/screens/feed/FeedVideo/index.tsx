@@ -1,140 +1,177 @@
-import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { StyleSheet, Dimensions } from "react-native";
+import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
+import { UserServiceContext } from "../../../services/user";
+import { StyleSheet, Dimensions, View } from "react-native";
+import { Utils } from "avcore/client";
+import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
+
 import {
   AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, BackToFeedButton, FeedPlayerContentWrapper, FeedPlayerToolTip,
   CommonImgWrapper, CommentsFeedItemWrapper,
 } from "../styled";
-import { RecordUser } from "../../../shared/interfaces";
 import { CallPageToolbar } from "../../../components/styled";
 
+const tempProfileIcon = "../../../assets/images/call/default_profile_image.svg";
+import { SocketServiceInstance, SocketServiceContext } from "../../../services/socket";
+
 import Video from "react-native-video";
-import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
-import PlayIcon from "../../../assets/images/feed/play.svg";
-import PauseIcon from "../../../assets/images/feed/pause.svg";
 import CommentIcon from "../../../assets/images/feed/comment.svg";
 import ShareIcon from "../../../assets/images/feed/share.svg";
+import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
+import BackToFeedIcon from "../../../assets/images/call/ExitLive.svg";
+import BandwithLogo from "../../../assets/images/Bandwith.svg";
+import PlayIcon from "../../../assets/images/feed/play.svg";
+import PauseIcon from "../../../assets/images/feed/pause.svg";
 
 const height = Dimensions.get('window').height;
 
-interface Iprops {
-  id: string;
-  photo: string;
-  name: string;
-  level: string;
-  link: string;
-  status: boolean;
-  feedItemCommentsStatus: boolean;
-  feedItemShareStatus: boolean;
+interface IProps {
+  recording: GetRecordResponse;
+  isShared?: boolean;
+  showComments: () => void;
   openRecordUser: (user: RecordUser) => void;
+  shareCall?: (recording: GetRecordResponse) => void;
+  backToFeed?: () => void;
+  currentRecording?: GetRecordResponse;
 }
 
 export const FeedVideoComponent = observer(({
-  id,
-  photo,
-  name,
-  level,
-  link,
-  status,
-  feedItemCommentsStatus,
-  feedItemShareStatus,
-  openRecordUser,
-}: Iprops) => {
-  const [feedItemID, setFeedItemID] = useState("");
-  const [feedItemPhoto, setFeedItemPhoto] = useState("");
-  const [feedItemName, setFeedItemName] = useState("");
-  const [feedItemLevel, setFeedItemLevel] = useState("");
-  const [feedItemLink, setFeedItemLink] = useState("");
-  const [feedItemStatus, setFeedItemStatus] = useState(false);
-  const [commentsStatus, setCommentsStatus] = useState(false);
-  const [shareStatus, setShareStatus] = useState(false);
+  recording, isShared, showComments, openRecordUser, shareCall, backToFeed, currentRecording,
+}: IProps) => {
+  const { contacts } = useContext(SocketServiceContext);
+  const playerRef = useRef<Video>(null);
+  const [started, setStarted] = useState(false);
+
+  const [showPlayBtn, setShowPlayBtn] = useState(false);
+
+  const changePlaybackStatus = () => {
+    if (!playerRef) return;
+
+    if (playerRef?.current?.paused) {
+      playerRef.current.play();
+      if (!started) {
+        setStarted(true);
+        console.log("> Setting 'started' to true");
+      }
+
+      setShowPlayBtn(false);
+      console.log(`> Recoding ${recording?._id} was resumed manually`);
+    } else {
+      setShowPlayBtn(true);
+      playerRef.current?.pause();
+      console.log(`> Recoding ${recording?._id} was paused manually`);
+    }
+  };
+
+  const feedOnScrollPlaybackHandler = () => {
+    if (currentRecording._id === recording._id) {
+      if (playerRef.current.paused) {
+        playerRef.current.play().then(() => setShowPlayBtn(false)).catch(() => {
+          console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
+          if (playerRef.current.paused) {
+            setShowPlayBtn(true);
+          }
+        });
+      }
+    } else if (!playerRef.current.paused) {
+      playerRef.current.pause();
+    }
+    console.log(`> Feed recording ${recording?._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
+  };
+
+  const sharedPlaybackHandler = () => {
+    if (playerRef.current.paused) {
+      playerRef.current.play().then(() => setShowPlayBtn(false)).catch(() => {
+        console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
+        if (playerRef.current.paused) {
+          setShowPlayBtn(true);
+        }
+      });
+    }
+    console.log(`> Shared recording ${recording._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
+  };
 
   useEffect(() => {
-    setFeedItemID(id);
-    setFeedItemPhoto(photo);
-    setFeedItemName(name);
-    setFeedItemLevel(level);
-    setFeedItemLink(link);
-    setFeedItemStatus(status);
-    setCommentsStatus(feedItemCommentsStatus);
-    setShareStatus(feedItemShareStatus);
-  }, [id, photo, name, level, link, status, feedItemCommentsStatus, feedItemShareStatus]);
+    if (playerRef && playerRef.current) {
+      if (isShared) {
+        if (Utils.isSafari && !started) {
+          // No reason to try to play it in Safari, it will be blocked in any case
+          // trying to play only when it was played manually before
+          console.log("> Skip play attempt in Safari for the first time");
+          setShowPlayBtn(true);
+        } else {
+          sharedPlaybackHandler();
+        }
+      } else {
+        if (!currentRecording) {
+          return;
+        }
 
-  // function for change video play status
-  const changePlaybackStatus = () => {
-    setFeedItemStatus(!feedItemStatus);
-  }
+        console.log(`> Current recording changed to ${currentRecording._id}. Current recording component: ${recording._id} `);
+        if (Utils.isSafari && !started) {
+          console.log("> Skip play attempt in Safari for the first time");
+          setShowPlayBtn(true);
+        } else {
+          feedOnScrollPlaybackHandler();
+        }
+      }
+    }
+  }, [playerRef, currentRecording]);
 
-  //function for show/hide comments
-  const showComments = () => {
-    setCommentsStatus(true);
-  }
+  const { profile } = useContext(UserServiceContext);
 
-  //function for show/hide comments
-  const shareCall = () => {
-    setShareStatus(true);
-  }
-
-  const openRecordUserTemp = ({
-    _id: feedItemID,
-    name: feedItemName,
-    imageUrl: feedItemPhoto
-  }) => {
-    console.log("here");
-  }
+  const contentText = useMemo(() => {
+    if (profile._id === recording?.user?._id) {
+      return "You";
+    }
+    if (SocketServiceInstance.isContact(recording?.user?._id)) {
+      return "Friend";
+    }
+    return "Unknown User";
+  }, [recording, contacts]);
 
   return (
     <>
-    {
-      (feedItemID !== "") ?
-        <>
-          <AddToFriendsWrapper>
-            <AddToFriendIcon source={{uri: feedItemPhoto}} />
-            <AddToFriendContent>
-              <ContentText isTitle>{feedItemName}</ContentText>
-              <ContentText>{feedItemLevel}</ContentText>
-            </AddToFriendContent>
-            <CommonImgWrapper onPress={() => openRecordUserTemp({
-              _id: feedItemID,
-              name: feedItemName,
-              imageUrl: feedItemPhoto
-            })}>
-              <AddIcon />
-            </CommonImgWrapper>
-          </AddToFriendsWrapper>
+      <FeedPlayerContentWrapper>
+        <FeedPlayerToolTip onPress={changePlaybackStatus}>
+          {
+            (showPlayBtn) ? <PauseIcon /> : <PlayIcon />
+          }
+        </FeedPlayerToolTip>
+      </FeedPlayerContentWrapper>
 
-          <FeedPlayerContentWrapper>
-            <FeedPlayerToolTip onPress={changePlaybackStatus}>
-              {
-                (feedItemStatus) ? <PlayIcon /> : <PauseIcon />
-              }
-            </FeedPlayerToolTip>
-          </FeedPlayerContentWrapper>
+      <AddToFriendsWrapper>
+        <AddToFriendIcon source={{uri: recording.user?.imageUrl || tempProfileIcon}} />
+        <AddToFriendContent>
+          <ContentText isTitle>{recording.user.name}</ContentText>
+          <ContentText>{contentText}</ContentText>
+        </AddToFriendContent>
+        <CommonImgWrapper onPress={() => openRecordUser(recording.user)}>
+          <AddIcon />
+        </CommonImgWrapper>
+      </AddToFriendsWrapper>
 
-          <Video
-            source={{uri: feedItemLink}}
-            resizeMode="cover"
-            style={styled.feedVideo}
-            paused={!feedItemStatus}
-          />
+      {!!recording?.list?.length && (
+        <Video
+          source={{uri: recording.list[0].url}}
+          resizeMode="cover"
+          style={styled.feedVideo}
+        />
+      )}
 
-          <CallPageToolbar>
-            <CommentsFeedItemWrapper onPress={showComments}>
-              <CommentIcon />
+      <CallPageToolbar>
+        <CommentsFeedItemWrapper onPress={showComments}>
+          <CommentIcon />
+        </CommentsFeedItemWrapper>
+        {
+          (!isShared) ?
+            <CommentsFeedItemWrapper onPress={() => shareCall(recording)}>
+              <ShareIcon />
             </CommentsFeedItemWrapper>
-            {
-              (!shareStatus) ?
-                <CommentsFeedItemWrapper onPress={shareCall}>
-                  <ShareIcon />
-                </CommentsFeedItemWrapper>
-                :
-                <></>
-            }
-            
-          </CallPageToolbar>
-        </> :
-        <></>
-    }
+            :
+            <></>
+        }
+      </CallPageToolbar>
     </>
   );
 });
@@ -142,7 +179,7 @@ export const FeedVideoComponent = observer(({
 const styled = StyleSheet.create({
   feedVideo: {
     flex: 1,
-    height: height * 0.78,
+    height: height * 0.778,
   }
 });
 
