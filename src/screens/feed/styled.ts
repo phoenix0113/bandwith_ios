@@ -1,5 +1,9 @@
 import styled from "styled-components/native";
 import { COLORS, Z_INDEX } from "../../components/styled";
+import { Dimensions } from "react-native";
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 interface FeedScrollableWrapperProps {
   hidden?: boolean;
@@ -16,13 +20,11 @@ interface BasicContentWrapperProps {
 
 export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
   position: relative;
-  display: flex;
   flex-direction: column;
   justify-content: ${({justifyContent}) => justifyContent || "center"};
   align-items: center;
   width: 100%;
   flex: 1;
-  border: 2px solid grey;
 `;
 
 
@@ -132,15 +134,104 @@ export const BackToFeedButton = styled.View`
 
 export const RecordUserWrapper = styled.View`
   position: absolute;
+  width: ${windowWidth}px;
   flex: 1;
+  top: 0;
+  left: 0;
+  z-index: ${Z_INDEX.HIGH};
+`;
+
+interface NavigationBarProps {
+  position?: "absolute";
+}
+
+export const NavigationBar = styled.View<NavigationBarProps>`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 0 21px;
+  background-color: rgb(15, 26, 35);
+  position: ${({ position }) => position || "relative"};
+  z-index: ${Z_INDEX.MIDDLE};
+  height: 70px;
+  width: 100%;
+`;
+
+interface NavigationTextProps {
+  color?: string;
+}
+
+export const NavigationText = styled.Text<NavigationTextProps>`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0px;
+  text-align: center;
+  color: ${({ color }) => color || COLORS.WHITE};
+`;
+
+export const RightText = styled.Text`
+  color: rgb(10, 255, 239);
+`;
+
+const NavigationItem = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   align-items: center;
-  position: absolute;
-  top: 10%;
-  left: 20px;
-  border-radius: 22.5px;
-  padding: 5px 8px;
-  background: rgb(0, 0, 0);
-  z-index: ${Z_INDEX.HIGH};
+`;
+
+export const LeftItem = styled(NavigationItem)`
+  width: 18%;
+  justify-content: flex-start;
+`;
+
+export const RightItem = styled(NavigationItem)`
+  width: 18%;
+  justify-content: flex-end;
+`;
+
+export const CenterItem = styled(NavigationItem)`
+  flex-grow: 1;
+  justify-content: center;
+`;
+
+export const ProfileImageContent = styled.View`
+  width: 100%;
+`;
+
+export const ProfileNameText = styled.Text`
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: 0px;
+  text-align: center;
+  color: rgb(255, 255, 255);
+`;
+
+export const ProfileActionButton = styled.TouchableOpacity`
+  height: 50px;
+  margin: 2.5% 13px 20px 13px;
+  height: 50px;
+  padding: 13px 0px 12px;
+  border-radius: 6px;
+`;
+
+export const ProfileActionText = styled.Text`
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: 0px;
+  text-align: center;
+`;
+
+export const ProfileContentWrapper = styled.View<BasicContentWrapperProps>`
+  display: flex;
+  flex-direction: column;
+  justify-content: ${({justifyContent}) => justifyContent || "center"};
+  align-items: center;
+  width: 100%;
+  flex: 1;
 `;

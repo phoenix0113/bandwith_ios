@@ -5,6 +5,7 @@ import {
   AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, BackToFeedButton, FeedPlayerContentWrapper, FeedPlayerToolTip,
   CommonImgWrapper, CommentsFeedItemWrapper,
 } from "../styled";
+import { RecordUser } from "../../../shared/interfaces";
 import { CallPageToolbar } from "../../../components/styled";
 
 import Video from "react-native-video";
@@ -17,14 +18,15 @@ import ShareIcon from "../../../assets/images/feed/share.svg";
 const height = Dimensions.get('window').height;
 
 interface Iprops {
-  id: string,
-  photo: string,
-  name: string,
-  level: string,
-  link: string,
-  status: boolean,
-  feedItemCommentsStatus: boolean,
-  feedItemShareStatus: boolean,
+  id: string;
+  photo: string;
+  name: string;
+  level: string;
+  link: string;
+  status: boolean;
+  feedItemCommentsStatus: boolean;
+  feedItemShareStatus: boolean;
+  openRecordUser: (user: RecordUser) => void;
 }
 
 export const FeedVideoComponent = observer(({
@@ -36,6 +38,7 @@ export const FeedVideoComponent = observer(({
   status,
   feedItemCommentsStatus,
   feedItemShareStatus,
+  openRecordUser,
 }: Iprops) => {
   const [feedItemID, setFeedItemID] = useState("");
   const [feedItemPhoto, setFeedItemPhoto] = useState("");
@@ -72,6 +75,14 @@ export const FeedVideoComponent = observer(({
     setShareStatus(true);
   }
 
+  const openRecordUserTemp = ({
+    _id: feedItemID,
+    name: feedItemName,
+    imageUrl: feedItemPhoto
+  }) => {
+    console.log("here");
+  }
+
   return (
     <>
     {
@@ -83,7 +94,11 @@ export const FeedVideoComponent = observer(({
               <ContentText isTitle>{feedItemName}</ContentText>
               <ContentText>{feedItemLevel}</ContentText>
             </AddToFriendContent>
-            <CommonImgWrapper>
+            <CommonImgWrapper onPress={() => openRecordUserTemp({
+              _id: feedItemID,
+              name: feedItemName,
+              imageUrl: feedItemPhoto
+            })}>
               <AddIcon />
             </CommonImgWrapper>
           </AddToFriendsWrapper>
@@ -127,7 +142,7 @@ export const FeedVideoComponent = observer(({
 const styled = StyleSheet.create({
   feedVideo: {
     flex: 1,
-    height: height * 0.775,
+    height: height * 0.78,
   }
 });
 

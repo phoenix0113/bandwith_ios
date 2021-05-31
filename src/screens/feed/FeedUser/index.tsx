@@ -1,31 +1,103 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { View, Text } from "react-native";
-
-import { RecordUserWrapper } from "../styled";
-import addIcon from "../../../assets/images/feed/feedAddIcon.svg";
+import { COLORS } from "../../../components/styled";
+import { RecordUserWrapper, RightItem, RightText, NavigationBar, LeftItem, CenterItem, NavigationText, ProfileImageContent,
+  ProfileNameText, ProfileActionButton, ProfileActionText, ProfileContentWrapper, BasicContentWrapper
+} from "../styled";
+import { View, Text, TouchableOpacity } from "react-native";
+import { ProfileImageWrapper } from "../../../components/ProfileImageWrapper";
 
 interface Iprops {
   photo: string,
   name: string,
-  level: string,
 }
 
-export const RecordUserComponent = observer(({ photo, name, level }: Iprops) => {
+export const RecordUserComponent = observer(({ photo, name }: Iprops) => {
   const [userPhoto, setUserPhoto] = useState("");
   const [userName, setUserName] = useState("");
-  const [userLevel, setUserLevel] = useState("");
+  const requestSent = false;
+
+  const closeHandler = () => {
+
+  }
+
+  const addToFriends = () => {
+
+  }
+
+  const removeFromFriends = () => {
+
+  }
+
+  const call = () => {
+
+  }
 
   useEffect(() => {
     setUserPhoto(photo);
     setUserName(name);
-    setUserLevel(level);
-  }, [photo, name, level]);
+  }, [photo, name]);
 
   return (
-    <RecordUserWrapper>
-      
-    </RecordUserWrapper>
+    <>
+      {
+        (userName !== "")
+          ?
+            <RecordUserWrapper>
+              <NavigationBar>
+                <LeftItem />
+                <CenterItem>
+                  <NavigationText>Contact Account</NavigationText>
+                </CenterItem>
+                <RightItem>
+                  <RightText onPress={closeHandler}>Cancel</RightText>
+                </RightItem>
+              </NavigationBar>
+              <BasicContentWrapper>
+                <ProfileImageContent>
+                  <ProfileImageWrapper src={userPhoto} />
+                </ProfileImageContent>
+                <View style={{width: "100%"}}>
+                  <ProfileNameText>{userName}</ProfileNameText>
+                  <ProfileActionButton
+                    onPress={addToFriends}
+                    style={{
+                      backgroundColor: requestSent ? COLORS.ALTERNATIVE : COLORS.MAIN_LIGHT,
+                    }}
+                  >
+                    <ProfileActionText style={{color: requestSent ? COLORS.BLACK : COLORS.WHITE}}>
+                      {requestSent ? "Invitation is sent" : "Add to Friends" }
+                    </ProfileActionText>
+                  </ProfileActionButton>
+
+                  <ProfileActionButton
+                    onPress={removeFromFriends}
+                    style={{
+                      backgroundColor: COLORS.MAIN_LIGHT,
+                    }}
+                  >
+                    <ProfileActionText style={{color: COLORS.RED}}>
+                      Delete
+                    </ProfileActionText>
+                  </ProfileActionButton>
+                  
+                  <ProfileActionButton
+                    onPress={call}
+                    style={{
+                      backgroundColor: COLORS.MAIN_LIGHT,
+                    }}
+                  >
+                    <ProfileActionText style={{color: COLORS.WHITE}}>
+                      Make a Call
+                    </ProfileActionText>
+                  </ProfileActionButton>
+                </View>
+              </BasicContentWrapper>
+            </RecordUserWrapper>
+          :
+          <></>
+      }
+    </>
   );
 });
 
@@ -93,36 +165,36 @@ export const RecordUserComponent = observer(({ photo, name, level }: Iprops) => 
 //         <ProfileImageWrapper src={user.imageUrl} />
 //         <CommonContentWrapper>
 //           <CommonContentTitle>{user.name}</CommonContentTitle>
-//           {!isUserInContactList && GlobalStorage.profile._id !== user._id && (
-//             <CommonButton
-//               margin="5% 0 20px 0"
-//               onClick={addToFriends}
-//               backgroundColor={requestSent ? COLORS.ALTERNATIVE : COLORS.MAIN_LIGHT}
-//               color={requestSent ? COLORS.BLACK : COLORS.WHITE}
-//             >
-//               {requestSent ? "Invitation is sent" : "Add to Friends" }
-//             </CommonButton>
-//           )}
-//           {isUserInContactList && GlobalStorage.profile._id !== user._id && (
-//             <CommonButton
-//               margin="5% 0 20px 0"
-//               onClick={removeFromFriends}
-//               backgroundColor={COLORS.MAIN_LIGHT}
-//               color={COLORS.RED}
-//             >
-//               Delete
-//             </CommonButton>
-//           )}
-//           {GlobalStorage.profile._id !== user._id && (
-//             <CommonButton
-//               margin="0 0 20px 0"
-//               onClick={call}
-//               backgroundColor={COLORS.MAIN_LIGHT}
-//               color={COLORS.WHITE}
-//             >
-//               Make a Call
-//             </CommonButton>
-//           )}
+          // {!isUserInContactList && GlobalStorage.profile._id !== user._id && (
+          //   <CommonButton
+          //     margin="5% 0 20px 0"
+          //     onClick={addToFriends}
+          //     backgroundColor={requestSent ? COLORS.ALTERNATIVE : COLORS.MAIN_LIGHT}
+          //     color={requestSent ? COLORS.BLACK : COLORS.WHITE}
+          //   >
+          //     {requestSent ? "Invitation is sent" : "Add to Friends" }
+          //   </CommonButton>
+          // )}
+          // {isUserInContactList && GlobalStorage.profile._id !== user._id && (
+          //   <CommonButton
+          //     margin="5% 0 20px 0"
+          //     onClick={removeFromFriends}
+          //     backgroundColor={COLORS.MAIN_LIGHT}
+          //     color={COLORS.RED}
+          //   >
+          //     Delete
+          //   </CommonButton>
+          // )}
+          // {GlobalStorage.profile._id !== user._id && (
+          //   <CommonButton
+          //     margin="0 0 20px 0"
+          //     onClick={call}
+          //     backgroundColor={COLORS.MAIN_LIGHT}
+          //     color={COLORS.WHITE}
+          //   >
+          //     Make a Call
+          //   </CommonButton>
+          // )}
 //         </CommonContentWrapper>
 //       </CommonPageContentWrapper>
 //     </RecordUserWrapper>

@@ -3,19 +3,22 @@ import React, { useContext, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { StyleSheet } from "react-native";
 import { FeedVideoComponent } from "../FeedVideo";
+import { RecordUser } from "../../../shared/interfaces";
 
 import { VideoWrapper } from "../styled";
 
 interface IProps {
-  id: string,
-  photo: string,
-  name: string,
-  level: string,
-  link: string,
-  openedComments: boolean,
+  id: string;
+  photo: string;
+  name: string;
+  level: string;
+  link: string;
+  openedComments: boolean;
+  shareStatus: boolean;
+  openRecordUser: (user: RecordUser) => void;
 }
 
-export const FeedItemComponent  = observer(({ id, photo, name, level, link, openedComments }: IProps) => {
+export const FeedItemComponent  = observer(({ id, photo, name, level, link, openedComments, shareStatus, openRecordUser }: IProps) => {
   const [feedItemID, setFeedItemID] = useState("");
   const [feedItemPhoto, setFeedItemPhoto] = useState("");
   const [feedItemName, setFeedItemName] = useState("");
@@ -33,7 +36,8 @@ export const FeedItemComponent  = observer(({ id, photo, name, level, link, open
     setFeedItemLink(link);
     setFeedItemStatus(false);
     setFeedItemCommentsStatus(openedComments);
-  }, [id, photo, name, level, link, openedComments, ]);
+    setFeedItemShareStatus(shareStatus);
+  }, [id, photo, name, level, link, openedComments, shareStatus]);
 
   return (
     <VideoWrapper>
@@ -48,6 +52,7 @@ export const FeedItemComponent  = observer(({ id, photo, name, level, link, open
             status={false}
             feedItemCommentsStatus={feedItemCommentsStatus}
             feedItemShareStatus={feedItemShareStatus}
+            openRecordUser={openRecordUser}
           /> :
           <></>
       }

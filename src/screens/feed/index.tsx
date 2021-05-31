@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { observer } from "mobx-react";
+import { RecordUser } from "../../shared/interfaces";
 import { FeedItemComponent } from "./FeedItem";
 
 import {
@@ -51,9 +52,16 @@ const DATA = [
 ]
 
 export const FeedScreen = observer(() => {
+  const [recordUser, setRecordUser] = useState<RecordUser>(null);
+
   const [openedComments, setOpenedComments] = useState(false);
   const showComments = () => setOpenedComments(true);
   const hideComments = () => setOpenedComments(false);
+
+  const openRecordUser = (user: RecordUser) => {
+    console.log("here");
+    setRecordUser(user);
+  };
 
   const [shareStatus, setShareStatus] = useState(false);
 
@@ -68,6 +76,7 @@ export const FeedScreen = observer(() => {
           link={item.video}
           openedComments={openedComments}
           shareStatus={shareStatus}
+          openRecordUser={openRecordUser}
         />
       </BasicContentWrapper>
     );
@@ -82,6 +91,15 @@ export const FeedScreen = observer(() => {
           </CenterItem>
           <RightItem />
         </NavigationBar>
+
+        {
+          (false) ?
+          <RecordUserComponent
+            photo={"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"}
+            name={"Luis Andres 1"}
+          /> :
+          <></>
+        }
         <FlatList
           data={DATA}
           renderItem={renderItem}
