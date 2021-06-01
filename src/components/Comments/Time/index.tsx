@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { timeSince } from "../../../utils/time";
 import { HeaderInfo } from "../styled";
@@ -7,8 +7,8 @@ interface IProps {
   date: number;
 }
 
-export const CommentTimeComponent = ({ date }: IProps): JSX.Element => {
-  const [since, setSince] = useState<string>(timeSince(date));
+export const CommentTimeComponent = ({ date }: IProps) => {
+  const [since, setSince] = useState(timeSince(date));
 
   useEffect(() => {
     const interval = setInterval(() => {

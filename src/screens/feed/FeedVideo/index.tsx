@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
-import { UserServiceContext } from "../../../services/user";
 import { StyleSheet, Dimensions, View } from "react-native";
 import { Utils } from "avcore/client";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
@@ -13,6 +12,7 @@ import { CallPageToolbar } from "../../../components/styled";
 
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.svg";
 import { SocketServiceInstance, SocketServiceContext } from "../../../services/socket";
+import { UserServiceInstance } from "../../../services/user";
 
 import Video from "react-native-video";
 import CommentIcon from "../../../assets/images/feed/comment.svg";
@@ -118,10 +118,8 @@ export const FeedVideoComponent = observer(({
     }
   }, [playerRef, currentRecording]);
 
-  const { profile } = useContext(UserServiceContext);
-
   const contentText = useMemo(() => {
-    if (profile._id === recording?.user?._id) {
+    if (UserServiceInstance.profile._id === recording?.user?._id) {
       return "You";
     }
     if (SocketServiceInstance.isContact(recording?.user?._id)) {
@@ -154,6 +152,7 @@ export const FeedVideoComponent = observer(({
       {!!recording?.list?.length && (
         <Video
           source={{uri: recording.list[0].url}}
+          paused={true}
           resizeMode="cover"
           style={styled.feedVideo}
         />

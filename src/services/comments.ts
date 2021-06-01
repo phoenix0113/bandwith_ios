@@ -2,11 +2,12 @@ import { createContext } from "react";
 import { observable, makeAutoObservable, runInAction } from "mobx";
 
 import { Comment } from "../shared/interfaces";
-// import { GlobalStorage } from "./global";
+import { SocketServiceInstance } from "./socket";
 import { ACTIONS, CLIENT_ONLY_ACTIONS, SendCommentRequest } from "../shared/socket";
-// import { getComments } from "../axios/routes/comments";
+import { getComments } from "../axios/routes/comments";
 import { COMMENTS_LOAD_LIMIT } from "../utils/constants";
-// import { showErrorNotification } from "../utils/notification";
+import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { UserServiceInstance } from "./user";
 
 class CommentsMobxService {
   @observable comments: Array<Comment> = [];
@@ -27,39 +28,39 @@ class CommentsMobxService {
    * Since we use global socket, it's already handled by other (`Call`) services
    */
   public subscribeToComments = (): void => {
-    // GlobalStorage.socket.on(CLIENT_ONLY_ACTIONS.COMMENT, (comment) => {
-    //   console.log("> Received new comment: ", comment);
-    //   runInAction(() => {
-    //     this.comments.unshift(comment);
-    //     this.totalAmount += 1;
-    //   });
-    // });
+    SocketServiceInstance.socket.on(CLIENT_ONLY_ACTIONS.COMMENT, (comment) => {
+      console.log("> Received new comment: ", comment);
+      runInAction(() => {
+        this.comments.unshift(comment);
+        this.totalAmount += 1;
+      });
+    });
   }
 
   public fetchComments = async (id: string, isRecording: boolean): Promise<void> => {
     this.loading = true;
     try {
-      // const { amount, comments } = await getComments(
-      //   id,
-      //   COMMENTS_LOAD_LIMIT,
-      //   this.comments.length,
-      //   isRecording,
-      // );
+      const { amount, comments } = await getComments(
+        id,
+        COMMENTS_LOAD_LIMIT,
+        this.comments.length,
+        isRecording,
+      );
 
-      // console.log(`> Loaded ${comments?.length} comments. IsRecording comments: ${isRecording}`);
+      console.log(`> Loaded ${comments?.length} comments. IsRecording comments: ${isRecording}`);
 
-      // runInAction(() => {
-      //   if (comments.length < COMMENTS_LOAD_LIMIT) {
-      //     console.log("> All stored comments was loaded");
-      //     this.allCommentsLoaded = true;
-      //   }
+      runInAction(() => {
+        if (comments.length < COMMENTS_LOAD_LIMIT) {
+          console.log("> All stored comments was loaded");
+          this.allCommentsLoaded = true;
+        }
 
-      //   this.comments.push(...comments);
-      //   this.totalAmount = amount;
-      // });
+        this.comments.push(...comments);
+        this.totalAmount = amount;
+      });
     } catch (err) {
       console.error(err);
-      // showErrorNotification(err.message);
+      showUnexpectedErrorAlert("Fetch Comments", err.message);
     } finally {
       this.loading = false;
     }
@@ -81,26 +82,26 @@ class CommentsMobxService {
       content,
       date: Date.now(),
       user: {
-        _id: "1",
-        name: "Luis Andres 1",
-        imageUrl: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+        _id: UserServiceInstance.profile._id,
+        name: UserServiceInstance.profile.name,
+        imageUrl: UserServiceInstance.profile.imageUrl,
       },
       recordingIds: isRecording ? [id] : [],
     };
 
     console.log(`> You are sending a comment (isRecording: ${isRecording}): `, comment);
 
-    // GlobalStorage.socket.emit(ACTIONS.SEND_COMMENT, comment, (savedComment) => {
-    //   console.log("> Your comment was saved: ", savedComment);
-    //   runInAction(() => {
-    //     this.comments.unshift(savedComment);
-    //     this.totalAmount += 1;
-    //   });
-    // });
+    SocketServiceInstance.socket.emit(ACTIONS.SEND_COMMENT, comment, (savedComment) => {
+      console.log("> Your comment was saved: ", savedComment);
+      runInAction(() => {
+        this.comments.unshift(savedComment);
+        this.totalAmount += 1;
+      });
+    });
   }
 
   public resetService = (): void => {
-    // GlobalStorage.socket.off(CLIENT_ONLY_ACTIONS.COMMENT);
+    SocketServiceInstance.socket.off(CLIENT_ONLY_ACTIONS.COMMENT);
     this.allCommentsLoaded = false;
     this.comments = [];
     console.log("> Comments service was reset");

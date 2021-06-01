@@ -122,7 +122,7 @@ export const CommentsFeedItemWrapper = styled.TouchableOpacity`
   border-radius: 27px;
   background-color: #ffffff;
   right: 10%;
-  margin: 10px 0;
+  margin: 16px 0;
 `;
 
 

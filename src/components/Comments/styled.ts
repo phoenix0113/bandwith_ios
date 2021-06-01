@@ -74,7 +74,7 @@ export const HeaderImage = styled.Image`
   width: 25px;
   height: 25px;
   margin-right: 10px;
-  border-radius: 50%;
+  border-radius: 12.5px;
 `;
 
 const Text = styled.View`
@@ -87,10 +87,26 @@ const Text = styled.View`
   margin-right: 10px;
 `;
 
-export const HeaderUsernameText = styled(Text)``;
+export const HeaderUsernameText = styled.Text`
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0px;
+  text-align: left;
+  margin-right: 10px;
+  color: white;
+`;
 
-export const HeaderInfo = styled(Text)`
-  mix-blend-mode: normal;
+export const HeaderInfo = styled.Text`
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0px;
+  text-align: left;
+  margin-right: 10px;
+  color: white;
   opacity: 0.5;
 `;
 
@@ -102,6 +118,7 @@ export const CommentContentText = styled.Text`
   letter-spacing: -0.093px;
   text-align: left;
   padding-right: 15%;
+  color: white;
 `;
 
 export const InputWrapper = styled.View`
@@ -157,7 +174,7 @@ export const SendButton = styled.TouchableOpacity`
   right: 7px;
 `;
 
-export const AllLoadedText = styled.View`
+export const AllLoadedText = styled.Text`
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

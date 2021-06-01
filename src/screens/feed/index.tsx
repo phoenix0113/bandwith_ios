@@ -30,7 +30,7 @@ export const FeedScreen = observer(() => {
     sharedRecording,
     recordings,
     loadRecordings,
-    // setCurrentRecording,
+    setCurrentRecording,
     fetchSharedRecording,
     cleanSharedRecording,
   } = useContext(FeedStorageContext);
@@ -71,11 +71,6 @@ export const FeedScreen = observer(() => {
       url: `${SERVER_BASE_URL}${Routes.FEED}?${Params.RECORDING_ID}=${recording._id}`,
     };
 
-    // const result = await Share.share({
-    //   message: `Check out ${recording.user?.name}'s recording`,
-    //   url: `${SERVER_BASE_URL}${Routes.FEED}?${Params.RECORDING_ID}=${recording._id}`
-    // });
-
     Share.share(shareCallData);
   };
 
@@ -92,13 +87,13 @@ export const FeedScreen = observer(() => {
     cleanSharedRecording();
   };
 
-  const scrollableRef = useRef<HTMLDivElement>(null);
+  // const scrollableRef = useRef<HTMLDivElement>(null);
 
-  const [videoObserver, setVideoObserver] = useState(null);
+  // const [videoObserver, setVideoObserver] = useState(null);
 
   useEffect(() => {
     loadRecordings();
-  })
+  }, [])
 
   // useEffect(() => {
   //   if (scrollableRef.current) {
@@ -137,7 +132,17 @@ export const FeedScreen = observer(() => {
   //   }
   // }, [scrollableRef]);
 
-  const [shareStatus, setShareStatus] = useState(false);
+  // const [shareStatus, setShareStatus] = useState(false);
+
+  const onViewRef = useRef((viewableItems)=> {
+    let item = viewableItems;
+    let currentRecording = item.changed[0]["item"];
+    setCurrentRecording(currentRecording._id);
+  });
+
+  const viewConfigRef = useRef({ 
+    viewAreaCoveragePercentThreshold: 50
+  });
 
   const renderItem = ({item}) => {
     return (
@@ -196,7 +201,12 @@ export const FeedScreen = observer(() => {
           data={recordings}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
+          pagingEnabled={true}
           style={styled.flatlist}
+          horizontal={false}
+          showsHorizontalScrollIndicator={false}
+          onViewableItemsChanged={onViewRef.current}
+          viewabilityConfig={viewConfigRef.current}
         />
       </PageWrapper>
     </BasicSafeAreaView>

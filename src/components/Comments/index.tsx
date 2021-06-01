@@ -1,9 +1,7 @@
 import React, { ChangeEvent, useState, useContext, useEffect } from "react";
 import { observer } from "mobx-react";
-// import { CloseOutlined } from "@ant-design/icons";
-import { ScrollView } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 // import InfiniteScroll from "react-infinite-scroll-component";
-// import { Spin } from "antd";
 
 import {
   CommentsBlock, CommentsBlockHeader, CommentContentText, CommentListWrapper, CloseOutlined, TotalCommentsAmount, CommentText,
@@ -12,7 +10,7 @@ import {
 
 import SendImg from "../../assets/images/SendComment.svg";
 import CloseImg from "../../assets/images/close.svg";
-// import { showInfoNotification } from "../../utils/notification";
+import { showUnexpectedErrorAlert } from "../../utils/notifications";
 import { CommentsStorageContext } from "../../services/comments";
 
 import { CommentTimeComponent } from "./Time";
@@ -29,8 +27,7 @@ interface IProps {
 const MAX_INPUT_LENGTH = 150;
 
 export const CommentsComponent = observer((
-  { visible, id, hide, isRecording }: IProps,
-): JSX.Element => {
+  { visible, id, hide, isRecording }: IProps) => {
   const {
     fetchComments, subscribeToComments, totalAmount, loading,
     comments, resetService, sendComment, allCommentsLoaded,
@@ -46,14 +43,14 @@ export const CommentsComponent = observer((
   }, [id]);
 
   const [inputValue, setInputValue] = useState("");
-  const onChange = ({ target }: ChangeEvent<HTMLTextAreaElement>) => {
-    // const { value } = target;
+  const onChange = (target: string) => {
+    const value = target;
 
-    // if (value.length === MAX_INPUT_LENGTH + 1) {
-    //   showInfoNotification(`Maximum of ${MAX_INPUT_LENGTH} characters`, 1);
-    // } else {
-    //   setInputValue(target.value);
-    // }
+    if (value.length === MAX_INPUT_LENGTH + 1) {
+      showUnexpectedErrorAlert(`Maximum of ${MAX_INPUT_LENGTH} characters`, "");
+    } else {
+      setInputValue(value);
+    }
   };
 
   const sendCommentHandler = () => {
@@ -67,6 +64,20 @@ export const CommentsComponent = observer((
     }
   };
 
+  const renderItem = (comment) => {
+    const item = comment.item;
+    return (
+      <CommentItem key={item._id}>
+        <CommentHeader>
+          <HeaderImage source={{uri: item.user.imageUrl}} />
+          <HeaderUsernameText>{item.user.name}</HeaderUsernameText>
+          <CommentTimeComponent date={item.date} />
+        </CommentHeader>
+        <CommentContentText>{item.content}</CommentContentText>
+      </CommentItem>
+    )
+  }
+
   return (
     <CommentsContentWrapper>
       <CommentsBlock visible={visible}>
@@ -77,7 +88,24 @@ export const CommentsComponent = observer((
           </CloseOutlined>
         </CommentsBlockHeader>
         <CommentListWrapper>
-          <ScrollView>
+          <FlatList
+            data={comments}
+            renderItem={(comment) => renderItem(comment)}
+            keyExtractor={(comment) => {
+              return comment._id;
+            }}
+            style={styled.feedComment}
+          />
+          {/* <InfiniteScroll
+            dataLength={comments.length}
+            next={() => fetchComments(id, isRecording)}
+            hasMore={!allCommentsLoaded}
+            loader={<></>}
+            endMessage={
+              <AllLoadedText>You have seen it all</AllLoadedText>
+            }
+            scrollableTarget={SCROLLABLE_DIV_ID}
+          >
             {comments && comments.map((comment) => (
               <CommentItem key={comment._id}>
                 <CommentHeader>
@@ -88,7 +116,8 @@ export const CommentsComponent = observer((
                 <CommentContentText>{comment.content}</CommentContentText>
               </CommentItem>
             ))}
-          </ScrollView>
+          </InfiniteScroll> */}
+          <AllLoadedText>You have seen it all</AllLoadedText>
         </CommentListWrapper>
         <InputWrapper>
           <CommentText
@@ -97,6 +126,7 @@ export const CommentsComponent = observer((
             placeholderTextColor={"#ffffff"}
             numberOfLines={50}
             multiline={true}
+            onChangeText={text => onChange(text)}
           />
           <SendButton onPress={sendCommentHandler}>
             <SendImg width={"100%"} />
@@ -106,3 +136,9 @@ export const CommentsComponent = observer((
     </CommentsContentWrapper>
   );
 });
+
+export const styled = StyleSheet.create({
+  feedComment: {
+    maxHeight: "100%",
+  }
+})
