@@ -42,23 +42,22 @@ export const FeedVideoComponent = observer(({
   const playerRef = useRef<Video>(null);
   const [started, setStarted] = useState(false);
 
-  const [showPlayBtn, setShowPlayBtn] = useState(false);
+  const [showPlayBtn, setShowPlayBtn] = useState(true);
 
   const changePlaybackStatus = () => {
     if (!playerRef) return;
 
-    if (playerRef?.current?.paused) {
-      playerRef.current.play();
-      if (!started) {
-        setStarted(true);
-        console.log("> Setting 'started' to true");
-      }
+    // if (playerRef?.current?.paused) {
+    if (showPlayBtn) {
+      // if (!started) {
+      //   setStarted(true);
+      //   console.log("> Setting 'started' to true");
+      // }
 
       setShowPlayBtn(false);
       console.log(`> Recoding ${recording?._id} was resumed manually`);
     } else {
       setShowPlayBtn(true);
-      playerRef.current?.pause();
       console.log(`> Recoding ${recording?._id} was paused manually`);
     }
   };
@@ -74,7 +73,7 @@ export const FeedVideoComponent = observer(({
         });
       }
     } else if (!playerRef.current.paused) {
-      playerRef.current.pause();
+      setShowPlayBtn(true);
     }
     console.log(`> Feed recording ${recording?._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
   };
@@ -133,7 +132,7 @@ export const FeedVideoComponent = observer(({
       <FeedPlayerContentWrapper>
         <FeedPlayerToolTip onPress={changePlaybackStatus}>
           {
-            (showPlayBtn) ? <PauseIcon /> : <PlayIcon />
+            (showPlayBtn) ? <PlayIcon /> : <PauseIcon />
           }
         </FeedPlayerToolTip>
       </FeedPlayerContentWrapper>
@@ -151,10 +150,12 @@ export const FeedVideoComponent = observer(({
 
       {!!recording?.list?.length && (
         <Video
+          paused={showPlayBtn}
+          // ref={playerRef}
           source={{uri: recording.list[0].url}}
-          paused={true}
           resizeMode="cover"
           style={styled.feedVideo}
+          loop
         />
       )}
 
@@ -181,5 +182,3 @@ const styled = StyleSheet.create({
     height: height * 0.778,
   }
 });
-
-
