@@ -31,10 +31,9 @@ export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
 export const VideoWrapper = styled.View<VideoWrapperProps>`
   display: flex;
   width: 100%;
-  height: ${windowHeight * 0.78}px;
+  height: ${windowHeight * 0.858}px;
   flex: 1;
   z-index: ${({ sharedRecording }) => (sharedRecording ? Z_INDEX.HIGH : 1)};
-  border: none;
 `;
 
 export const AddToFriendsWrapper = styled.View`
@@ -81,7 +80,7 @@ export const CommonImgWrapper = styled.TouchableOpacity`
   background-color: #ffffff;
 `;
 
-export const FeedPlayerContentWrapper = styled.View`
+export const FeedPlayerContentWrapper = styled.TouchableOpacity`
   position: absolute;
   z-index: ${Z_INDEX.MIDDLE};
   width: 100%;

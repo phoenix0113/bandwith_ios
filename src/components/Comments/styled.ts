@@ -34,7 +34,7 @@ export const CommentsBlock = styled.View<ICommentBlockProps>`
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px;
+  padding: 20px 20px 5px 20px;
 
   display: ${({ visible }) => (visible ? "flex" : "none")};
   flex-direction: column;
@@ -111,6 +111,7 @@ export const HeaderInfo = styled.Text`
 `;
 
 export const CommentContentText = styled.Text`
+  padding-top: 5px;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -122,6 +123,9 @@ export const CommentContentText = styled.Text`
 `;
 
 export const InputWrapper = styled.View`
+  width: 100%;
+  position: absolute;
+  bottom: 0;
   background: rgb(100, 102, 103);
   display: flex;
   flex-direction: row;
@@ -138,39 +142,15 @@ export const CommentText = styled.TextInput`
   font-weight: 400;
   letter-spacing: 0px;
   text-align: left;
+  padding: 0;
+  margin: 2px 0;
 `;
-
-// const { TextArea } = Input;
-
-// export const StyledTextArea = styled(TextArea)`
-//   && {
-//     color: ${COLORS.WHITE};
-//     background: #646667;
-//     border-radius: 6px;
-//     border: none;
-
-//     font-size: 14px;
-//     font-style: normal;
-//     font-weight: 400;
-//     line-height: 22px;
-//     letter-spacing: 0px;
-//     text-align: left;
-
-//     padding: 9px 40px 9px 20px;
-
-
-//     :focus {
-//       /* border-color: ${COLORS.ALTERNATIVE}; */
-//       border-color: transparent;
-//     }
-//   }
-// `;
 
 export const SendButton = styled.TouchableOpacity`
   position: absolute;
   width: 40px;
-  height: 25px;
-  bottom: 12px;
+  height: 20px;
+  bottom: 20px;
   right: 7px;
 `;
 
@@ -181,6 +161,7 @@ export const AllLoadedText = styled.Text`
   line-height: 19px;
   letter-spacing: -0.093px;
   text-align: left;
+  padding-top: 10px;
   padding-right: 15%;
   color: ${COLORS.ALTERNATIVE};
 `;

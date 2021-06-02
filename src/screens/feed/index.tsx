@@ -160,14 +160,14 @@ export const FeedScreen = observer(() => {
   };
   return (
     <BasicSafeAreaView>
-      <PageWrapper>
+      {/* <PageWrapper>
         <NavigationBar>
           <LeftItem />
           <CenterItem>
             <NavigationText>Feed</NavigationText>
           </CenterItem>
           <RightItem />
-        </NavigationBar>
+        </NavigationBar> */}
 
          {recordUser && (
           <RecordUserComponent
@@ -207,8 +207,9 @@ export const FeedScreen = observer(() => {
           showsHorizontalScrollIndicator={false}
           onViewableItemsChanged={onViewRef.current}
           viewabilityConfig={viewConfigRef.current}
+          showsVerticalScrollIndicator={false}
         />
-      </PageWrapper>
+      {/* </PageWrapper> */}
     </BasicSafeAreaView>
   )
 });

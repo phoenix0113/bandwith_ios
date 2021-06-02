@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useState, useContext, useEffect } from "react";
 import { observer } from "mobx-react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, Keyboard, Text } from "react-native";
 // import InfiniteScroll from "react-infinite-scroll-component";
 
 import {
   CommentsBlock, CommentsBlockHeader, CommentContentText, CommentListWrapper, CloseOutlined, TotalCommentsAmount, CommentText,
-  CommentHeader, CommentItem, HeaderImage, HeaderUsernameText, InputWrapper, SendButton, AllLoadedText, CommentsContentWrapper,
+  CommentHeader, CommentItem, HeaderImage, HeaderUsernameText, InputWrapper, SendButton, AllLoadedText, CommentsContentWrapper
 } from "./styled";
 
 import SendImg from "../../assets/images/SendComment.svg";
@@ -32,6 +32,29 @@ export const CommentsComponent = observer((
     fetchComments, subscribeToComments, totalAmount, loading,
     comments, resetService, sendComment, allCommentsLoaded,
   } = useContext(CommentsStorageContext);
+  
+  const [keyboardStatus, setKeyboardStatus] = useState(undefined);
+  const [keyboardHeight, setKeyboardHeight] = useState("0%");
+  const _keyboardDidShow = () => setKeyboardStatus("Keyboard Shown");
+  const _keyboardDidHide = () => setKeyboardStatus("Keyboard Hidden");
+
+  useEffect(() => {
+    if (keyboardStatus === "Keyboard Shown")
+      setKeyboardHeight("33%");
+    else
+      setKeyboardHeight("0%");
+  }, [keyboardStatus]);
+
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+  }, []);
 
   useEffect(() => {
     subscribeToComments();
@@ -80,7 +103,7 @@ export const CommentsComponent = observer((
 
   return (
     <CommentsContentWrapper>
-      <CommentsBlock visible={visible}>
+      <CommentsBlock visible={visible} style={{bottom: keyboardHeight}}>
         <CommentsBlockHeader>
           <TotalCommentsAmount>{`Comments (${totalAmount})`}</TotalCommentsAmount>
           <CloseOutlined onPress={hide}>
@@ -118,20 +141,23 @@ export const CommentsComponent = observer((
             ))}
           </InfiniteScroll> */}
           <AllLoadedText>You have seen it all</AllLoadedText>
+          <InputWrapper>
+            <CommentText
+              value={inputValue}
+              underlineColorAndroid="transparent"
+              placeholder={"Leave Comment..."}
+              placeholderTextColor={"#ffffff"}
+              numberOfLines={50}
+              multiline={true}
+              enablesReturnKeyAutomatically={true}
+              keyboardType={"default"}
+              onChangeText={text => onChange(text)}
+            />
+            <SendButton onPress={sendCommentHandler}>
+              <SendImg width={"100%"} />
+            </SendButton>
+          </InputWrapper>
         </CommentListWrapper>
-        <InputWrapper>
-          <CommentText
-            underlineColorAndroid="transparent"
-            placeholder={"Leave Comment..."}
-            placeholderTextColor={"#ffffff"}
-            numberOfLines={50}
-            multiline={true}
-            onChangeText={text => onChange(text)}
-          />
-          <SendButton onPress={sendCommentHandler}>
-            <SendImg width={"100%"} />
-          </SendButton>
-        </InputWrapper>
       </CommentsBlock>
     </CommentsContentWrapper>
   );
@@ -139,6 +165,6 @@ export const CommentsComponent = observer((
 
 export const styled = StyleSheet.create({
   feedComment: {
-    maxHeight: "100%",
-  }
+    maxHeight: "80%",
+  },
 })

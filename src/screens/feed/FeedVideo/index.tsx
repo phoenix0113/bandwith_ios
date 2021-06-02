@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { Utils } from "avcore/client";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
 
@@ -22,8 +22,10 @@ import BackToFeedIcon from "../../../assets/images/call/ExitLive.svg";
 import BandwithLogo from "../../../assets/images/Bandwith.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
 import PauseIcon from "../../../assets/images/feed/pause.svg";
+import { widthPercentageToDP } from "react-native-responsive-screen";
 
 const height = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
 
 interface IProps {
   recording: GetRecordResponse;
@@ -43,6 +45,10 @@ export const FeedVideoComponent = observer(({
   const [started, setStarted] = useState(false);
 
   const [showPlayBtn, setShowPlayBtn] = useState(true);
+
+  const hidePlayBtn = () => {
+    setShowPlayBtn(true);
+  }
 
   const changePlaybackStatus = () => {
     if (!playerRef) return;
@@ -129,10 +135,10 @@ export const FeedVideoComponent = observer(({
 
   return (
     <>
-      <FeedPlayerContentWrapper>
+      <FeedPlayerContentWrapper onPress={hidePlayBtn}>
         <FeedPlayerToolTip onPress={changePlaybackStatus}>
           {
-            (showPlayBtn) ? <PlayIcon /> : <PauseIcon />
+            (showPlayBtn) ? <PlayIcon /> : <></>
           }
         </FeedPlayerToolTip>
       </FeedPlayerContentWrapper>
@@ -154,7 +160,7 @@ export const FeedVideoComponent = observer(({
           // ref={playerRef}
           source={{uri: recording.list[0].url}}
           resizeMode="cover"
-          style={styled.feedVideo}
+          style={styles.feedVideo}
           loop
         />
       )}
@@ -176,9 +182,9 @@ export const FeedVideoComponent = observer(({
   );
 });
 
-const styled = StyleSheet.create({
+const styles = StyleSheet.create({
   feedVideo: {
     flex: 1,
-    height: height * 0.778,
-  }
+    height: height,
+  },
 });
