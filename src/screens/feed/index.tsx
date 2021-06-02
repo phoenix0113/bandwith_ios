@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { FlatList, StyleSheet, Share, ShareContent } from "react-native";
+import { FlatList, StyleSheet, Share, ShareContent, Dimensions } from "react-native";
 // import { useHistory, useLocation } from "react-router-dom";
 // import { parse } from "query-string";
 // import { Utils } from "avcore/client";
 import {
-  NavigationBar, LeftItem, CenterItem, RightItem, PageWrapper, NavigationText, BasicSafeAreaView,
+  NavigationBar, LeftItem, CenterItem, RightItem, NavigationText, BasicSafeAreaView,
 } from "../../components/styled";
 // import { BottomNavigationComponent } from "../../components/BottomNavigation";
 import { CommentsComponent } from "../../components/Comments";
 
-import { BasicContentWrapper } from "./styled";
+import { PageContent, BasicContentWrapper } from "./styled";
 
 import { FeedItemComponent } from "./FeedItem";
 import { HintComponent } from "../../components/Hint";
@@ -42,7 +42,7 @@ export const FeedScreen = observer(() => {
   // const { search } = useLocation();
   // const history = useHistory();
   const [sharedRecordingId, setSharedRecordingId] = useState(null);
-  
+
   // useEffect(() => {
   //   if (search) {
   //     const parsed = parse(search);
@@ -134,17 +134,17 @@ export const FeedScreen = observer(() => {
 
   // const [shareStatus, setShareStatus] = useState(false);
 
-  const onViewRef = useRef((viewableItems)=> {
+  const onViewRef = useRef((viewableItems) => {
     let item = viewableItems;
     let currentRecording = item.changed[0]["item"];
     setCurrentRecording(currentRecording._id);
   });
 
-  const viewConfigRef = useRef({ 
+  const viewConfigRef = useRef({
     viewAreaCoveragePercentThreshold: 50
   });
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     return (
       <BasicContentWrapper>
         <FeedItemComponent
@@ -160,8 +160,8 @@ export const FeedScreen = observer(() => {
   };
   return (
     <BasicSafeAreaView>
-      {/* <PageWrapper>
-        <NavigationBar>
+      <PageContent>
+        {/* <NavigationBar>
           <LeftItem />
           <CenterItem>
             <NavigationText>Feed</NavigationText>
@@ -169,7 +169,7 @@ export const FeedScreen = observer(() => {
           <RightItem />
         </NavigationBar> */}
 
-         {recordUser && (
+        {recordUser && (
           <RecordUserComponent
             closeHandler={closeRecordUser}
             user={recordUser}
@@ -209,7 +209,7 @@ export const FeedScreen = observer(() => {
           viewabilityConfig={viewConfigRef.current}
           showsVerticalScrollIndicator={false}
         />
-      {/* </PageWrapper> */}
+      </PageContent>
     </BasicSafeAreaView>
   )
 });

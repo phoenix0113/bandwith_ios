@@ -178,6 +178,7 @@ export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
   justify-content: ${({justifyContent}) => justifyContent || "center"};
   align-items: center;
   width: 100%;
+  height: 100%;
   flex: 1;
 `;
 

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { View } from "react-native";
+import { View, Platform, Dimensions } from "react-native";
 
 import { observer } from "mobx-react";
 import { VideoWrapper } from "../styled";
@@ -24,6 +24,8 @@ export const FeedItemComponent  = observer((
   const [itemRef, setItemRef] = useState<View>(null);
 
   const { currentRecording } = useContext(FeedStorageContext);
+
+  const windowHeight = Dimensions.get('window').height;
 
   // useEffect(() => {
   //   if (itemRef) {

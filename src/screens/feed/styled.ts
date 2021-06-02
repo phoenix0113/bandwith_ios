@@ -18,6 +18,22 @@ interface BasicContentWrapperProps {
   justifyContent?: "center" | "space-between";
 }
 
+interface PageWrapperProps {
+  background?: string;
+  paddingHorizontal?: string;
+  justifyContent?: "space-between"|"flex-start";
+}
+
+export const PageContent = styled.View<PageWrapperProps>`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: ${({justifyContent}) => justifyContent || "flex-start"};
+  align-items: center;
+  background-color: ${({ background }) => background || COLORS.BLACK};
+`;
+
+
 export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
   position: relative;
   flex-direction: column;
@@ -31,7 +47,7 @@ export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
 export const VideoWrapper = styled.View<VideoWrapperProps>`
   display: flex;
   width: 100%;
-  height: ${windowHeight * 0.858}px;
+  height: 100%;
   flex: 1;
   z-index: ${({ sharedRecording }) => (sharedRecording ? Z_INDEX.HIGH : 1)};
 `;

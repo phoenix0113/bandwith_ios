@@ -10,6 +10,9 @@ import {
 } from "../styled";
 import { CallPageToolbar } from "../../../components/styled";
 
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from "react-native-safe-area-view";
+
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.svg";
 import { SocketServiceInstance, SocketServiceContext } from "../../../services/socket";
 import { UserServiceInstance } from "../../../services/user";
@@ -23,9 +26,8 @@ import BandwithLogo from "../../../assets/images/Bandwith.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
 import PauseIcon from "../../../assets/images/feed/pause.svg";
 import { widthPercentageToDP } from "react-native-responsive-screen";
-
-const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
+import { setWeek } from "date-fns/esm";
+import { tabBarHeight } from "../../../utils/styles";
 
 interface IProps {
   recording: GetRecordResponse;
@@ -45,6 +47,11 @@ export const FeedVideoComponent = observer(({
   const [started, setStarted] = useState(false);
 
   const [showPlayBtn, setShowPlayBtn] = useState(true);
+
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const insets = useSafeAreaInsets();
+  const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
 
   const hidePlayBtn = () => {
     setShowPlayBtn(true);
@@ -95,6 +102,11 @@ export const FeedVideoComponent = observer(({
     }
     console.log(`> Shared recording ${recording._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
   };
+
+  const onEnd = () => {
+    setShowPlayBtn(true);
+    setCurrentTime(0);
+  }
 
   useEffect(() => {
     if (playerRef && playerRef.current) {
@@ -155,14 +167,20 @@ export const FeedVideoComponent = observer(({
       </AddToFriendsWrapper>
 
       {!!recording?.list?.length && (
-        <Video
-          paused={showPlayBtn}
-          // ref={playerRef}
-          source={{uri: recording.list[0].url}}
-          resizeMode="cover"
-          style={styles.feedVideo}
-          loop
-        />
+        <SafeAreaProvider>
+          <SafeAreaView>
+            <Video
+              paused={showPlayBtn}
+              source={{uri: recording.list[0].url}}
+              onEnd={onEnd}
+              resizeMode="cover"
+              style={{height: height}}
+              currentTime={currentTime}
+              repeat={true}
+              loop
+            />
+          </SafeAreaView>
+        </SafeAreaProvider>
       )}
 
       <CallPageToolbar>
@@ -184,7 +202,7 @@ export const FeedVideoComponent = observer(({
 
 const styles = StyleSheet.create({
   feedVideo: {
+    position: "relative",
     flex: 1,
-    height: height,
   },
 });
