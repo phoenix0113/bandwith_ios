@@ -8,8 +8,7 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem,
-  NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView,
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView
 } from "../../components/styled";
 import { InputLabel, InputGroup } from "../login/styled";
 import { UserServiceInstance } from "../../services/user";
@@ -42,8 +41,7 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
 
   return (
     <BasicSafeAreaView>
-      <PageWrapper justifyContent="space-between">
-
+      <PageWrapper justifyContent="space-around">
         <NavigationBar>
           <LeftItem onPress={() => navigation.navigate("Welcome")}>
             <BackButtonIcon />
@@ -115,7 +113,6 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
         >
           <BasicButtonText>REGISTER</BasicButtonText>
         </BasicButton>
-
       </PageWrapper>
     </BasicSafeAreaView>
   );

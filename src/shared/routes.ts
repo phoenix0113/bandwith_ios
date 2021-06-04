@@ -27,6 +27,8 @@ export const PATH = {
   VERIFY_CODE: "verifyCode",
   PHONE: "phone",
   IMPORT: "contactsImport",
+  FORGOT_PASSWORD: "forgot-password",
+  RESET_PASSWORD: "reset-password",
 };
 
 export const API = {
@@ -54,4 +56,6 @@ export const API = {
   VERIFY_CODE: `${PATH.API}/${PATH.USER}/${PATH.VERIFY_CODE}`,
   UPDATE_PHONE: `${PATH.API}/${PATH.USER}/${PATH.PHONE}`,
   IMPORT_CONTACTS: `${PATH.API}/${PATH.CONTACTS}/${PATH.IMPORT}`,
+  GET_VERIFY_CODE: `${PATH.API}/${PATH.USER}/${PATH.FORGOT_PASSWORD}/${PATH.VERIFY_CODE}`,
+  RESET_PASSWORD: `${PATH.API}/${PATH.USER}/${PATH.RESET_PASSWORD}`,
 };

@@ -1,8 +1,8 @@
 const servers = {
-  DEV_URL: "https://bandwith.codeda.com",
+  DEV_URL: "http://localhost:8000",
   PROD_URL: "https://app.bandwwith.com",
   TELEPORT_DEV_URL: "https://teleport-dev.codeda.com",
-  LOCAL_DOCKER_URL: "http://localhost:1380",
+  LOCAL_DOCKER_URL: "http://localhost:8000",
 };
 
 export const SERVER_BASE_URL = servers.DEV_URL;
@@ -12,6 +12,14 @@ console.log(`> Using ${SERVER_BASE_URL} server`);
 export const SEND_LOGS_THRESHOLD = 5;
 
 export const TOKEN_STORAGE_KEY = "TOKEN";
+
+export const VERIFY_CODE = "VERIFY_CODE";
+
+export const VERIFY_STATUS = "VERIFY_STATUS";
+
+export const EMAIL = "EMAIL";
+
+export const RESET_PASSWORD_STATUS = "RESET_PASSWORD_STATUS";
 
 export const SMS_REQUEST_ID = "SMS_REQUEST_ID";
 

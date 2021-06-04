@@ -8,6 +8,9 @@ export type WelcomeStackParamList = {
   IncomingCall: undefined;
   OutgoingCall: undefined;
   PhoneSetup: undefined;
+  ForgotPassword: undefined;
+  VerifyCode: undefined;
+  ResetPassword: undefined;
 };
 
 export enum WelcomeScreensEnum {
@@ -18,6 +21,9 @@ export enum WelcomeScreensEnum {
   IncomingCall="IncomingCall",
   OutgoingCall="OutgoingCall",
   PhoneSetup="PhoneSetup",
+  ForgotPassword="ForgotPassword",
+  VerifyCode="VerifyCode",
+  ResetPassword="ResetPassword",
 }
 
 export type WelcomeScreenNavigationProps = StackNavigationProp<

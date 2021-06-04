@@ -6,7 +6,7 @@ import {
   AuthResponse, LoginRequest, AvcoreAuthResponse, CloudCredentials,
   OAuthGoogleRequest, RegistrationRequest, UserProfileRequest, UserProfileResponse,
   SetReadHintRequest, SetReadHintResponse, SendSMSRequest, BasicResponse, VerifyCodeRequest,
-  UpdatePhoneRequest, NexmoResponse,
+  UpdatePhoneRequest, NexmoResponse, GetVerifyCodeRequest, GetVerifyCodeResponse, ResetPasswordResponse
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
@@ -139,3 +139,26 @@ export const updatePhoneRequest = async (request: UpdatePhoneRequest): Promise<U
     throw new Error(getError(response));
   }
 };
+
+export const getVerifyCodeRequest = async (request: GetVerifyCodeRequest): Promise<GetVerifyCodeResponse> => {
+  try {
+    const response = await instance.post<GetVerifyCodeResponse>(API.GET_VERIFY_CODE, request);
+
+    return response.data;
+    // return ({ code: "111111" });
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+}
+
+export const resetPasswordRequest = async (request: LoginRequest): Promise<ResetPasswordResponse> => {
+  try {
+    const response = await instance.post<ResetPasswordResponse>(API.RESET_PASSWORD, request);
+    return response.data;
+    // return ({ code: "200" });
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+}

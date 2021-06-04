@@ -30,8 +30,8 @@ export const PhoneSetupStep = ({ sendSms }: IProps) => {
   };
 
   return (
-    <BasicContentWrapper justifyContent="space-between">
-      <BasicContentWrapper>
+    <BasicContentWrapper justifyContent="space-around">
+      <BasicContentWrapper justifyContent="space-around">
         <InputGroup>
           <PhoneInput
             ref={phoneInput}

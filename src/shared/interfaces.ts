@@ -69,6 +69,18 @@ export interface UpdatePhoneRequest {
   countryCode: string;
 }
 
+export interface GetVerifyCodeRequest {
+  email: string;
+}
+
+export interface GetVerifyCodeResponse {
+  code: string;
+}
+
+export interface ResetPasswordResponse {
+  code: string;
+}
+
 // TODO: most likely some user data has to be here
 export interface SubscribeToFirebasePushesRequest {
   token: string;

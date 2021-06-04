@@ -8,14 +8,14 @@ import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-si
 
 import { CloudCredentials, UserProfileResponse } from "../shared/interfaces";
 import {
-  loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest,
-  authWithGoogleRequest, sendSMSRequest, verifyCodeRequest, updatePhoneRequest,
+  loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest, resetPasswordRequest,
+  authWithGoogleRequest, sendSMSRequest, verifyCodeRequest, updatePhoneRequest, getVerifyCodeRequest
 } from "../axios/routes/user";
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
 import { WelcomeScreensEnum } from "../navigation/welcome/types";
 import { MainScreensEnum } from "../navigation/main/types";
-import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE } from "../utils/constants";
+import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE, VERIFY_CODE, VERIFY_STATUS, EMAIL, RESET_PASSWORD_STATUS } from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
 
@@ -136,6 +136,90 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         showUnexpectedErrorAlert("login()", err.message);
+      }
+    }
+  }
+
+  public forgotPassword = async (email:string) => {
+    try {
+      const { code } = await getVerifyCodeRequest({
+        email: email.toLowerCase(),
+      });
+
+      console.log(`> Forgot Password Request send`, code);
+      this.saveVerifyCodeToStorage(code);
+      this.saveEmailToStorage(email.toLowerCase());
+      navigateToScreen("VerifyCode");
+
+    } catch (err) {
+      if (!AppServiceInstance.netAccessible) {
+        showNetworkErrorAlert();
+      } else {
+        showUnexpectedErrorAlert("forgotPassword()", err.message);
+      }
+    }
+  }
+
+  private saveEmailToStorage = async (email: string) => {
+    try {
+      await AsyncStorage.setItem(EMAIL, email);
+      console.log(`> Email was saved: ${email.substring(0, 10)}`);
+    } catch (err) {
+      console.error(`>> save verify code error: ${err.message}`);
+    }
+  }
+
+  private saveVerifyCodeToStorage = async (code:string) => {
+    try {
+      let verify_code = md5(code);
+      await AsyncStorage.setItem(VERIFY_CODE, verify_code);
+      console.log(`> Verify code was saved: ${verify_code.substring(0, 10)}`);
+    } catch (err) {
+      console.error(`>> save verify code error: ${err.message}`);
+    }
+  }
+
+  public verifyCode = async (code:string) => {
+    await AsyncStorage.setItem(VERIFY_STATUS, "VERIFY_STATUS");
+    try {
+      const storageCode = await AsyncStorage.getItem(VERIFY_CODE);
+      if(md5(code) === storageCode) {
+        console.log(`> Verify code was success: ${storageCode.substring(0, 10)}`);
+        navigateToScreen("ResetPassword");
+      } else {
+        await AsyncStorage.setItem(VERIFY_STATUS, "Your verify code not match now. Please check your email again.");
+        console.log(`> Verify code was failed: ${storageCode.substring(0, 10)}`);
+        navigateToScreen("VerifyCode");
+      }
+    } catch (err) {
+      console.error(`>> Verify code error: ${err.message}`);
+    }
+    
+  }
+
+  public resetPassword = async (password: string) => {
+    await AsyncStorage.setItem(VERIFY_STATUS, "VERIFY_STATUS");
+    await AsyncStorage.setItem(RESET_PASSWORD_STATUS, "RESET_PASSWORD_STATUS");
+    try {
+      const email = await AsyncStorage.getItem(EMAIL);
+      const { code } = await resetPasswordRequest({
+        email: email.toLowerCase(),
+        password: password,
+      });
+
+      if (code === "200") {
+        console.log(`> Reset Password was success`, code);
+        navigateToScreen("Login");
+      } else {
+        await AsyncStorage.setItem(RESET_PASSWORD_STATUS, "Reset password was failed. Please again.");
+        console.log(`> Reset Password was failed`, code);
+        navigateToScreen("ResetPassword");
+      }
+    } catch (err) {
+      if (!AppServiceInstance.netAccessible) {
+        showNetworkErrorAlert();
+      } else {
+        showUnexpectedErrorAlert("resetPassword()", err.message);
       }
     }
   }

@@ -118,7 +118,7 @@ export const BasicButtonText = styled.Text<BasicButtonTextProps>`
 interface PageWrapperProps {
   background?: string;
   paddingHorizontal?: string;
-  justifyContent?: "space-between"|"flex-start";
+  justifyContent?: "space-around"|"flex-start";
 }
 
 export const PageWrapper = styled.View<PageWrapperProps>`
@@ -169,7 +169,7 @@ export const SpinnerOverlayText = StyleSheet.create({
 });
 
 interface BasicContentWrapperProps {
-  justifyContent?: "center" | "space-between";
+  justifyContent?: "center" | "space-between" | "space-around";
 }
 
 export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
@@ -204,3 +204,7 @@ export const CommonImgWrapper = styled.TouchableOpacity<ICommonImgWrapperProps>`
 interface ICommonImgWrapperProps {
   width?: string;
 }
+
+export const ContentGroup = styled.View`
+  width: 100%;
+`;

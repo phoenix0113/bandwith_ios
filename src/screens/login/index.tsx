@@ -8,8 +8,7 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem,
-  NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView,
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ContentGroup
 } from "../../components/styled";
 import { InputLabel, InputGroup } from "./styled";
 import { UserServiceInstance } from "../../services/user";
@@ -37,7 +36,7 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
 
   return (
     <BasicSafeAreaView>
-      <PageWrapper justifyContent="space-between">
+      <PageWrapper justifyContent="space-around">
 
         <NavigationBar>
           <LeftItem onPress={() => navigation.navigate("Welcome")}>
@@ -76,14 +75,22 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
           />
         </InputGroup>
 
-        <BasicButton
-          width="100%"
-          disabled={isSubmitDisabled}
-          onPress={onSubmit}
-        >
-          <BasicButtonText>LOGIN</BasicButtonText>
-        </BasicButton>
+        <ContentGroup>
+          <BasicButton
+            width="100%"
+            disabled={isSubmitDisabled}
+            onPress={onSubmit}
+          >
+            <BasicButtonText>LOGIN</BasicButtonText>
+          </BasicButton>
 
+          <BasicButton
+            width="100%"
+            onPress={() => navigation.navigate("ForgotPassword")}
+          >
+            <BasicButtonText>FORGOT PASSWORD</BasicButtonText>
+          </BasicButton>
+        </ContentGroup>
       </PageWrapper>
     </BasicSafeAreaView>
   );

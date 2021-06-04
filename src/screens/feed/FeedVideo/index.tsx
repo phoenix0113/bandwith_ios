@@ -174,7 +174,7 @@ export const FeedVideoComponent = observer(({
               source={{uri: recording.list[0].url}}
               onEnd={onEnd}
               resizeMode="cover"
-              style={{height: height}}
+              style={{height: height + 4}}
               currentTime={currentTime}
               repeat={true}
               loop
