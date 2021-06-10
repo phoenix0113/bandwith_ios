@@ -1,8 +1,8 @@
 const servers = {
-  DEV_URL: "http://localhost:8000",
+  DEV_URL: "https://bandwith.codeda.com",
   PROD_URL: "https://app.bandwwith.com",
   TELEPORT_DEV_URL: "https://teleport-dev.codeda.com",
-  LOCAL_DOCKER_URL: "http://localhost:8000",
+  LOCAL_DOCKER_URL: "http://localhost:1380",
 };
 
 export const SERVER_BASE_URL = servers.DEV_URL;

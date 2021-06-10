@@ -145,7 +145,6 @@ export const getVerifyCodeRequest = async (request: GetVerifyCodeRequest): Promi
     const response = await instance.post<GetVerifyCodeResponse>(API.GET_VERIFY_CODE, request);
 
     return response.data;
-    // return ({ code: "111111" });
   } catch (err) {
     const { response } = err as IAxiosError;
     throw new Error(getError(response));
@@ -156,7 +155,6 @@ export const resetPasswordRequest = async (request: LoginRequest): Promise<Reset
   try {
     const response = await instance.post<ResetPasswordResponse>(API.RESET_PASSWORD, request);
     return response.data;
-    // return ({ code: "200" });
   } catch (err) {
     const { response } = err as IAxiosError;
     throw new Error(getError(response));

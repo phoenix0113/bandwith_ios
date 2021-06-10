@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { Keyboard } from "react-native";
 import { Input } from "react-native-elements";
 
 import { LoginScreenNavigationProps } from "../../navigation/welcome/types";
@@ -8,7 +9,7 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ContentGroup
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ContentGroup, ScrollViewContent
 } from "../../components/styled";
 import { InputLabel, InputGroup } from "./styled";
 import { UserServiceInstance } from "../../services/user";
@@ -23,6 +24,21 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
 
   const emailErrorMessage = useMemo(() => email === null ? "" : getEmailErrorMessage(email), [email]);
   const passwordErrorMessage = useMemo(() => password === null ? "" : getPasswordErrorMessage(password), [password]);
+
+  const [keyboardStatus, setKeyboardStatus] = useState(undefined);
+  const _keyboardDidShow = () => setKeyboardStatus("Keyboard Shown");
+  const _keyboardDidHide = () => setKeyboardStatus("Keyboard Hidden");
+
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+  }, []);
 
   const onSubmit = async () => {
     if (email && password){
@@ -50,47 +66,49 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
 
         <BandwwithTextLogo width="50%" />
 
-        <InputGroup>
-          <InputLabel>Your gmail is required for login</InputLabel>
-          <Input
-            onChangeText={(value: string) => setEmail(value)}
-            placeholder="ENTER YOUR EMAIL"
-            autoCorrect={false}
-            errorMessage={emailErrorMessage}
-            inputStyle={inputStyles.inputText}
-            containerStyle={inputStyles.inputContainer}
-          />
-        </InputGroup>
+        <ScrollViewContent justifyContent={(keyboardStatus === "Keyboard Shown") ? "space-between" : "space-around"}>
+          <InputGroup>
+            <InputLabel>Your gmail is required for login</InputLabel>
+            <Input
+              onChangeText={(value: string) => setEmail(value)}
+              placeholder="ENTER YOUR EMAIL"
+              autoCorrect={false}
+              errorMessage={emailErrorMessage}
+              inputStyle={inputStyles.inputText}
+              containerStyle={inputStyles.inputContainer}
+            />
+          </InputGroup>
 
-        <InputGroup>
-          <InputLabel>Your password it's your safety</InputLabel>
-          <Input
-            secureTextEntry={true}
-            onChangeText={(value: string) => setPassword(value)}
-            placeholder="ENTER YOUR PASSWORD"
-            textContentType="oneTimeCode"
-            errorMessage={passwordErrorMessage}
-            inputStyle={inputStyles.inputText}
-            containerStyle={inputStyles.inputContainer}
-          />
-        </InputGroup>
+          <InputGroup>
+            <InputLabel>Your password it's your safety</InputLabel>
+            <Input
+              secureTextEntry={true}
+              onChangeText={(value: string) => setPassword(value)}
+              placeholder="ENTER YOUR PASSWORD"
+              textContentType="oneTimeCode"
+              errorMessage={passwordErrorMessage}
+              inputStyle={inputStyles.inputText}
+              containerStyle={inputStyles.inputContainer}
+            />
+          </InputGroup>
 
-        <ContentGroup>
-          <BasicButton
-            width="100%"
-            disabled={isSubmitDisabled}
-            onPress={onSubmit}
-          >
-            <BasicButtonText>LOGIN</BasicButtonText>
-          </BasicButton>
+          <ContentGroup>
+            <BasicButton
+              width="100%"
+              disabled={isSubmitDisabled}
+              onPress={onSubmit}
+            >
+              <BasicButtonText>LOGIN</BasicButtonText>
+            </BasicButton>
 
-          <BasicButton
-            width="100%"
-            onPress={() => navigation.navigate("ForgotPassword")}
-          >
-            <BasicButtonText>FORGOT PASSWORD</BasicButtonText>
-          </BasicButton>
-        </ContentGroup>
+            <BasicButton
+              width="100%"
+              onPress={() => navigation.navigate("ForgotPassword")}
+            >
+              <BasicButtonText>FORGOT PASSWORD</BasicButtonText>
+            </BasicButton>
+          </ContentGroup>
+        </ScrollViewContent>  
       </PageWrapper>
     </BasicSafeAreaView>
   );

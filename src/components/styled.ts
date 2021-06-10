@@ -118,7 +118,7 @@ export const BasicButtonText = styled.Text<BasicButtonTextProps>`
 interface PageWrapperProps {
   background?: string;
   paddingHorizontal?: string;
-  justifyContent?: "space-around"|"flex-start";
+  justifyContent?: "space-around"|"flex-start"|"space-between";
 }
 
 export const PageWrapper = styled.View<PageWrapperProps>`
@@ -207,4 +207,9 @@ interface ICommonImgWrapperProps {
 
 export const ContentGroup = styled.View`
   width: 100%;
+`;
+
+export const ScrollViewContent = styled.ScrollView<PageWrapperProps>`
+  width: 100%;
+  margin-bottom: 0;
 `;

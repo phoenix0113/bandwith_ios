@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { Keyboard } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 import Icon from "react-native-vector-icons/AntDesign";
 
-import { BasicContentWrapper, COLORS, BasicButton, BasicButtonText } from "../../../components/styled";
+import { BasicContentWrapper, COLORS, BasicButton, BasicButtonText, ScrollViewContent } from "../../../components/styled";
 import { InputValidationText, styles } from "./../styled";
 import { InputGroup } from "../../login/styled";
 
@@ -28,6 +29,21 @@ export const PhoneSetupStep = ({ sendSms }: IProps) => {
   const onSubmit = async () => {
     sendSms(formattedPhone, phoneInput.current.getCountryCode());
   };
+
+  const [keyboardStatus, setKeyboardStatus] = useState(undefined);
+  const _keyboardDidShow = () => setKeyboardStatus("Keyboard Shown");
+  const _keyboardDidHide = () => setKeyboardStatus("Keyboard Hidden");
+
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+  }, []);
 
   return (
     <BasicContentWrapper justifyContent="space-around">

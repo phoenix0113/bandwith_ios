@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { Keyboard } from "react-native";
 import { Input } from "react-native-elements";
 
 import { RegistrationScreenNavigationProps } from "../../navigation/welcome/types";
@@ -8,9 +9,9 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ScrollViewContent
 } from "../../components/styled";
-import { InputLabel, InputGroup } from "../login/styled";
+import { InputLabel, InputGroup } from "./styled";
 import { UserServiceInstance } from "../../services/user";
 
 type WithNavigatorScreen = {
@@ -34,6 +35,21 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
     }
   };
 
+  const [keyboardStatus, setKeyboardStatus] = useState(undefined);
+  const _keyboardDidShow = () => setKeyboardStatus("Keyboard Shown");
+  const _keyboardDidHide = () => setKeyboardStatus("Keyboard Hidden");
+
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+  }, []);
+
   const isSubmitDisabled = useMemo(() => {
     return !username || !email || !password || !rPassword
       || !!usernameErrorMessage || !!emailErrorMessage || !!passwordErrorMessage || !!rPasswordErrorMessage;
@@ -54,65 +70,67 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
 
         <BandwwithTextLogo width="50%" />
 
-        <InputGroup>
-          <InputLabel>Username it's your identity</InputLabel>
-          <Input
-            onChangeText={(value: string) => setUsername(value)}
-            placeholder="ENTER YOUR USERNAME"
-            autoCorrect={false}
-            textContentType="oneTimeCode"
-            errorMessage={usernameErrorMessage}
-            inputStyle={inputStyles.inputText}
-            containerStyle={inputStyles.inputContainer}
-          />
-        </InputGroup>
+        <ScrollViewContent justifyContent={(keyboardStatus === "Keyboard Shown") ? "space-between" : "space-around"}>
+          <InputGroup>
+            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Username it's your identity</InputLabel>
+            <Input
+              onChangeText={(value: string) => setUsername(value)}
+              placeholder="ENTER YOUR USERNAME"
+              autoCorrect={false}
+              textContentType="oneTimeCode"
+              errorMessage={usernameErrorMessage}
+              inputStyle={inputStyles.inputText}
+              containerStyle={inputStyles.inputContainer}
+            />
+          </InputGroup>
 
-        <InputGroup>
-          <InputLabel>Your gmail is required for login</InputLabel>
-          <Input
-            onChangeText={(value: string) => setEmail(value)}
-            placeholder="ENTER YOUR EMAIL"
-            autoCorrect={false}
-            textContentType="oneTimeCode"
-            errorMessage={emailErrorMessage}
-            inputStyle={inputStyles.inputText}
-            containerStyle={inputStyles.inputContainer}
-          />
-        </InputGroup>
+          <InputGroup>
+            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your gmail is required for login</InputLabel>
+            <Input
+              onChangeText={(value: string) => setEmail(value)}
+              placeholder="ENTER YOUR EMAIL"
+              autoCorrect={false}
+              textContentType="oneTimeCode"
+              errorMessage={emailErrorMessage}
+              inputStyle={inputStyles.inputText}
+              containerStyle={inputStyles.inputContainer}
+            />
+          </InputGroup>
 
-        <InputGroup>
-          <InputLabel>Your password it's your safety</InputLabel>
-          <Input
-            secureTextEntry={true}
-            onChangeText={(value: string) => setPassword(value)}
-            placeholder="ENTER YOUR PASSWORD"
-            textContentType="oneTimeCode"
-            errorMessage={passwordErrorMessage}
-            inputStyle={inputStyles.inputText}
-            containerStyle={inputStyles.inputContainer}
-          />
-        </InputGroup>
+          <InputGroup>
+            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your password it's your safety</InputLabel>
+            <Input
+              secureTextEntry={true}
+              onChangeText={(value: string) => setPassword(value)}
+              placeholder="ENTER YOUR PASSWORD"
+              textContentType="oneTimeCode"
+              errorMessage={passwordErrorMessage}
+              inputStyle={inputStyles.inputText}
+              containerStyle={inputStyles.inputContainer}
+            />
+          </InputGroup>
 
-        <InputGroup>
-          <InputLabel>Your password it's your safety</InputLabel>
-          <Input
-            secureTextEntry={true}
-            onChangeText={(value: string) => setRPassword(value)}
-            placeholder="REPEAT YOUR PASSWORD"
-            textContentType="oneTimeCode"
-            errorMessage={rPasswordErrorMessage}
-            inputStyle={inputStyles.inputText}
-            containerStyle={inputStyles.inputContainer}
-          />
-        </InputGroup>
+          <InputGroup>
+            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your password it's your safety</InputLabel>
+            <Input
+              secureTextEntry={true}
+              onChangeText={(value: string) => setRPassword(value)}
+              placeholder="REPEAT YOUR PASSWORD"
+              textContentType="oneTimeCode"
+              errorMessage={rPasswordErrorMessage}
+              inputStyle={inputStyles.inputText}
+              containerStyle={inputStyles.inputContainer}
+            />
+          </InputGroup>
 
-        <BasicButton
-          width="100%"
-          disabled={isSubmitDisabled}
-          onPress={onSubmit}
-        >
-          <BasicButtonText>REGISTER</BasicButtonText>
-        </BasicButton>
+          <BasicButton
+            width="100%"
+            disabled={isSubmitDisabled}
+            onPress={onSubmit}
+          >
+            <BasicButtonText>REGISTER</BasicButtonText>
+          </BasicButton>
+        </ScrollViewContent>
       </PageWrapper>
     </BasicSafeAreaView>
   );

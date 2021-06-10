@@ -10,7 +10,7 @@ export const InputLabel = styled.Text`
   letter-spacing: 0.64px;
   text-align: left;
   color: ${COLORS.WHITE};
-  margin: 30px 0;
+  margin: 20px 0;
 `;
 
 export const InputGroup = styled.View`
