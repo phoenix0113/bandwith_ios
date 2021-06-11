@@ -71,6 +71,11 @@ export interface UpdatePhoneRequest {
 
 export interface GetVerifyCodeRequest {
   email: string;
+  role: string;
+}
+
+export interface ResetPasswordRequest extends GetVerifyCodeRequest {
+  password: string;
 }
 
 export interface GetVerifyCodeResponse {

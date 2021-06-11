@@ -144,9 +144,10 @@ class UserService {
     try {
       const { code } = await getVerifyCodeRequest({
         email: email.toLowerCase(),
+        role: "user",
       });
 
-      console.log(`> Forgot Password Request send`, code);
+      console.log(`> Forgot Password Request sent`);
       this.saveVerifyCodeToStorage(code);
       this.saveEmailToStorage(email.toLowerCase());
       navigateToScreen("VerifyCode");

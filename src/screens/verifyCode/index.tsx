@@ -10,7 +10,7 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ContentGroup
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ContentGroup, ScrollViewContent,
 } from "../../components/styled";
 import { InputLabel, InputGroup } from "./styled";
 import { UserServiceInstance } from "../../services/user";
@@ -65,27 +65,29 @@ export const VerifyCodeScreen = ({navigation}: WithNavigatorScreen) => {
 
         <BandwwithTextLogo width="50%" />
 
-        <ContentGroup>
-          <InputGroup>
-            <InputLabel>Please input verify code here</InputLabel>
-            <Input
-              onChangeText={(value: string) => changeCode(value)}
-              placeholder="ENTER VERIFY CODE"
-              autoCorrect={false}
-              errorMessage={codeErrorMessage}
-              inputStyle={inputStyles.inputText}
-              containerStyle={inputStyles.inputContainer}
-            />
-          </InputGroup>
+        <ScrollViewContent justifyContent="space-around">
+          <ContentGroup>
+            <InputGroup>
+              <InputLabel>Please input verify code here</InputLabel>
+              <Input
+                onChangeText={(value: string) => changeCode(value)}
+                placeholder="ENTER VERIFY CODE"
+                autoCorrect={false}
+                errorMessage={codeErrorMessage}
+                inputStyle={inputStyles.inputText}
+                containerStyle={inputStyles.inputContainer}
+              />
+            </InputGroup>
 
-          <BasicButton
-            width="100%"
-            disabled={isSubmitDisabled}
-            onPress={onSubmit}
-          >
-            <BasicButtonText>VERIFY</BasicButtonText>
-          </BasicButton>
-        </ContentGroup>
+            <BasicButton
+              width="100%"
+              disabled={isSubmitDisabled}
+              onPress={onSubmit}
+            >
+              <BasicButtonText>VERIFY</BasicButtonText>
+            </BasicButton>
+          </ContentGroup>
+        </ScrollViewContent>
       </PageWrapper>
     </BasicSafeAreaView>
   );
