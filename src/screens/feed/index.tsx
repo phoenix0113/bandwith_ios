@@ -1,13 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { FlatList, StyleSheet, Share, ShareContent, Dimensions } from "react-native";
-// import { useHistory, useLocation } from "react-router-dom";
-// import { parse } from "query-string";
-// import { Utils } from "avcore/client";
+import { FlatList, StyleSheet, Share, ShareContent } from "react-native";
 import {
-  NavigationBar, LeftItem, CenterItem, RightItem, NavigationText, BasicSafeAreaView,
+  BasicSafeAreaView,
 } from "../../components/styled";
-// import { BottomNavigationComponent } from "../../components/BottomNavigation";
 import { CommentsComponent } from "../../components/Comments";
 
 import { PageContent, BasicContentWrapper } from "./styled";
@@ -38,18 +34,8 @@ export const FeedScreen = observer(() => {
   recordings.map((recording) => {
     console.log(recording.user);
   })
-
-  // const { search } = useLocation();
-  // const history = useHistory();
+  
   const [sharedRecordingId, setSharedRecordingId] = useState(null);
-
-  // useEffect(() => {
-  //   if (search) {
-  //     const parsed = parse(search);
-  //     console.log("> Parsed search params: ", parsed);
-  //     setSharedRecordingId(parsed[Params.RECORDING_ID]);
-  //   }
-  // }, [search]);
 
   useEffect(() => {
     if (sharedRecordingId) {
@@ -83,56 +69,12 @@ export const FeedScreen = observer(() => {
   };
 
   const backToFeed = () => {
-    // history.push({ search: null });
     cleanSharedRecording();
   };
-
-  // const scrollableRef = useRef<HTMLDivElement>(null);
-
-  // const [videoObserver, setVideoObserver] = useState(null);
 
   useEffect(() => {
     loadRecordings();
   }, [])
-
-  // useEffect(() => {
-  //   if (scrollableRef.current) {
-  //     const createdObserver = new IntersectionObserver((entries) => {
-  //       console.log("Interaction observer event's entries: ", entries);
-
-  //       entries.forEach((entry) => {
-  //         console.log(`Is safari: ${Utils.isSafari}, entry is intersecting: ${entry.isIntersecting}`);
-
-  //         if (entry.isIntersecting) {
-  //           console.log(`Entry is intersecting ${entry.target?.id}.`);
-  //           setCurrentRecording(entry.target.id);
-  //         } else if (Utils.isSafari) {
-  //           console.log(`For some reason, entry is not intersecting. May need a new method. Scrolling from ${entry.target.id} to the bottom`);
-  //         }
-  //       });
-  //     }, { threshold: 0.8, root: scrollableRef.current });
-
-  //     console.log("Created observer: ", createdObserver);
-
-  //     setVideoObserver(createdObserver);
-  //   }
-  // }, [scrollableRef]);
-
-  // useEffect(() => {
-  //   if (scrollableRef?.current && currentRecording) {
-  //     console.log(`> Scrolling into ${currentRecording._id}`);
-
-  //     const nodes = scrollableRef.current.querySelectorAll(".video_wrapper");
-
-  //     nodes.forEach((n) => {
-  //       if (n.id === currentRecording._id) {
-  //         n.scrollIntoView();
-  //       }
-  //     });
-  //   }
-  // }, [scrollableRef]);
-
-  // const [shareStatus, setShareStatus] = useState(false);
 
   const onViewRef = useRef((viewableItems) => {
     let item = viewableItems;
@@ -149,11 +91,11 @@ export const FeedScreen = observer(() => {
       <BasicContentWrapper>
         <FeedItemComponent
           key={item._id}
-          // observer={videoObserver}
           openRecordUser={openRecordUser}
           recording={item}
           shareCall={shareCall}
           showComments={showComments}
+          paused={(item._id === currentRecording?._id) ? false : true}
         />
       </BasicContentWrapper>
     );
@@ -161,14 +103,6 @@ export const FeedScreen = observer(() => {
   return (
     <BasicSafeAreaView>
       <PageContent>
-        {/* <NavigationBar>
-          <LeftItem />
-          <CenterItem>
-            <NavigationText>Feed</NavigationText>
-          </CenterItem>
-          <RightItem />
-        </NavigationBar> */}
-
         {recordUser && (
           <RecordUserComponent
             closeHandler={closeRecordUser}

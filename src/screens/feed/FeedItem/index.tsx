@@ -11,33 +11,19 @@ import { FeedStorageContext } from "../../../services/feed";
 import { FeedVideoComponent } from "../FeedVideo";
 
 interface IProps {
-  // observer: IntersectionObserver;
   recording: GetRecordResponse;
   showComments: () => void;
   shareCall: (recording: GetRecordResponse) => void;
   openRecordUser: (user: RecordUser) => void;
+  paused: boolean;
 }
 
 export const FeedItemComponent  = observer((
-  { recording, openRecordUser, shareCall, showComments }: IProps) => {
+  { recording, openRecordUser, shareCall, showComments, paused }: IProps) => {
   
   const [itemRef, setItemRef] = useState<View>(null);
 
   const { currentRecording } = useContext(FeedStorageContext);
-
-  const windowHeight = Dimensions.get('window').height;
-
-  // useEffect(() => {
-  //   if (itemRef) {
-  //     observer.observe(itemRef);
-  //   }
-
-  //   return () => {
-  //     if (itemRef) {
-  //       observer.unobserve(itemRef);
-  //     }
-  //   };
-  // }, [observer, itemRef]);
 
   return (
     <VideoWrapper key={recording?._id} ref={setItemRef}>
@@ -47,6 +33,7 @@ export const FeedItemComponent  = observer((
         shareCall={shareCall}
         openRecordUser={openRecordUser}
         currentRecording={currentRecording}
+        paused={paused}
       />
     </VideoWrapper>
   )

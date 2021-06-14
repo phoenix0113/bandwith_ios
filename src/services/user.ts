@@ -18,6 +18,7 @@ import { MainScreensEnum } from "../navigation/main/types";
 import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE, VERIFY_CODE, VERIFY_STATUS, EMAIL, RESET_PASSWORD_STATUS } from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
+import { resolvePlugin } from "@babel/core";
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
@@ -123,6 +124,7 @@ class UserService {
       const { token } = await loginRequest({
         email: email.toLowerCase(),
         password: md5(password),
+        role: "user",
       });
 
       console.log(`> Login token ${token}`);
@@ -205,7 +207,8 @@ class UserService {
       const email = await AsyncStorage.getItem(EMAIL);
       const { code } = await resetPasswordRequest({
         email: email.toLowerCase(),
-        password: password,
+        password: md5(password),
+        role: "user",
       });
 
       if (code === "200") {

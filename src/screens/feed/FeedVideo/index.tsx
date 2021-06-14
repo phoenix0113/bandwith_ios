@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
-import { StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { Utils } from "avcore/client";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
 
 import {
   AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, BackToFeedButton, FeedPlayerContentWrapper, FeedPlayerToolTip,
-  CommonImgWrapper, CommentsFeedItemWrapper,
+  CommonImgWrapper, CommentsFeedItemWrapper, TotalContent,
 } from "../styled";
 import { CallPageToolbar } from "../../../components/styled";
 
@@ -25,7 +25,6 @@ import BackToFeedIcon from "../../../assets/images/call/ExitLive.svg";
 import BandwithLogo from "../../../assets/images/Bandwith.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
 import PauseIcon from "../../../assets/images/feed/pause.svg";
-import { widthPercentageToDP } from "react-native-responsive-screen";
 import { setWeek } from "date-fns/esm";
 import { tabBarHeight } from "../../../utils/styles";
 
@@ -37,16 +36,17 @@ interface IProps {
   shareCall?: (recording: GetRecordResponse) => void;
   backToFeed?: () => void;
   currentRecording?: GetRecordResponse;
+  paused: boolean;
 }
 
 export const FeedVideoComponent = observer(({
-  recording, isShared, showComments, openRecordUser, shareCall, backToFeed, currentRecording,
+  recording, isShared, showComments, openRecordUser, shareCall, backToFeed, currentRecording, paused
 }: IProps) => {
   const { contacts } = useContext(SocketServiceContext);
   const playerRef = useRef<Video>(null);
   const [started, setStarted] = useState(false);
 
-  const [showPlayBtn, setShowPlayBtn] = useState(true);
+  const [showPlayBtn, setShowPlayBtn] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -133,7 +133,9 @@ export const FeedVideoComponent = observer(({
         }
       }
     }
-  }, [playerRef, currentRecording]);
+
+    setShowPlayBtn(paused);
+  }, [playerRef, currentRecording, paused]);
 
   const contentText = useMemo(() => {
     if (UserServiceInstance.profile._id === recording?.user?._id) {
@@ -174,7 +176,7 @@ export const FeedVideoComponent = observer(({
               source={{uri: recording.list[0].url}}
               onEnd={onEnd}
               resizeMode="cover"
-              style={{height: height + 4}}
+              style={{ height: height + 4 }}
               currentTime={currentTime}
               repeat={true}
               loop

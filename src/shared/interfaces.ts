@@ -15,9 +15,13 @@ export interface OAuthFacebookRequest {
   userID: string;
 }
 
-export interface LoginRequest {
+export interface LoginRequest extends RoleRequest {
   email: string;
   password: string;
+}
+
+export interface RoleRequest {
+  role: string;
 }
 
 export interface RegistrationRequest {

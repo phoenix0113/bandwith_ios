@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Keyboard } from "react-native";
 import { Input } from "react-native-elements";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { RegistrationScreenNavigationProps } from "../../navigation/welcome/types";
 import { getPasswordErrorMessage, getEmailErrorMessage, inputStyles, getUsernameErrorMessage } from "../login/utils";
@@ -70,66 +71,68 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
 
         <BandwwithTextLogo width="50%" />
 
-        <ScrollViewContent justifyContent={(keyboardStatus === "Keyboard Shown") ? "space-between" : "space-around"}>
-          <InputGroup>
-            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Username it's your identity</InputLabel>
-            <Input
-              onChangeText={(value: string) => setUsername(value)}
-              placeholder="ENTER YOUR USERNAME"
-              autoCorrect={false}
-              textContentType="oneTimeCode"
-              errorMessage={usernameErrorMessage}
-              inputStyle={inputStyles.inputText}
-              containerStyle={inputStyles.inputContainer}
-            />
-          </InputGroup>
+        <ScrollViewContent justifyContent={"space-around"}>
+          <KeyboardAwareScrollView>
+            <InputGroup>
+              <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Username it's your identity</InputLabel>
+              <Input
+                onChangeText={(value: string) => setUsername(value)}
+                placeholder="ENTER YOUR USERNAME"
+                autoCorrect={false}
+                textContentType="oneTimeCode"
+                errorMessage={usernameErrorMessage}
+                inputStyle={inputStyles.inputText}
+                containerStyle={inputStyles.inputContainer}
+              />
+            </InputGroup>
 
-          <InputGroup>
-            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your gmail is required for login</InputLabel>
-            <Input
-              onChangeText={(value: string) => setEmail(value)}
-              placeholder="ENTER YOUR EMAIL"
-              autoCorrect={false}
-              textContentType="oneTimeCode"
-              errorMessage={emailErrorMessage}
-              inputStyle={inputStyles.inputText}
-              containerStyle={inputStyles.inputContainer}
-            />
-          </InputGroup>
+            <InputGroup>
+              <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your gmail is required for login</InputLabel>
+              <Input
+                onChangeText={(value: string) => setEmail(value)}
+                placeholder="ENTER YOUR EMAIL"
+                autoCorrect={false}
+                textContentType="oneTimeCode"
+                errorMessage={emailErrorMessage}
+                inputStyle={inputStyles.inputText}
+                containerStyle={inputStyles.inputContainer}
+              />
+            </InputGroup>
 
-          <InputGroup>
-            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your password it's your safety</InputLabel>
-            <Input
-              secureTextEntry={true}
-              onChangeText={(value: string) => setPassword(value)}
-              placeholder="ENTER YOUR PASSWORD"
-              textContentType="oneTimeCode"
-              errorMessage={passwordErrorMessage}
-              inputStyle={inputStyles.inputText}
-              containerStyle={inputStyles.inputContainer}
-            />
-          </InputGroup>
+            <InputGroup>
+              <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your password it's your safety</InputLabel>
+              <Input
+                secureTextEntry={true}
+                onChangeText={(value: string) => setPassword(value)}
+                placeholder="ENTER YOUR PASSWORD"
+                textContentType="oneTimeCode"
+                errorMessage={passwordErrorMessage}
+                inputStyle={inputStyles.inputText}
+                containerStyle={inputStyles.inputContainer}
+              />
+            </InputGroup>
 
-          <InputGroup>
-            <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your password it's your safety</InputLabel>
-            <Input
-              secureTextEntry={true}
-              onChangeText={(value: string) => setRPassword(value)}
-              placeholder="REPEAT YOUR PASSWORD"
-              textContentType="oneTimeCode"
-              errorMessage={rPasswordErrorMessage}
-              inputStyle={inputStyles.inputText}
-              containerStyle={inputStyles.inputContainer}
-            />
-          </InputGroup>
+            <InputGroup>
+              <InputLabel style={{ marginTop: (keyboardStatus === "Keyboard Shown") ? 5 : 20, marginBottom: (keyboardStatus === "Keyboard Shown") ? 5 : 20 }}>Your password it's your safety</InputLabel>
+              <Input
+                secureTextEntry={true}
+                onChangeText={(value: string) => setRPassword(value)}
+                placeholder="REPEAT YOUR PASSWORD"
+                textContentType="oneTimeCode"
+                errorMessage={rPasswordErrorMessage}
+                inputStyle={inputStyles.inputText}
+                containerStyle={inputStyles.inputContainer}
+              />
+            </InputGroup>
 
-          <BasicButton
-            width="100%"
-            disabled={isSubmitDisabled}
-            onPress={onSubmit}
-          >
-            <BasicButtonText>REGISTER</BasicButtonText>
-          </BasicButton>
+            <BasicButton
+              width="100%"
+              disabled={isSubmitDisabled}
+              onPress={onSubmit}
+            >
+              <BasicButtonText>REGISTER</BasicButtonText>
+            </BasicButton>
+          </KeyboardAwareScrollView>
         </ScrollViewContent>
       </PageWrapper>
     </BasicSafeAreaView>

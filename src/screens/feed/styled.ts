@@ -50,6 +50,7 @@ export const VideoWrapper = styled.View<VideoWrapperProps>`
   height: 100%;
   flex: 1;
   z-index: ${({ sharedRecording }) => (sharedRecording ? Z_INDEX.HIGH : 1)};
+  border" 2px solid red;
 `;
 
 export const AddToFriendsWrapper = styled.View`
@@ -252,4 +253,10 @@ export const ProfileContentWrapper = styled.View<BasicContentWrapperProps>`
   align-items: center;
   width: 100%;
   flex: 1;
+`;
+
+export const TotalContent = styled.View`
+  background-color: green;
+  z-index: 100;
+  margin-top: 4px;
 `;

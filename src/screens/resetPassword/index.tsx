@@ -69,9 +69,10 @@ export const ResetPasswordScreen = ({navigation}: WithNavigatorScreen) => {
             <InputGroup>
               <InputLabel>Please input your new password</InputLabel>
               <Input
+                secureTextEntry={true}
                 onChangeText={(value: string) => setPassword(value)}
-                placeholder="ENTER NEW PASSWORD"
-                autoCorrect={false}
+                placeholder="ENTER YOUR PASSWORD"
+                textContentType="oneTimeCode"
                 errorMessage={passwordErrorMessage}
                 inputStyle={inputStyles.inputText}
                 containerStyle={inputStyles.inputContainer}
