@@ -13,6 +13,7 @@ import { SocketServiceInstance } from "../../services/socket";
 
 import MakeCallIcon from "../../assets/images/home/MakeCall.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
+import ArtistLoaderIcon from "../../assets/images/general/ArtistLoader.svg";
 
 import { ContentText, ContentTitle, ContentWrapper, SwitchWrapper } from "./styled";
 import { observer } from "mobx-react";
@@ -49,9 +50,7 @@ export const HomeScreen = observer(() => {
       <BandwwithTextLogo width="50%" />
 
       <ContentWrapper>
-        <MakeCallIcon onPress={() => OutgoingCallServiceInstance.makeCall()} />
-        <ContentTitle>Make Random Call</ContentTitle>
-        <ContentText>Make calls to complete strangers, meet, invite friends and share your calls</ContentText>
+        <ArtistLoaderIcon />
       </ContentWrapper>
 
     </PageWrapper>

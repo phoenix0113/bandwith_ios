@@ -5,7 +5,7 @@ const servers = {
   LOCAL_DOCKER_URL: "http://localhost:1380",
 };
 
-export const SERVER_BASE_URL = servers.DEV_URL;
+export const SERVER_BASE_URL = servers.PROD_URL;
 
 console.log(`> Using ${SERVER_BASE_URL} server`);
 
