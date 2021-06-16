@@ -50,7 +50,6 @@ export const VideoWrapper = styled.View<VideoWrapperProps>`
   height: 100%;
   flex: 1;
   z-index: ${({ sharedRecording }) => (sharedRecording ? Z_INDEX.HIGH : 1)};
-  border" 2px solid red;
 `;
 
 export const AddToFriendsWrapper = styled.View`
@@ -107,6 +106,16 @@ export const FeedPlayerContentWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
+export const FeedPlayerContentWrapperView = styled.View`
+  position: absolute;
+  z-index: ${Z_INDEX.MIDDLE};
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const FeedPlayerToolTip = styled.TouchableOpacity`
 `;
 
@@ -137,7 +146,6 @@ export const CommentsFeedItemWrapper = styled.TouchableOpacity`
   height: 54px;
   border-radius: 27px;
   background-color: #ffffff;
-  right: 10%;
   margin: 16px 0;
 `;
 

@@ -17,7 +17,6 @@ class FeedMobxService {
 
   constructor() {
     makeAutoObservable(this);
-    // this.loadRecordings();
   }
 
   public loadRecordings = async () => {

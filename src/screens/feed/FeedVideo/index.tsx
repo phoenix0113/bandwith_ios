@@ -5,8 +5,8 @@ import { Utils } from "avcore/client";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
 
 import {
-  AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, BackToFeedButton, FeedPlayerContentWrapper, FeedPlayerToolTip,
-  CommonImgWrapper, CommentsFeedItemWrapper, TotalContent,
+  AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, FeedPlayerContentWrapper, FeedPlayerToolTip,
+  CommonImgWrapper, CommentsFeedItemWrapper, FeedPlayerContentWrapperView,
 } from "../styled";
 import { CallPageToolbar } from "../../../components/styled";
 
@@ -149,18 +149,23 @@ export const FeedVideoComponent = observer(({
 
   return (
     <>
-      <FeedPlayerContentWrapper onPress={hidePlayBtn}>
-        <FeedPlayerToolTip onPress={changePlaybackStatus}>
-          {
-            (showPlayBtn) ? <PlayIcon /> : <></>
-          }
-        </FeedPlayerToolTip>
-      </FeedPlayerContentWrapper>
-
+      {
+        (showPlayBtn) ? (
+          <FeedPlayerContentWrapperView>
+            <FeedPlayerToolTip onPress={changePlaybackStatus}>
+              <PlayIcon />
+            </FeedPlayerToolTip>
+          </FeedPlayerContentWrapperView>
+        ) : (
+          <FeedPlayerContentWrapper onPress={hidePlayBtn}>
+            <FeedPlayerToolTip onPress={changePlaybackStatus} />
+          </FeedPlayerContentWrapper>
+        )
+      }
       <AddToFriendsWrapper>
         <AddToFriendIcon source={{uri: recording.user?.imageUrl || tempProfileIcon}} />
         <AddToFriendContent>
-          <ContentText isTitle>{recording.user.name}</ContentText>
+          <ContentText isTitle>{recording.user?.name}</ContentText>
           <ContentText>{contentText}</ContentText>
         </AddToFriendContent>
         <CommonImgWrapper onPress={() => openRecordUser(recording.user)}>

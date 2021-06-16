@@ -189,6 +189,7 @@ export const CallPageToolbar = styled.View`
   right: 0;
   bottom: 16%;
   z-index: ${Z_INDEX.MIDDLE};
+  right: 16px;
 
   & > * {
     padding: 16px;

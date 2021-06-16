@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react";
+import { observer, Observer } from "mobx-react";
 import { FlatList, StyleSheet, Share, ShareContent } from "react-native";
 import {
   BasicSafeAreaView,
@@ -20,7 +20,7 @@ import { Params, Routes } from "../../utils/routes";
 import { SharedFeedItemComponent } from "./SharedItem";
 import { RecordUserComponent } from "./FeedUser";
 
-export const FeedScreen = observer(() => {
+export const FeedScreen = observer((): JSX.Element => {
   const {
     currentRecording,
     sharedRecording,
@@ -87,7 +87,7 @@ export const FeedScreen = observer(() => {
   });
 
   const renderItem = ({ item }) => {
-    return (
+    return <Observer>{() => 
       <BasicContentWrapper>
         <FeedItemComponent
           key={item._id}
@@ -98,7 +98,7 @@ export const FeedScreen = observer(() => {
           paused={(item._id === currentRecording?._id) ? false : true}
         />
       </BasicContentWrapper>
-    );
+    }</Observer>;
   };
   return (
     <BasicSafeAreaView>
@@ -134,7 +134,7 @@ export const FeedScreen = observer(() => {
         <FlatList
           data={recordings}
           renderItem={renderItem}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item) => (Math.random() * 1000000000).toString()}
           pagingEnabled={true}
           style={styled.flatlist}
           horizontal={false}
@@ -142,6 +142,7 @@ export const FeedScreen = observer(() => {
           onViewableItemsChanged={onViewRef.current}
           viewabilityConfig={viewConfigRef.current}
           showsVerticalScrollIndicator={false}
+          onEndReached={loadRecordings}
         />
       </PageContent>
     </BasicSafeAreaView>
