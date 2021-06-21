@@ -21,7 +21,8 @@ export const PhoneSetupStep = ({ sendSms }: IProps) => {
   const [valid, setValid] = useState(false);
 
   const checkNumber = () => {
-    const checkValid = phoneInput.current?.isValidNumber(phone);
+    let checkValid = phoneInput.current?.isValidNumber(phone);
+    checkValid = (phoneInput.current?.getCountryCode() === "CN") ? false : checkValid;
     setChecked(true);
     setValid(checkValid ? checkValid : false);
   };
