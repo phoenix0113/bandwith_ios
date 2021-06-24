@@ -1,6 +1,6 @@
 import { action, makeAutoObservable, observable, runInAction, toJS } from "mobx";
 import { createContext } from "react";
-import { getRecordingById, getRecordingsList } from "../axios/routes/feed";
+import { getRecordingById, getRecordingsList, sendRecordingReport } from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
 import { LOAD_MORE_RECORDINGS_THRESHOLD, RECORDINGS_LOAD_LIMIT } from "../utils/constants";
 import { showUnexpectedErrorAlert } from "../utils/notifications";
@@ -86,6 +86,15 @@ class FeedMobxService {
        && !this.allRecordingsLoaded) {
       console.log("> Loading more recordings due to threshold");
       this.loadRecordings();
+    }
+  }
+
+  public sendReport = async (id: string) => {
+    try {
+      const code = await sendRecordingReport(id);
+      console.log("> Report recording: ", code);
+    } catch (err) {
+      showUnexpectedErrorAlert("Report Recording", err.message);
     }
   }
 }

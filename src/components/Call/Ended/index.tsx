@@ -18,7 +18,7 @@ interface IProps {
   callId: string;
 }
 
-export const CallEndedComponent = ({ callParticipantData, resetHandler }: IProps): JSX.Element => {
+export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }: IProps): JSX.Element => {
   const [requestSent, setRequestSent] = useState(false);
   const addToFriendsHandler = () => {
     SocketServiceInstance.sendAddToFriendInvitation(callParticipantData?.id, () => {

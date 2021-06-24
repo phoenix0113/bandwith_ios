@@ -51,7 +51,17 @@ export const HomeScreen = observer(() => {
 
       <ContentWrapper>
         <ArtistLoaderIcon />
+        <ContentTitle>
+          Support Team:
+        </ContentTitle>
+        <ContentText>
+          Email: bandwith@doejo.com
+        </ContentText>
+        <ContentText>
+          Phone: +37477070436
+        </ContentText>
       </ContentWrapper>
+
 
     </PageWrapper>
   </BasicSafeAreaView>

@@ -5,20 +5,22 @@ import {
   BasicSafeAreaView,
 } from "../../components/styled";
 import { CommentsComponent } from "../../components/Comments";
-
-import { PageContent, BasicContentWrapper } from "./styled";
+import { ProfileScreen } from "../profile";
 
 import { FeedItemComponent } from "./FeedItem";
+import { SharedFeedItemComponent } from "./SharedItem";
+import { RecordUserComponent } from "./FeedUser";
 import { HintComponent } from "../../components/Hint";
-
-import { GetRecordResponse, RecordUser } from "../../shared/interfaces";
+import { ReportRecordingComponent } from "./Report";
 
 import { FeedStorageContext } from "../../services/feed";
 import { showUnexpectedErrorAlert } from "../../utils/notifications";
 import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../utils/constants";
 import { Params, Routes } from "../../utils/routes";
-import { SharedFeedItemComponent } from "./SharedItem";
-import { RecordUserComponent } from "./FeedUser";
+
+import { GetRecordResponse, RecordUser } from "../../shared/interfaces";
+
+import { PageContent, BasicContentWrapper } from "./styled";
 
 export const FeedScreen = observer((): JSX.Element => {
   const {
@@ -32,7 +34,7 @@ export const FeedScreen = observer((): JSX.Element => {
   } = useContext(FeedStorageContext);
 
   recordings.map((recording) => {
-    console.log(recording.user);
+    console.log(recording._id);
   })
   
   const [sharedRecordingId, setSharedRecordingId] = useState(null);
@@ -46,6 +48,9 @@ export const FeedScreen = observer((): JSX.Element => {
   const [openedComments, setOpenedComments] = useState(false);
   const showComments = () => setOpenedComments(true);
   const hideComments = () => setOpenedComments(false);
+  const [isReport, setIsReport] = useState("");
+  const [currentProfileUser, setCurrentProfileUser] = useState("");
+  const [currentRecordings, setCurrentRecordings] = useState([]);
 
   const shareCall = (recording: GetRecordResponse) => {
     if (!Share.share) {
@@ -61,9 +66,11 @@ export const FeedScreen = observer((): JSX.Element => {
   };
 
   const [recordUser, setRecordUser] = useState<RecordUser>(null);
+
   const openRecordUser = (user: RecordUser) => {
     setRecordUser(user);
   };
+
   const closeRecordUser = () => {
     setRecordUser(null);
   };
@@ -72,11 +79,27 @@ export const FeedScreen = observer((): JSX.Element => {
     cleanSharedRecording();
   };
 
+  const filterRecordings = (id: string) => {
+    let items = [];
+    currentRecordings.forEach(item => {
+      if (item.user._id === id) {
+        items.push(item);
+      }
+    });
+    setCurrentRecordings(items);
+  }
+
   useEffect(() => {
     loadRecordings();
-  }, [])
+    setCurrentRecordings([]);
+    if (currentProfileUser === "") {
+      setCurrentRecordings(recordings);
+    } else if (currentProfileUser !== "") {
+      filterRecordings(currentProfileUser);
+    }
+  }, []);
 
-  const onViewRef = useRef((viewableItems) => {
+  const onViewRef = useRef((viewableItems: any) => {
     let item = viewableItems;
     let currentRecording = item.changed[0]["item"];
     setCurrentRecording(currentRecording._id);
@@ -86,6 +109,14 @@ export const FeedScreen = observer((): JSX.Element => {
     viewAreaCoveragePercentThreshold: 50
   });
 
+  const showUserProfile = (id: string) => {
+    setCurrentProfileUser(id);
+  }
+
+  const showReport = (id: string) => {
+    setIsReport(id);
+  }
+
   const renderItem = ({ item }) => {
     return <Observer>{() => 
       <BasicContentWrapper>
@@ -94,6 +125,8 @@ export const FeedScreen = observer((): JSX.Element => {
           openRecordUser={openRecordUser}
           recording={item}
           shareCall={shareCall}
+          showReport={showReport}
+          showUserProfile={showUserProfile}
           showComments={showComments}
           paused={(item._id === currentRecording?._id) ? false : true}
         />
@@ -103,6 +136,21 @@ export const FeedScreen = observer((): JSX.Element => {
   return (
     <BasicSafeAreaView>
       <PageContent>
+        {(currentProfileUser !== "") && (
+          <ProfileScreen
+            id={currentProfileUser}
+            showUserProfile={showUserProfile}
+            currentRecordings={currentRecordings}
+          />
+        )}
+
+        {(isReport !== "") && (
+          <ReportRecordingComponent
+            closeHandler={() => setIsReport("")}
+            id={isReport}
+          />
+        )}
+
         {recordUser && (
           <RecordUserComponent
             closeHandler={closeRecordUser}
@@ -132,7 +180,7 @@ export const FeedScreen = observer((): JSX.Element => {
         )}
 
         <FlatList
-          data={recordings}
+          data={currentRecordings}
           renderItem={renderItem}
           keyExtractor={(item) => (Math.random() * 1000000000).toString()}
           pagingEnabled={true}

@@ -9,7 +9,8 @@ import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-si
 import { CloudCredentials, UserProfileResponse } from "../shared/interfaces";
 import {
   loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest, resetPasswordRequest,
-  authWithGoogleRequest, sendSMSRequest, verifyCodeRequest, updatePhoneRequest, getVerifyCodeRequest
+  authWithGoogleRequest, sendSMSRequest, verifyCodeRequest, updatePhoneRequest, getVerifyCodeRequest,
+  getUserDataByID,
 } from "../axios/routes/user";
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
@@ -18,7 +19,6 @@ import { MainScreensEnum } from "../navigation/main/types";
 import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE, VERIFY_CODE, VERIFY_STATUS, EMAIL, RESET_PASSWORD_STATUS } from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
-import { resolvePlugin } from "@babel/core";
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
@@ -450,6 +450,17 @@ class UserService {
 
   private scheduleActions = (action: Function) => {
     this.onReconnectActions.push(action);
+  }
+
+  @observable profileUser: UserProfileResponse = null;
+
+  public getUserData = async (id: string) => {
+    try {
+      this.profileUser = await getUserDataByID(id);
+      console.log("> Get user data by ID: ", this.profileUser._id);
+    } catch (err) {
+      showUnexpectedErrorAlert("verifySMSCode()", err.message);
+    }
   }
 }
 

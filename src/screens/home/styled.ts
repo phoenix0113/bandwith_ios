@@ -31,8 +31,9 @@ export const ContentTitle = styled.Text`
 `;
 
 export const ContentText = styled.Text`
+  margin-top: 10px;
   font-family: Kefa;
-  font-size: 12px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: 16px;

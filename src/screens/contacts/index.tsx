@@ -1,6 +1,6 @@
 import React, { useState, useContext, useCallback } from "react";
 import { observer } from "mobx-react";
-import { View, TouchableOpacity, Animated } from "react-native";
+import { View, TouchableOpacity, Animated, Modal } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TabView } from "react-native-tab-view";
 

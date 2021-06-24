@@ -29,6 +29,8 @@ export const PATH = {
   IMPORT: "contactsImport",
   FORGOT_PASSWORD: "forgot-password",
   RESET_PASSWORD: "reset-password",
+  AVAILABLE: "available",
+  REPORT: "report",
 };
 
 export const API = {
@@ -58,4 +60,6 @@ export const API = {
   IMPORT_CONTACTS: `${PATH.API}/${PATH.CONTACTS}/${PATH.IMPORT}`,
   GET_VERIFY_CODE: `/${PATH.API}/${PATH.FORGOT_PASSWORD}`,
   RESET_PASSWORD: `/${PATH.API}/${PATH.RESET_PASSWORD}`,
+  RECORD_AVAILABLE: `/${PATH.API}/${PATH.RECORD}/${PATH.AVAILABLE}`,
+  REPORT: `/${PATH.API}/${PATH.REPORT}`,
 };

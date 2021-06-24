@@ -1,37 +1,37 @@
 import { observer } from "mobx-react";
 import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
 import { StyleSheet, Dimensions } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from "react-native-safe-area-view";
+import Video from "react-native-video";
+
 import { Utils } from "avcore/client";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
 
-import {
-  AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, FeedPlayerContentWrapper, FeedPlayerToolTip,
-  CommonImgWrapper, CommentsFeedItemWrapper, FeedPlayerContentWrapperView,
-} from "../styled";
-import { CallPageToolbar } from "../../../components/styled";
-
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SafeAreaProvider } from "react-native-safe-area-view";
-
-const tempProfileIcon = "../../../assets/images/call/default_profile_image.svg";
 import { SocketServiceInstance, SocketServiceContext } from "../../../services/socket";
 import { UserServiceInstance } from "../../../services/user";
 
-import Video from "react-native-video";
+import { tabBarHeight } from "../../../utils/styles";
+import {
+  AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, FeedPlayerContentWrapper, FeedPlayerToolTip,
+  CommonImgWrapper, CommentsFeedItemWrapper, FeedPlayerContentWrapperView, ViewProfile, ReportIcon
+} from "../styled";
+import { CallPageToolbar } from "../../../components/styled";
+
+const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
+
 import CommentIcon from "../../../assets/images/feed/comment.svg";
 import ShareIcon from "../../../assets/images/feed/share.svg";
 import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
-import BackToFeedIcon from "../../../assets/images/call/ExitLive.svg";
-import BandwithLogo from "../../../assets/images/Bandwith.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
-import PauseIcon from "../../../assets/images/feed/pause.svg";
-import { setWeek } from "date-fns/esm";
-import { tabBarHeight } from "../../../utils/styles";
+const reportIcon = "../../../assets/images/feed/report.png";
 
 interface IProps {
   recording: GetRecordResponse;
   isShared?: boolean;
+  showUserProfile: (id: string) => void;
   showComments: () => void;
+  showReport: (id: string) => void;
   openRecordUser: (user: RecordUser) => void;
   shareCall?: (recording: GetRecordResponse) => void;
   backToFeed?: () => void;
@@ -40,7 +40,7 @@ interface IProps {
 }
 
 export const FeedVideoComponent = observer(({
-  recording, isShared, showComments, openRecordUser, shareCall, backToFeed, currentRecording, paused
+  recording, isShared, showComments, openRecordUser, shareCall, currentRecording, paused, showUserProfile, showReport
 }: IProps) => {
   const { contacts } = useContext(SocketServiceContext);
   const playerRef = useRef<Video>(null);
@@ -59,14 +59,8 @@ export const FeedVideoComponent = observer(({
 
   const changePlaybackStatus = () => {
     if (!playerRef) return;
-
-    // if (playerRef?.current?.paused) {
+    
     if (showPlayBtn) {
-      // if (!started) {
-      //   setStarted(true);
-      //   console.log("> Setting 'started' to true");
-      // }
-
       setShowPlayBtn(false);
       console.log(`> Recoding ${recording?._id} was resumed manually`);
     } else {
@@ -163,7 +157,16 @@ export const FeedVideoComponent = observer(({
         )
       }
       <AddToFriendsWrapper>
-        <AddToFriendIcon source={{uri: recording.user?.imageUrl || tempProfileIcon}} />
+        <ViewProfile onPress={() => showUserProfile(recording.user?._id)}>
+          {
+            (recording.user?.imageUrl) ? (
+              <AddToFriendIcon source={{uri: recording.user?.imageUrl}} />
+            ) : (
+              <AddToFriendIcon source={require(tempProfileIcon)} />
+            )
+          }
+          
+        </ViewProfile>
         <AddToFriendContent>
           <ContentText isTitle>{recording.user?.name}</ContentText>
           <ContentText>{contentText}</ContentText>
@@ -202,6 +205,9 @@ export const FeedVideoComponent = observer(({
             :
             <></>
         }
+        <CommentsFeedItemWrapper onPress={() => showReport(recording?._id)}>
+          <ReportIcon source={require(reportIcon)} />
+        </CommentsFeedItemWrapper>
       </CallPageToolbar>
     </>
   );

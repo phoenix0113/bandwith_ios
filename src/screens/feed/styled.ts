@@ -65,10 +65,25 @@ export const AddToFriendsWrapper = styled.View`
   background: ${COLORS.BLACK};
 `;
 
+export const ViewProfile = styled.TouchableOpacity`
+`;
+
 export const AddToFriendIcon = styled.Image`
   width: 30px;
   height: 30px;
   border-radius: 15px;
+`;
+
+export const UserProfileIcon = styled.Image`
+  width: 54px;
+  height: 54px;
+  border-radius: 27px;
+`;
+
+export const BackIcon = styled.Image`
+  width: 54px;
+  height: 54px;
+  border-radius: 27px;
 `;
 
 export const AddToFriendContent = styled.View`
@@ -267,4 +282,71 @@ export const TotalContent = styled.View`
   background-color: green;
   z-index: 100;
   margin-top: 4px;
+`;
+
+export const PhoneBlock = styled.View`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px 3%;
+`;
+
+export const ReportIcon = styled.Image`
+  width: 36px;
+  height: 36px;
+  margin: 8px;
+  border-radius: 13.5px;
+`;
+
+export const ReportTitle = styled.TextInput`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0px;
+  text-align: left;
+  padding: 10px;
+  margin: 2px 0;
+  width: 80%;
+  border: 1px solid grey;
+  color: #FFFFFF;
+`;
+
+export const ReportBody = styled.TextInput`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0px;
+  text-align: left;
+  padding: 10px;
+  margin: 2px 0;
+  width: 80%;
+  height: 100%;
+  border: 1px solid grey;
+  color: #FFFFFF;
+`;
+
+export const ReportContentWrapper = styled.View`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+`;
+
+export const ReportHeader = styled.View`
+  margin: 20px 0;
+  align-items: center;
+  width: 100%;
+`;
+
+export const ReportContent = styled.View`
+  align-items: center;
+  width: 100%;
+  height: 60%;
+`;
+
+export const ReportFooter = styled.View`
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
 `;

@@ -3,7 +3,9 @@ import { instance } from "../instance";
 import { IAxiosError } from "../interfaces";
 import { getError } from "../utils";
 
-import { GetAllRecordsQuery, PublishRecordingRequest, BasicResponse, GetAllRecordsResponse, GetRecordResponse } from "../../shared/interfaces";
+import {
+  GetAllRecordsQuery, PublishRecordingRequest, BasicResponse, GetAllRecordsResponse, GetRecordResponse, GetVerifyCodeResponse
+} from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
 export const getRecordingsList = async (
@@ -12,7 +14,7 @@ export const getRecordingsList = async (
   const stringified = stringify(query);
 
   try {
-    const response = await instance.get<GetAllRecordsResponse>(`/${API.RECORD}?${stringified}`);
+    const response = await instance.post<GetAllRecordsResponse>(`${API.RECORD_AVAILABLE}?${stringified}`);
     return response.data;
   } catch (err) {
     const { response } = err as IAxiosError;
@@ -45,3 +47,14 @@ export const getRecordingById = async (id: string): Promise<GetRecordResponse> =
     throw new Error(getError(response));
   }
 };
+
+export const sendRecordingReport = async (id: string): Promise<GetVerifyCodeResponse> => {
+  try {
+    const response = await instance.post<GetVerifyCodeResponse>(`${API.REPORT}/${id}`);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+}

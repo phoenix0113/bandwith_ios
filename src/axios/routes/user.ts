@@ -160,3 +160,13 @@ export const resetPasswordRequest = async (request: LoginRequest): Promise<Reset
     throw new Error(getError(response));
   }
 }
+
+export const getUserDataByID = async (id: string): Promise<UserProfileResponse> => {
+  try {
+    const response = await instance.get<UserProfileResponse>(`${API.USER}/${id}`);
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+}

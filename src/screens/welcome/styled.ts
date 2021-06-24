@@ -37,3 +37,10 @@ export const ContentToolbox = styled.View`
   padding: 50px 30px;
   align-items: flex-end;
 `;
+
+export const ButtonContent = styled.View`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;

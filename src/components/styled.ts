@@ -187,14 +187,9 @@ export const CallPageToolbar = styled.View`
   flex-direction: column;
   position: absolute;
   right: 0;
-  bottom: 16%;
+  bottom: 5%;
   z-index: ${Z_INDEX.MIDDLE};
   right: 16px;
-
-  & > * {
-    padding: 16px;
-  }
-
 `;
 
 export const CommonImgWrapper = styled.TouchableOpacity<ICommonImgWrapperProps>`

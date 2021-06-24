@@ -1,72 +1,64 @@
-import React, { useContext } from "react";
-import { TouchableOpacity } from "react-native";
+import React, { useEffect, useContext } from "react";
 import { observer } from "mobx-react";
+import Video from "react-native-video";
+import { Dimensions } from "react-native";
+
+import { UserServiceContext } from "../../services/user";
+import { GetRecordResponse } from "../../shared/interfaces";
 
 import {
-  COLORS, NavigationBar, LeftItem, CenterItem, RightItem, BasicContentWrapper,
-  PageWrapper, BasicText, NavigationText, BasicSafeAreaView,
+  NavigationBar, LeftItem, CenterItem, RightItem, COLORS
 } from "../../components/styled";
-import { PhoneBlock } from "./styled";
+import {
+  ProfileUserWrapper, BackContent, ProfileName, ProfileImageWrapper, ProfileEmail, ProfileContentWrapper,
+  ProfileRecordingContent, ProfileVideo,
+} from "./styled";
+import BackIcon from "../../assets/images/feed/back.svg";
 
-import { ProfileImageWrapper } from "../../components/ProfileImageWrapper";
-import { UserServiceContext, UserServiceInstance } from "../../services/user";
+interface IProps {
+  id: string;
+  currentRecordings: Array<GetRecordResponse>;
+  showUserProfile: (id: string) => void;
+}
 
+export const ProfileScreen = observer(({ id, showUserProfile, currentRecordings }: IProps): JSX.Element => {
+  const { profileUser, getUserData } = useContext(UserServiceContext);
+  const width = Dimensions.get('screen').width;
 
-export const ProfileScreen = observer(() => {
-  const { profile } = useContext(UserServiceContext);
-
+  useEffect(() => {
+    getUserData(id);
+  }, [id]);
+  
   return (
-    <BasicSafeAreaView>
-      <PageWrapper>
-
+    <ProfileUserWrapper>
         <NavigationBar>
-          <LeftItem />
+          <LeftItem>
+            <BackContent onPress={() => showUserProfile("")}>
+              <BackIcon />
+            </BackContent>
+          </LeftItem>
           <CenterItem>
-            <NavigationText>Profile</NavigationText>
+            <ProfileName>{profileUser?.name}</ProfileName>
           </CenterItem>
           <RightItem />
         </NavigationBar>
 
-        <BasicContentWrapper>
-          <ProfileImageWrapper src={profile?.imageUrl} />
-
-          <BasicText margin="0 0 10% 0" lineHeight="40px">{profile?.name}</BasicText>
-
-          {profile?.phone && (
-            <PhoneBlock>
-              <BasicText
-                fontSize="20px"
-                color={COLORS.WHITE}
-                textAlign="left"
-                margin="10px 0 0 0"
-              >
-                Phone number:
-              </BasicText>
-              <BasicText
-                fontSize="16px"
-                color={COLORS.WHITE}
-                textAlign="left"
-                margin="5px 0 3px 0"
-              >
-                {profile.phone}
-              </BasicText>
-              <TouchableOpacity onPress={UserServiceInstance.editPhone}>
-                <BasicText
-                  fontSize="14px"
-                  lineHeight="16px"
-                  color={COLORS.ALTERNATIVE}
-                  textAlign="left"
-                  underline
-                >
-                  Change
-                </BasicText>
-              </TouchableOpacity>
-            </PhoneBlock>
-          )}
-
-        </BasicContentWrapper>
-
-      </PageWrapper>
-    </BasicSafeAreaView>
+        <ProfileContentWrapper style={{backgroundColor: COLORS.BLACK}}>
+          <ProfileImageWrapper source={{uri: profileUser?.imageUrl}} />
+          <ProfileEmail>{profileUser?.email}</ProfileEmail>
+          <ProfileRecordingContent>
+            {
+              currentRecordings.map((recording) => (
+                <ProfileVideo key={recording._id}>
+                  <Video
+                    source={{uri: recording.list[0].url}}
+                    style={{width: width / 3, height: "100%"}}
+                  />
+                </ProfileVideo>
+              ))
+            }
+          </ProfileRecordingContent>
+        </ProfileContentWrapper>
+    </ProfileUserWrapper>
   );
 });
