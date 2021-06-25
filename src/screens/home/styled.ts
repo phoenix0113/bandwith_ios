@@ -41,3 +41,17 @@ export const ContentText = styled.Text`
   text-align: center;
   color: ${COLORS.WHITE_VAGUE};
 `;
+
+interface PageWrapperProps {
+  background?: string;
+  paddingHorizontal?: string;
+}
+
+export const PageWrapper = styled.ScrollView<PageWrapperProps>`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding-horizontal: ${({paddingHorizontal}) => paddingHorizontal || "24px"}; 
+  background-color: ${({ background }) => background || COLORS.BLACK};
+`;
+

@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import Icon from "react-native-vector-icons/AntDesign";
-import { Switch } from "react-native";
+import { Switch, StyleSheet } from "react-native";
 
 import {
-  COLORS, CenterItem, LeftItem, NavigationBar, PageWrapper,
+  COLORS, CenterItem, LeftItem, NavigationBar,
   RightItem, NavigationText, BasicSafeAreaView, BasicText,
  } from "../../components/styled";
 
@@ -15,7 +15,7 @@ import MakeCallIcon from "../../assets/images/home/MakeCall.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 import ArtistLoaderIcon from "../../assets/images/general/ArtistLoader.svg";
 
-import { ContentText, ContentTitle, ContentWrapper, SwitchWrapper } from "./styled";
+import { ContentText, ContentTitle, ContentWrapper, SwitchWrapper, PageWrapper } from "./styled";
 import { observer } from "mobx-react";
 
 export const HomeScreen = observer(() => {
@@ -23,7 +23,7 @@ export const HomeScreen = observer(() => {
 
   return (
   <BasicSafeAreaView>
-    <PageWrapper>
+    <PageWrapper contentContainerStyle={styles.container}>
 
       <NavigationBar>
         <LeftItem onPress={UserServiceInstance.logout}>
@@ -47,7 +47,7 @@ export const HomeScreen = observer(() => {
         </RightItem>
       </NavigationBar>
 
-      <BandwwithTextLogo width="50%" />
+      <BandwwithTextLogo />
 
       <ContentWrapper>
         <ArtistLoaderIcon />
@@ -65,4 +65,12 @@ export const HomeScreen = observer(() => {
 
     </PageWrapper>
   </BasicSafeAreaView>
-);});
+  );
+});
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: "flex-start",
+    alignItems: "center",
+  }
+});

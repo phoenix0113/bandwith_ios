@@ -69,7 +69,7 @@ class LoggerService {
   private send = async (logs: string): Promise<void> => {
     try {
       await sendLogsRequest({
-        userId: `${UserServiceInstance.profile.name.replace(" ", "")}|${UserServiceInstance.profile._id.substr(0, 8)}`,
+        userId: `${UserServiceInstance.profile.name.replace(" ", "")}|${UserServiceInstance.profile?._id.substr(0, 8)}`,
         logs,
       });
     } catch (err) {

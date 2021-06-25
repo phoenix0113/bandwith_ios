@@ -32,6 +32,7 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
   const rPasswordErrorMessage = useMemo(() => rPassword === null ? "" : getPasswordErrorMessage(password, rPassword), [rPassword]);
 
   const onSubmit = async () => {
+    setConfirmModalStatus(false);
     if (email && password && username) {
       UserServiceInstance.register(email, password, username);
     }

@@ -256,23 +256,18 @@ class UserService {
 
   public authWithApple = async (user: string, email: string) => {
     try {
-      await GoogleSignin.hasPlayServices();
       const { token } = await authWithAppleRequest({
         user: user,
         email: email.toLowerCase(),
         password: "unset",
       });
 
-      console.log(`> Registration token ${token}`);
-
-      if (!token) {
-        navigateToScreen("welcome");
-        return;
-      }
+      console.log(`> Apple Auth token ${token}`);
 
       this.token = token;
       this.saveTokenToStotage(token);
       setBearerToken(this.token);
+      this.fetchUserData();
     } catch (err) {
       if (AppServiceInstance.hasNetworkProblems()) {
         showNetworkErrorAlert();

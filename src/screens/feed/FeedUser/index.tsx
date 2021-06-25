@@ -69,7 +69,7 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
         </ProfileImageContent>
         <View style={{width: "100%"}}>
           <ProfileNameText>{user.name}</ProfileNameText>
-          {!isUserInContactList && profile._id !== user._id && (
+          {!isUserInContactList && profile?._id !== user._id && (
             <ProfileActionButton
               onPress={addToFriends}
               style={{
@@ -82,7 +82,7 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
             </ProfileActionButton>
           )}
 
-          {isUserInContactList && profile._id !== user._id && (
+          {isUserInContactList && profile?._id !== user._id && (
             <ProfileActionButton
               onPress={removeFromFriends}
               style={{
@@ -95,7 +95,7 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
             </ProfileActionButton>
           )}
 
-          {profile._id !== user._id && (
+          {profile?._id !== user._id && (
             <ProfileActionButton
               onPress={call}
               style={{

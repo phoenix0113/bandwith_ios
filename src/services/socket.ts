@@ -199,7 +199,7 @@ class SocketService {
 
     this.socket.on("connect", () => {
       const joinLobbyRequest: JoinLobbyRequest = {
-        self_id: UserServiceInstance.profile._id,
+        self_id: UserServiceInstance.profile?._id,
         self_name: UserServiceInstance.profile.name,
         self_image: UserServiceInstance.profile.imageUrl || null,
         available: UserServiceInstance.profile.available,
@@ -450,7 +450,7 @@ class SocketService {
       {
         target_id,
         notification: createAddToFriednsInvitation({
-          _id: UserServiceInstance.profile._id,
+          _id: UserServiceInstance.profile?._id,
           name: UserServiceInstance.profile.name,
           imageUrl: UserServiceInstance.profile.imageUrl,
         }),
@@ -465,7 +465,7 @@ class SocketService {
   public sendMissedCallNotification = () => {
     this.socket.emit(ACTIONS.SEND_MISSED_CALL_NOTIFICATION, {
       notification: createMissedCallNotification({
-        _id: UserServiceInstance.profile._id,
+        _id: UserServiceInstance.profile?._id,
         name: UserServiceInstance.profile.name,
         imageUrl: UserServiceInstance.profile.imageUrl,
       }),
@@ -486,7 +486,7 @@ class SocketService {
           {
             target_id: userId,
             notification: createInvitationAcceptedNotification({
-              _id: UserServiceInstance.profile._id,
+              _id: UserServiceInstance.profile?._id,
               name: UserServiceInstance.profile.name,
               imageUrl: UserServiceInstance.profile.imageUrl,
             }),
@@ -520,7 +520,7 @@ class SocketService {
           {
             target_id: userId,
             notification: createRemovedFromContactsNotification({
-              _id: UserServiceInstance.profile._id,
+              _id: UserServiceInstance.profile?._id,
               name: UserServiceInstance.profile.name,
               imageUrl: UserServiceInstance.profile.imageUrl,
             }),
