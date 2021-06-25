@@ -3,7 +3,7 @@ import { IAxiosError } from "../interfaces";
 import { getError } from "../utils";
 
 import {
-  AuthResponse, LoginRequest, AvcoreAuthResponse, CloudCredentials,
+  AuthResponse, LoginRequest, AvcoreAuthResponse, CloudCredentials, OAuthAppleRequest,
   OAuthGoogleRequest, RegistrationRequest, UserProfileRequest, UserProfileResponse,
   SetReadHintRequest, SetReadHintResponse, SendSMSRequest, BasicResponse, VerifyCodeRequest,
   UpdatePhoneRequest, NexmoResponse, GetVerifyCodeRequest, GetVerifyCodeResponse, ResetPasswordResponse
@@ -13,6 +13,17 @@ import { API } from "../../shared/routes";
 export const authWithGoogleRequest = async (request: OAuthGoogleRequest): Promise<AuthResponse> => {
   try {
     const response = await instance.post<AuthResponse>(API.OAUTH_GOOGLE, request);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const authWithAppleRequest = async (request: OAuthAppleRequest): Promise<AuthResponse> => {
+  try {
+    const response = await instance.post<AuthResponse>(API.OAUTH_APPLE, request);
 
     return response.data;
   } catch (err) {

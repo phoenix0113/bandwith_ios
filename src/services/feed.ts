@@ -1,7 +1,7 @@
 import { action, makeAutoObservable, observable, runInAction, toJS } from "mobx";
 import { createContext } from "react";
 import { getRecordingById, getRecordingsList, sendRecordingReport } from "../axios/routes/feed";
-import { GetRecordResponse } from "../shared/interfaces";
+import { GetRecordResponse, ReportRequest } from "../shared/interfaces";
 import { LOAD_MORE_RECORDINGS_THRESHOLD, RECORDINGS_LOAD_LIMIT } from "../utils/constants";
 import { showUnexpectedErrorAlert } from "../utils/notifications";
 import { SocketServiceInstance } from "./socket";
@@ -89,9 +89,14 @@ class FeedMobxService {
     }
   }
 
-  public sendReport = async (id: string) => {
+  public sendReport = async (id: string, email: string, title: string, body: string) => {
     try {
-      const code = await sendRecordingReport(id);
+      const code = await sendRecordingReport({
+        id: id,
+        email: email,
+        title: title,
+        body: body,
+      });
       console.log("> Report recording: ", code);
     } catch (err) {
       showUnexpectedErrorAlert("Report Recording", err.message);

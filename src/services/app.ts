@@ -45,7 +45,7 @@ class AppService {
 
   private handleAppStateChange = (nextAppState: AppStatusType): void => {
     if (this.appState.match(/inactive|background/) && nextAppState === "active") {
-      console.log("App has come to the foreground!");
+      console.log("> App has come to the foreground!");
     }
 
     this.appState = nextAppState;

@@ -10,6 +10,12 @@ export interface OAuthGoogleRequest {
   isAndroid?: boolean;
 }
 
+export interface OAuthAppleRequest {
+  user: string;
+  email: string;
+  password: string;
+}
+
 export interface OAuthFacebookRequest {
   accessToken: string;
   userID: string;
@@ -33,6 +39,13 @@ export interface RegistrationRequest {
 
 export interface UserProfileRequest {
   firebaseToken: string;
+}
+
+export interface ReportRequest {
+  id: string;
+  email: string;
+  title: string;
+  body: string;
 }
 
 export interface ImportedContactItem {

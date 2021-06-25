@@ -132,7 +132,7 @@ export const FeedVideoComponent = observer(({
   }, [playerRef, currentRecording, paused]);
 
   const contentText = useMemo(() => {
-    if (UserServiceInstance.profile._id === recording?.user?._id) {
+    if (UserServiceInstance.profile?._id === recording?.user?._id) {
       return "You";
     }
     if (SocketServiceInstance.isContact(recording?.user?._id)) {

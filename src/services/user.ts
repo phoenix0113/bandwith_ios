@@ -10,7 +10,7 @@ import { CloudCredentials, UserProfileResponse } from "../shared/interfaces";
 import {
   loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest, resetPasswordRequest,
   authWithGoogleRequest, sendSMSRequest, verifyCodeRequest, updatePhoneRequest, getVerifyCodeRequest,
-  getUserDataByID,
+  getUserDataByID, authWithAppleRequest,
 } from "../axios/routes/user";
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
@@ -250,6 +250,34 @@ class UserService {
         Alert.alert("Google Authentication", "Play services are not available");
       } else {
         Alert.alert("Google Authentication", `Unexpected error: ${error.toString()}`);
+      }
+    }
+  }
+
+  public authWithApple = async (user: string, email: string) => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const { token } = await authWithAppleRequest({
+        user: user,
+        email: email.toLowerCase(),
+        password: "unset",
+      });
+
+      console.log(`> Registration token ${token}`);
+
+      if (!token) {
+        navigateToScreen("welcome");
+        return;
+      }
+
+      this.token = token;
+      this.saveTokenToStotage(token);
+      setBearerToken(this.token);
+    } catch (err) {
+      if (AppServiceInstance.hasNetworkProblems()) {
+        showNetworkErrorAlert();
+      } else {
+        showUnexpectedErrorAlert("sign with Apple", err.message);
       }
     }
   }

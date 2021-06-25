@@ -1,6 +1,7 @@
 import React, { useState, useContext, useMemo } from "react";
 
 import { observer } from "mobx-react";
+import { UserServiceContext } from "../../../services/user";
 import { FeedStorageContext } from "../../../services/feed";
 
 import {
@@ -18,6 +19,7 @@ export const ReportRecordingComponent = observer(({ id, closeHandler }: IProps) 
   const [reportTitle, setReportTitle] = useState("");
   const [reportBody, setReportBody] = useState("");
   
+  const { profile } = useContext(UserServiceContext);
   const { sendReport } = useContext(FeedStorageContext);
   const onChangeTitle = (text: string) => {
     setReportTitle(text);
@@ -28,7 +30,12 @@ export const ReportRecordingComponent = observer(({ id, closeHandler }: IProps) 
   }
 
   const onSubmit = () => {
-    sendReport(id);
+    sendReport(
+      id,
+      profile?.email,
+      reportTitle,
+      reportBody
+    );
     closeHandler();
   }
 

@@ -4,7 +4,7 @@ import { IAxiosError } from "../interfaces";
 import { getError } from "../utils";
 
 import {
-  GetAllRecordsQuery, PublishRecordingRequest, BasicResponse, GetAllRecordsResponse, GetRecordResponse, GetVerifyCodeResponse
+  GetAllRecordsQuery, PublishRecordingRequest, BasicResponse, GetAllRecordsResponse, GetRecordResponse, GetVerifyCodeResponse, ReportRequest
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
@@ -28,7 +28,7 @@ export const publishRecording = async (
   try {
     const response = await instance.post<BasicResponse>(API.RECORD_PUBLISH, request);
 
-    console.log("Publish response: ", response.data);
+    console.log("> Publish response: ", response.data);
 
     return response.data.success;
   } catch (err) {
@@ -48,9 +48,9 @@ export const getRecordingById = async (id: string): Promise<GetRecordResponse> =
   }
 };
 
-export const sendRecordingReport = async (id: string): Promise<GetVerifyCodeResponse> => {
+export const sendRecordingReport = async (request: ReportRequest): Promise<GetVerifyCodeResponse> => {
   try {
-    const response = await instance.post<GetVerifyCodeResponse>(`${API.REPORT}/${id}`);
+    const response = await instance.post<GetVerifyCodeResponse>(API.REPORT, request);
 
     return response.data;
   } catch (err) {

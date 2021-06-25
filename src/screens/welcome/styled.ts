@@ -44,3 +44,9 @@ export const ButtonContent = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
 `;
+
+export const GoogleIcon = styled.Image`
+  width: 20px;
+  height: 20px;
+  margin: 0 10px 0 0;
+`;
