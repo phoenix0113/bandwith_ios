@@ -108,11 +108,11 @@ class ContactsService {
       console.log("> Contacts import were performed. Response: ", response);
 
 
-      const difference = response.profile.contacts.length - UserServiceInstance.profile.contacts.length;
+      const difference = response.profile.contacts.length - UserServiceInstance.profile?.contacts.length;
 
       if (response.updated && difference > 0) {
         Alert.alert("Contacts were imported", `Found ${difference} new contacts with an installed app`);
-      } else if (!response.updated && !UserServiceInstance.profile.contactsImported) {
+      } else if (!response.updated && !UserServiceInstance.profile?.contactsImported) {
         Alert.alert("Contacts were imported", "No one of your contacts has an app yet");
       } else if (difference < 0) {
         Alert.alert("Contacts were imported", `Removed ${Math.abs(difference)} contacts from the list since they are no longer correspond to user's app`);
@@ -135,7 +135,7 @@ class ContactsService {
 
     const oldImportedContacts = [...this.importedContacts];
 
-    UserServiceInstance.profile.contacts.forEach((c) => {
+    UserServiceInstance.profile?.contacts.forEach((c) => {
       let status: UserStatus = "offline"; // default status
       if (oldImportedContacts) {
         const oldContactObject = oldImportedContacts.find((ic) => ic.user._id === c.user._id);

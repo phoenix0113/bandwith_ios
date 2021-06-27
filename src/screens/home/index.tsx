@@ -10,6 +10,7 @@ import {
 import { UserServiceContext, UserServiceInstance } from "../../services/user";
 import { OutgoingCallServiceInstance } from "../../services/outgoingCall";
 import { SocketServiceInstance } from "../../services/socket";
+import { ADMIN_EMAIL } from "../../utils/constants";
 
 import MakeCallIcon from "../../assets/images/home/MakeCall.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
@@ -55,14 +56,10 @@ export const HomeScreen = observer(() => {
           Support Team:
         </ContentTitle>
         <ContentText>
-          Email: bandwith@doejo.com
-        </ContentText>
-        <ContentText>
-          Phone: +37477070436
+          Email: {ADMIN_EMAIL}
         </ContentText>
       </ContentWrapper>
-
-
+      
     </PageWrapper>
   </BasicSafeAreaView>
   );

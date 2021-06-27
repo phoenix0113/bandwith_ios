@@ -110,7 +110,7 @@ export const FeedScreen = observer((): JSX.Element => {
   });
 
   const showUserProfile = (id: string) => {
-    setCurrentProfileUser(id);
+    // setCurrentProfileUser(id);
   }
 
   const showReport = (id: string) => {

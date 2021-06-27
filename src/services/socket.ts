@@ -200,9 +200,9 @@ class SocketService {
     this.socket.on("connect", () => {
       const joinLobbyRequest: JoinLobbyRequest = {
         self_id: UserServiceInstance.profile?._id,
-        self_name: UserServiceInstance.profile.name,
-        self_image: UserServiceInstance.profile.imageUrl || null,
-        available: UserServiceInstance.profile.available,
+        self_name: UserServiceInstance.profile?.name,
+        self_image: UserServiceInstance.profile?.imageUrl || null,
+        available: UserServiceInstance.profile?.available,
       };
 
       this.socket.emit(ACTIONS.JOIN_LOBBY, joinLobbyRequest, ({ onlineUsers, busyUsers }) => {
@@ -413,11 +413,11 @@ class SocketService {
 
   public toggleAvailabilityStatus = () => {
     const request: SetCallAvailabilityRequest = {
-      available: !UserServiceInstance.profile.available,
+      available: !UserServiceInstance.profile?.available,
     };
 
     this.socket.emit(ACTIONS.SET_CALL_AVAILABILITY, request, () => {
-      UserServiceInstance.profile.available = !UserServiceInstance.profile.available;
+      UserServiceInstance.profile.available = !UserServiceInstance.profile?.available;
     });
   }
 
@@ -451,8 +451,8 @@ class SocketService {
         target_id,
         notification: createAddToFriednsInvitation({
           _id: UserServiceInstance.profile?._id,
-          name: UserServiceInstance.profile.name,
-          imageUrl: UserServiceInstance.profile.imageUrl,
+          name: UserServiceInstance.profile?.name,
+          imageUrl: UserServiceInstance.profile?.imageUrl,
         }),
       },
       () => {
@@ -466,8 +466,8 @@ class SocketService {
     this.socket.emit(ACTIONS.SEND_MISSED_CALL_NOTIFICATION, {
       notification: createMissedCallNotification({
         _id: UserServiceInstance.profile?._id,
-        name: UserServiceInstance.profile.name,
-        imageUrl: UserServiceInstance.profile.imageUrl,
+        name: UserServiceInstance.profile?.name,
+        imageUrl: UserServiceInstance.profile?.imageUrl,
       }),
     },
     () => {
@@ -487,8 +487,8 @@ class SocketService {
             target_id: userId,
             notification: createInvitationAcceptedNotification({
               _id: UserServiceInstance.profile?._id,
-              name: UserServiceInstance.profile.name,
-              imageUrl: UserServiceInstance.profile.imageUrl,
+              name: UserServiceInstance.profile?.name,
+              imageUrl: UserServiceInstance.profile?.imageUrl,
             }),
           },
           async () => {
@@ -521,8 +521,8 @@ class SocketService {
             target_id: userId,
             notification: createRemovedFromContactsNotification({
               _id: UserServiceInstance.profile?._id,
-              name: UserServiceInstance.profile.name,
-              imageUrl: UserServiceInstance.profile.imageUrl,
+              name: UserServiceInstance.profile?.name,
+              imageUrl: UserServiceInstance.profile?.imageUrl,
             }),
           },
           () => {

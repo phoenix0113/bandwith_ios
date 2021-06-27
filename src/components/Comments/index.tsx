@@ -119,28 +119,7 @@ export const CommentsComponent = observer((
             }}
             style={styled.feedComment}
           />
-          {/* <InfiniteScroll
-            dataLength={comments.length}
-            next={() => fetchComments(id, isRecording)}
-            hasMore={!allCommentsLoaded}
-            loader={<></>}
-            endMessage={
-              <AllLoadedText>You have seen it all</AllLoadedText>
-            }
-            scrollableTarget={SCROLLABLE_DIV_ID}
-          >
-            {comments && comments.map((comment) => (
-              <CommentItem key={comment._id}>
-                <CommentHeader>
-                  <HeaderImage source={{uri: comment.user.imageUrl}} />
-                  <HeaderUsernameText>{comment.user.name}</HeaderUsernameText>
-                  <CommentTimeComponent date={comment.date} />
-                </CommentHeader>
-                <CommentContentText>{comment.content}</CommentContentText>
-              </CommentItem>
-            ))}
-          </InfiniteScroll> */}
-          <AllLoadedText>You have seen it all</AllLoadedText>
+          <AllLoadedText>You cannot comment such as nudity, pornography, or profanity.</AllLoadedText>
           <InputWrapper>
             <CommentText
               value={inputValue}
@@ -165,6 +144,6 @@ export const CommentsComponent = observer((
 
 export const styled = StyleSheet.create({
   feedComment: {
-    maxHeight: "80%",
+    maxHeight: "75%",
   },
 })

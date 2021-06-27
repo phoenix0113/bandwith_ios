@@ -162,7 +162,6 @@ export const AllLoadedText = styled.Text`
   letter-spacing: -0.093px;
   text-align: left;
   padding-top: 10px;
-  padding-right: 15%;
   color: ${COLORS.ALTERNATIVE};
 `;
 

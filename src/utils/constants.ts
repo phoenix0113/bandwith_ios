@@ -40,3 +40,5 @@ export const COMMENTS_LOAD_LIMIT = 20;
 export const RECORDINGS_LOAD_LIMIT = 5;
 
 export const LOAD_MORE_RECORDINGS_THRESHOLD = 3;
+
+export const ADMIN_EMAIL = "phil@bandwwith.com";

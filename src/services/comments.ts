@@ -83,8 +83,8 @@ class CommentsMobxService {
       date: Date.now(),
       user: {
         _id: UserServiceInstance.profile?._id,
-        name: UserServiceInstance.profile.name,
-        imageUrl: UserServiceInstance.profile.imageUrl,
+        name: UserServiceInstance.profile?.name,
+        imageUrl: UserServiceInstance.profile?.imageUrl,
       },
       recordingIds: isRecording ? [id] : [],
     };

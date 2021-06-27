@@ -1,5 +1,6 @@
 import React, { useState, useContext, useMemo } from "react";
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Alert } from "react-native";
 import { observer } from "mobx-react";
 import { UserServiceContext } from "../../../services/user";
 import { FeedStorageContext } from "../../../services/feed";
@@ -8,7 +9,7 @@ import {
   RecordUserWrapper, RightItem, RightText, NavigationBar, LeftItem, CenterItem, NavigationText, ReportContentWrapper,
   ReportHeader, ReportContent, ReportFooter, ReportTitle, ReportBody
 } from "../styled";
-import { BasicButton, BasicButtonText } from "../../../components/styled";
+import { BasicButton, BasicButtonText, COLORS } from "../../../components/styled";
 
 interface IProps {
   id: string;
@@ -37,6 +38,7 @@ export const ReportRecordingComponent = observer(({ id, closeHandler }: IProps) 
       reportBody
     );
     closeHandler();
+    Alert.alert("Email sent successfully!");
   }
 
   const isSubmitDisabled = useMemo(() => {
@@ -54,43 +56,50 @@ export const ReportRecordingComponent = observer(({ id, closeHandler }: IProps) 
           <RightText onPress={closeHandler}>Cancel</RightText>
         </RightItem>
       </NavigationBar>
-      <ReportContentWrapper>
-        <ReportHeader>
-          <ReportTitle
-            value={reportTitle}
-            onChangeText={text => onChangeTitle(text)}
-            underlineColorAndroid="transparent"
-            placeholder={"Report Title"}
-            placeholderTextColor={"grey"}
-            numberOfLines={50}
-            multiline={false}
-            enablesReturnKeyAutomatically={true}
-            keyboardType={"default"}
-          />
-        </ReportHeader>
-        <ReportContent>
-          <ReportBody
-            value={reportBody}
-            onChangeText={text => onChangeBody(text)}
-            underlineColorAndroid="transparent"
-            placeholder={"Report Body"}
-            placeholderTextColor={"grey"}
-            numberOfLines={50}
-            multiline={true}
-            enablesReturnKeyAutomatically={true}
-            keyboardType={"default"}
-          />
-        </ReportContent>
-        <ReportFooter>
-          <BasicButton
-            disabled={isSubmitDisabled}
-            onPress={onSubmit}
-            width="80%"
-          >
-            <BasicButtonText>Send</BasicButtonText>
-          </BasicButton>
-        </ReportFooter>
-      </ReportContentWrapper>
+      <KeyboardAwareScrollView>
+        <ReportContentWrapper>
+          <ReportHeader>
+            <NavigationText
+              style={{ color: COLORS.GREY, margin: 40 }}
+            >
+              If you send the report, the administrator will check it and reply to you.
+            </NavigationText>
+            <ReportTitle
+              value={reportTitle}
+              onChangeText={text => onChangeTitle(text)}
+              underlineColorAndroid="transparent"
+              placeholder={"Report Title"}
+              placeholderTextColor={"grey"}
+              numberOfLines={50}
+              multiline={false}
+              enablesReturnKeyAutomatically={true}
+              keyboardType={"default"}
+            />
+          </ReportHeader>
+          <ReportContent>
+            <ReportBody
+              value={reportBody}
+              onChangeText={text => onChangeBody(text)}
+              underlineColorAndroid="transparent"
+              placeholder={"Report Body"}
+              placeholderTextColor={"grey"}
+              numberOfLines={50}
+              multiline={true}
+              enablesReturnKeyAutomatically={true}
+              keyboardType={"default"}
+            />
+          </ReportContent>
+          <ReportFooter>
+            <BasicButton
+              disabled={isSubmitDisabled}
+              onPress={onSubmit}
+              width="80%"
+            >
+              <BasicButtonText>Send</BasicButtonText>
+            </BasicButton>
+          </ReportFooter>
+        </ReportContentWrapper>
+      </KeyboardAwareScrollView>
     </RecordUserWrapper>
   );
 });
