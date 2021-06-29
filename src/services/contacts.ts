@@ -7,7 +7,7 @@ import { Alert } from "react-native";
 import { UserServiceInstance } from "./user";
 import { AppServiceInstance } from "./app";
 
-import { getContactListRequest, importContactsRequest } from "../axios/routes/contacts";
+import { getContactListRequest, importContactsRequest, sendInvite, getInvite } from "../axios/routes/contacts";
 import { ContactImportItem, ContactItem, ImportedContactItem } from "../shared/interfaces";
 import { UserStatus } from "../shared/socket";
 import { showUnexpectedErrorAlert } from "../utils/notifications";
@@ -28,6 +28,8 @@ class ContactsService {
   @observable importedContacts: Array<ImportedContactItemWithStatus> = [];
 
   @observable isImporting = false;
+
+  @observable inviteRequests: Array<ContactItemWithStatus> = [];
 
   public requestStatusUpdate: () => void = null;
 
@@ -193,6 +195,31 @@ class ContactsService {
           status,
         };
       });
+
+      const inviteRequests = await getInvite();
+
+      this.inviteRequests = inviteRequests.map((request) => {
+        let status: UserStatus = "offline";
+        if (oldContacts?.length) {
+          const oldContactObject = oldContacts.find((c) => c._id === request._id);
+          if (oldContactObject) {
+            status = oldContactObject.status;
+          }
+        }
+
+        if (onlineUsers?.length || busyUsers?.length) {
+          this.contacts.forEach((c) => {
+            if (onlineUsers.includes(c._id)) {c.status = "online";}
+            if (busyUsers.includes(c._id)) {c.status = "busy";}
+          });
+        }
+
+        return {
+          ...request,
+          status,
+        };
+      });
+
     } catch (err) {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.fetchUserContacts);
@@ -239,7 +266,18 @@ class ContactsService {
 
   public isContact = (userId: string): boolean => !!this.contacts.find((c) => c._id === userId);
 
+  public isInvite = (userId: string): boolean => !!this.inviteRequests.find((c) => c._id === userId);
+
   public isImportedContact = (userId: string): boolean => !!this.importedContacts.find((ic) => ic.user._id === userId);
+
+  public sendInvite = async (userId: string) => {
+    try {
+      await sendInvite({ contactPerson: userId });
+      this.fetchUserContacts();
+    } catch (err) {
+      showUnexpectedErrorAlert("Invite Reqeust", err.message);
+    }
+  }
 
   private scheduleActions = (action: Function) => {
     this.onReconnectActions.push(action);

@@ -29,14 +29,14 @@ const reportIcon = "../../../assets/images/feed/report.png";
 interface IProps {
   recording: GetRecordResponse;
   isShared?: boolean;
-  showUserProfile: (id: string) => void;
+  showUserProfile?: (id: string) => void;
   showComments: () => void;
-  showReport: (id: string) => void;
+  showReport?: (id: string) => void;
   openRecordUser: (user: RecordUser) => void;
   shareCall?: (recording: GetRecordResponse) => void;
   backToFeed?: () => void;
   currentRecording?: GetRecordResponse;
-  paused: boolean;
+  paused?: boolean;
 }
 
 export const FeedVideoComponent = observer(({
