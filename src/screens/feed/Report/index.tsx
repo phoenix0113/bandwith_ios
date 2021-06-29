@@ -60,9 +60,14 @@ export const ReportRecordingComponent = observer(({ id, closeHandler }: IProps) 
         <ReportContentWrapper>
           <ReportHeader>
             <NavigationText
-              style={{ color: COLORS.GREY, margin: 40 }}
+              style={{ color: COLORS.GREY, marginLeft: 40, marginRight: 40, marginTop: 20, marginBottom: 10 }}
             >
-              If you send the report, the administrator will check it and reply to you.
+              If you find recording and comments that violate our contract with Bandwith, please send them to admin.
+            </NavigationText>
+            <NavigationText
+              style={{ color: COLORS.GREY, marginLeft: 40, marginRight: 40, marginTop: 0, marginBottom: 20 }}
+            >
+              Then admin will check this and block that recording, comments and author.
             </NavigationText>
             <ReportTitle
               value={reportTitle}

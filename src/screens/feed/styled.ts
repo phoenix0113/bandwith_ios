@@ -341,7 +341,7 @@ export const ReportHeader = styled.View`
 export const ReportContent = styled.View`
   align-items: center;
   width: 100%;
-  height: 60%;
+  height: 50%;
 `;
 
 export const ReportFooter = styled.View`

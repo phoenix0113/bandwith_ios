@@ -28,11 +28,11 @@ export const WelcomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element 
           appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME
         ],
       });
-      
-      let username = appleAuthRequestResponse.fullName.givenName + " " + appleAuthRequestResponse.fullName.middleName;
-      let email = appleAuthRequestResponse.email;
 
-      console.log("appleAuthRequestResponse", appleAuthRequestResponse);
+      console.log("> appleAuthRequestResponse", appleAuthRequestResponse);
+      
+      let username = appleAuthRequestResponse.fullName.givenName + " " + appleAuthRequestResponse.fullName.familyName;
+      let email = appleAuthRequestResponse.email;
 
       UserServiceInstance.authWithApple(username, email);
     } catch (error) {
