@@ -44,3 +44,7 @@ export const LOAD_MORE_RECORDINGS_THRESHOLD = 3;
 export const ADMIN_EMAIL = "phil@bandwwith.com";
 
 export const TERMS_CONDITIONS_URL = "https://www.privacypolicies.com/live/d97e40ef-850d-4ebe-848d-154ee1965d1f";
+
+export const APPROVED_STATUS = "approved";
+
+export const INVITED_STATUS = "invited";

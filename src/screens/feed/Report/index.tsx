@@ -4,6 +4,7 @@ import { Alert } from "react-native";
 import { observer } from "mobx-react";
 import { UserServiceContext } from "../../../services/user";
 import { FeedStorageContext } from "../../../services/feed";
+import { showGeneralErrorAlert } from "../../../utils/notifications";
 
 import {
   RecordUserWrapper, RightItem, RightText, NavigationBar, LeftItem, CenterItem, NavigationText, ReportContentWrapper,
@@ -38,7 +39,7 @@ export const ReportRecordingComponent = observer(({ id, closeHandler }: IProps) 
       reportBody
     );
     closeHandler();
-    Alert.alert("Email sent successfully!");
+    showGeneralErrorAlert("Email sent successfully!");
   }
 
   const isSubmitDisabled = useMemo(() => {

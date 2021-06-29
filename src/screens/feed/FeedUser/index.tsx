@@ -1,12 +1,13 @@
-import React, { useState, useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { COLORS } from "../../../components/styled";
 import { RecordUser } from "../../../shared/interfaces";
 
 import { ProfileImageWrapper } from "../../../components/ProfileImageWrapper";
-import { SocketServiceInstance, SocketServiceContext } from "../../../services/socket";
+import { SocketServiceContext } from "../../../services/socket";
 import { OutgoingCallServiceInstance } from "../../../services/outgoingCall";
-import { showUnexpectedErrorAlert } from "../../../utils/notifications";
+import { showGeneralErrorAlert } from "../../../utils/notifications";
 import { UserServiceContext } from "../../../services/user";
+import { ContactsServiceContext } from "../../../services/contacts";
 
 import { observer } from "mobx-react";
 import { RecordUserWrapper, RightItem, RightText, NavigationBar, LeftItem, CenterItem, NavigationText, ProfileImageContent,
@@ -23,11 +24,12 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
   const {
     contacts, sendAddToFriendInvitation, removeContact, canCallToUser, isContact,
   } = useContext(SocketServiceContext);
+  const { sendInvite, isInvite, inviteRequests } = useContext(ContactsServiceContext);
   
-  const [requestSent, setRequestSent] = useState(false);
+  // const [requestSent, setRequestSent] = useState(false);
   const addToFriends = () => {
     sendAddToFriendInvitation(user._id, () => {
-      setRequestSent(true);
+      sendInvite(user._id);
     });
   };
 
@@ -37,7 +39,7 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
         closeHandler();
       }
     } catch (err) {
-      showUnexpectedErrorAlert("Feed User", err.message);
+      showGeneralErrorAlert("Sorry, You can't remove this user from your friends list.");
     }
   };
 
@@ -46,10 +48,11 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
       OutgoingCallServiceInstance.makeCall(user._id);
       closeHandler();
     } else {
-      showUnexpectedErrorAlert("User is offline or busy at the moment", "");
+      showGeneralErrorAlert("User is offline or busy at the moment");
     }
   };
   const isUserInContactList = useMemo(() => isContact(user._id), [contacts]);
+  const isUserInInviteList = useMemo(() => isInvite(user._id), [inviteRequests]);
   const { profile } = useContext(UserServiceContext);
 
   return (
@@ -73,11 +76,12 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
             <ProfileActionButton
               onPress={addToFriends}
               style={{
-                backgroundColor: requestSent ? COLORS.ALTERNATIVE : COLORS.MAIN_LIGHT,
+                backgroundColor: isUserInInviteList ? COLORS.ALTERNATIVE : COLORS.MAIN_LIGHT,
               }}
+              disabled={isUserInInviteList ? true : false }
             >
-              <ProfileActionText style={{color: requestSent ? COLORS.BLACK : COLORS.WHITE}}>
-                {requestSent ? "Invitation is sent" : "Add to Friends" }
+              <ProfileActionText style={{color: isUserInInviteList ? COLORS.BLACK : COLORS.WHITE}}>
+                {isUserInInviteList ? "Invitation is sent" : "Add to Friends" }
               </ProfileActionText>
             </ProfileActionButton>
           )}

@@ -14,6 +14,7 @@ import { HintComponent } from "../../components/Hint";
 import { ReportRecordingComponent } from "./Report";
 
 import { FeedStorageContext } from "../../services/feed";
+import { ContactsServiceContext } from "../../services/contacts";
 import { showUnexpectedErrorAlert } from "../../utils/notifications";
 import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../utils/constants";
 import { Params, Routes } from "../../utils/routes";
