@@ -18,7 +18,7 @@ import { WelcomeScreensEnum } from "../navigation/welcome/types";
 import { MainScreensEnum } from "../navigation/main/types";
 import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE, VERIFY_CODE, VERIFY_STATUS, EMAIL, RESET_PASSWORD_STATUS } from "../utils/constants";
 import { AppServiceInstance } from "./app";
-import { showNetworkErrorAlert, showUnexpectedErrorAlert } from "../utils/notifications";
+import { showNetworkErrorAlert, showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
@@ -114,7 +114,8 @@ class UserService {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.fetchUserData);
       } else {
-        showUnexpectedErrorAlert("fetchUserData()", err.message);
+        console.log(err.message);
+        showGeneralErrorAlert("Fetch User Data Error");
       }
     }
   }
@@ -137,7 +138,8 @@ class UserService {
       if (!AppServiceInstance.netAccessible) {
         showNetworkErrorAlert();
       } else {
-        showUnexpectedErrorAlert("login()", err.message);
+        console.log(err.message);
+        showGeneralErrorAlert("Login Error");
       }
     }
   }
@@ -158,7 +160,8 @@ class UserService {
       if (!AppServiceInstance.netAccessible) {
         showNetworkErrorAlert();
       } else {
-        showUnexpectedErrorAlert("forgotPassword()", err.message);
+        console.log(err.message);
+        showGeneralErrorAlert("Forgot Password Error");
       }
     }
   }
@@ -223,7 +226,8 @@ class UserService {
       if (!AppServiceInstance.netAccessible) {
         showNetworkErrorAlert();
       } else {
-        showUnexpectedErrorAlert("resetPassword()", err.message);
+        console.log(err.message);
+        showGeneralErrorAlert("Reset Password Error");
       }
     }
   }
@@ -272,7 +276,8 @@ class UserService {
       if (AppServiceInstance.hasNetworkProblems()) {
         showNetworkErrorAlert();
       } else {
-        showUnexpectedErrorAlert("sign with Apple", err.message);
+        console.log(err.message);
+        showGeneralErrorAlert("Sign With Apple Error");
       }
     }
   }
@@ -299,7 +304,8 @@ class UserService {
       if (AppServiceInstance.hasNetworkProblems()) {
         showNetworkErrorAlert();
       } else {
-        showUnexpectedErrorAlert("register()", err.message);
+        console.log(err.message);
+        showGeneralErrorAlert("Register Error");
       }
     }
   }
@@ -355,7 +361,8 @@ class UserService {
       if (AppServiceInstance.hasNetworkProblems()) {
         this.scheduleActions(this.initializeAvcoreCloudClient);
       } else {
-        showUnexpectedErrorAlert("initializeAvcoreCloudClient()", err.message);
+        console.log(err.message);
+        showGeneralErrorAlert("Initialize Avcor eCloud Client Error");
       }
     }
   }
@@ -375,7 +382,8 @@ class UserService {
         Alert.alert(response.error);
       }
     } catch (err) {
-      showUnexpectedErrorAlert("sendVerificationSMS()", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Send Verification SMS Error");
       return false;
     }
   }
@@ -394,7 +402,8 @@ class UserService {
         Alert.alert("Verification Error", response.error);
       }
     } catch (err) {
-      showUnexpectedErrorAlert("verifySMSCode()", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Verify SMS Code Error");
     }
   }
 
@@ -404,7 +413,8 @@ class UserService {
       console.log("> Updated user profile: ", updatedProfile);
       this.profile = updatedProfile;
     } catch (err) {
-      showUnexpectedErrorAlert("verifySMSCode()", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Update Phone Number Error");
     }
   }
 
@@ -482,7 +492,8 @@ class UserService {
       this.profileUser = await getUserDataByID(id);
       console.log("> Get user data by ID: ", this.profileUser._id);
     } catch (err) {
-      showUnexpectedErrorAlert("verifySMSCode()", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Get User Data Error");
     }
   }
 }

@@ -14,7 +14,7 @@ import { HintComponent } from "../../components/Hint";
 import { ReportRecordingComponent } from "./Report";
 
 import { FeedStorageContext } from "../../services/feed";
-import { showUnexpectedErrorAlert } from "../../utils/notifications";
+import { showGeneralErrorAlert } from "../../utils/notifications";
 import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../utils/constants";
 import { Params, Routes } from "../../utils/routes";
 
@@ -50,7 +50,7 @@ export const FeedScreen = observer((): JSX.Element => {
 
   const shareCall = (recording: GetRecordResponse) => {
     if (!Share.share) {
-      showUnexpectedErrorAlert(NAVIGATOR_SHARE_ERROR, "");
+      showGeneralErrorAlert(NAVIGATOR_SHARE_ERROR);
     }
 
     const shareCallData: ShareContent = {
@@ -86,7 +86,7 @@ export const FeedScreen = observer((): JSX.Element => {
   });
 
   const showUserProfile = (id: string) => {
-    setCurrentProfileUser(id);
+    // setCurrentProfileUser(id);
   }
 
   const showReport = (id: string) => {

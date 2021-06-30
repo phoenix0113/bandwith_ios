@@ -3,7 +3,7 @@ import { createContext } from "react";
 import { getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID } from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
 import { LOAD_MORE_RECORDINGS_THRESHOLD, RECORDINGS_LOAD_LIMIT } from "../utils/constants";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
 import { SocketServiceInstance } from "./socket";
 import { UserServiceInstance } from "./user";
 
@@ -48,7 +48,8 @@ class FeedMobxService {
         console.log("> All stored recordings were loaded");
       }
     } catch (err) {
-      showUnexpectedErrorAlert("Load Recordings", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Load Recordings Error");
     }
   }
 
@@ -65,7 +66,8 @@ class FeedMobxService {
       }
       SocketServiceInstance.joinRecordingCommentsRoom(recording._id);
     } catch (err) {
-      showUnexpectedErrorAlert("Fetch Shared Recording", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Fetch Shared Recording Error");
     }
   }
 
@@ -109,7 +111,8 @@ class FeedMobxService {
       });
       console.log("> Report recording: ", code);
     } catch (err) {
-      showUnexpectedErrorAlert("Report Recording", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Report Recording Error");
     }
   }
 
@@ -130,7 +133,8 @@ class FeedMobxService {
         console.log("> All stored recordings were loaded");
       }
     } catch (err) {
-      showUnexpectedErrorAlert("Load Recordings", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Load Recordings Error");
     }
   }
 }
