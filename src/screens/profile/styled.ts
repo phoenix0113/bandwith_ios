@@ -32,6 +32,7 @@ export const ProfileEmail = styled.Text`
   font-size: 17px;
   line-height: 20px;
   color: #E6E6E6;
+  margin-bottom: 50px;
 `;
 
 export const ProfileContentWrapper = styled.View`
@@ -48,16 +49,50 @@ export const ProfileImageWrapper = styled.Image`
   border-radius: 48px;
 `
 
-export const ProfileRecordingContent = styled.ScrollView`
-  margin-top: 50px;
+export const ProfileRecordingContent = styled.View`
   display: flex;
-  flex: 1;
-  width: 100%;
-  height: 100%;
+  flex-wrap: wrap;
+  align-content: stretch;
+  flex-direction: row;
+  padding: 2px;
 `;
 
-export const ProfileVideo = styled.View`
-  width: 33.3333%;
-  height: 100%;
+export const ProfileVideo = styled.TouchableOpacity`
   position: relative;
+  margin: 2px;
+  width: ${windowWidth / 3 - 6}px;
+  height: ${2 * windowWidth / 3 - 12}px;
+  border: 1px solid white;
+`;
+
+export const ProfileFeedContent = styled.View`
+  position: relative;
+`;
+
+
+export const ProfileFeedVideo = styled.View`
+  width: ${windowWidth}px;
+`;
+
+export const FeedPlayerContentWrapperView = styled.View`
+  position: absolute;
+  z-index: ${Z_INDEX.MIDDLE};
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const FeedPlayerToolTip = styled.TouchableOpacity`
+`;
+
+export const FeedPlayerContentWrapper = styled.TouchableOpacity`
+  position: absolute;
+  z-index: ${Z_INDEX.MIDDLE};
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

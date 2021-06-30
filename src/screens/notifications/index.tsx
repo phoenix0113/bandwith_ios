@@ -44,10 +44,10 @@ export const NotificationsScreen = observer(() => {
   };
 
   const handleNotificationClick = (notification: Notification) => {
-    if (notification.type === NotificationTypes.INVITATION) {
-      setViewerInvitationId(notification._id);
-      setViewerInvitationUser(notification.user);
-    }
+    // if (notification.type === NotificationTypes.INVITATION) {
+    setViewerInvitationId(notification._id);
+    setViewerInvitationUser(notification.user);
+    // }
   };
 
   const closeViewer = () => {
