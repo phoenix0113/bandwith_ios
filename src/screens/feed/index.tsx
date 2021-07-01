@@ -83,7 +83,7 @@ export const FeedScreen = observer((): JSX.Element => {
   const onViewRef = useRef((viewableItems: any) => {
     let item = viewableItems;
     let currentRecording = item.changed[0]["item"];
-    setCurrentRecording(currentRecording._id);
+    setCurrentRecording(currentRecording?._id);
   });
 
   const viewConfigRef = useRef({
@@ -91,7 +91,7 @@ export const FeedScreen = observer((): JSX.Element => {
   });
 
   const showUserProfile = (id: string) => {
-    // setCurrentProfileUser(id);
+    setCurrentProfileUser(id);
   }
 
   const showReport = (id: string) => {
@@ -102,7 +102,7 @@ export const FeedScreen = observer((): JSX.Element => {
     const positionY = event.nativeEvent.contentOffset.y;
     let index = 0;
     allRecordings.forEach((item) => {
-      if (index === Math.floor(positionY / height)) {
+      if (index === Math.floor(positionY / height) && currentRecording?._id !== item._id) {
         setCurrentRecording(item._id);
       }
       index++;
@@ -184,7 +184,7 @@ export const FeedScreen = observer((): JSX.Element => {
         <FlatList
           data={allRecordings}
           renderItem={renderItem}
-          keyExtractor={(item) => item._id}
+          keyExtractor={() => (Math.random() * 1000000000).toString()}
           pagingEnabled={true}
           style={styled.flatlist}
           horizontal={false}

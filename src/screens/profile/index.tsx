@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { observer } from "mobx-react";
 import Video from "react-native-video";
-import { Dimensions, ScrollView } from "react-native";
+import { Dimensions, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { tabBarHeight } from "../../utils/styles";
@@ -30,6 +30,7 @@ export const ProfileScreen = observer(({ id, showUserProfile }: IProps): JSX.Ele
   const windowWidth = Dimensions.get('screen').width;
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
+  const recordingHeight = height - 66;
   const [currentRecording, setCurrentRecording] = useState("");
   const [position, setPosition] = useState(0);
   const [recordigns, setRecordings] = useState([]);
@@ -46,14 +47,28 @@ export const ProfileScreen = observer(({ id, showUserProfile }: IProps): JSX.Ele
     setCurrentRecording(id);
     filterRecordings.forEach((item) => {
       if (item?._id === id) {
-        setPosition(index * (height - 66));
+        setPosition(index * recordingHeight);
       }
       index++;
     });
   }
 
-  const onScroll = () => {
-    console.log("+++++++++++++++++++++++++++");
+  const onScrollEndDrag = (event) => {
+    if (position > event.nativeEvent.contentOffset.y) {
+      setPosition((position > 0) ? position - recordingHeight : 0);
+    } else {
+      setPosition(position + recordingHeight);
+    }
+    scrollRef.current?.scrollTo({
+      y: position,
+      animated: true,
+    });
+    let index = Math.floor(position/recordingHeight);
+    if (index > filterRecordings.length - 1) {
+      index = filterRecordings.length - 1;
+    }
+    setCurrentRecording(filterRecordings[index]._id);
+    console.log("+++++++++++++++++++++++++++", currentRecording);
   }
 
   useEffect(() => {
@@ -110,12 +125,12 @@ export const ProfileScreen = observer(({ id, showUserProfile }: IProps): JSX.Ele
             </>
           ) : (
             <ScrollView
-              onScroll={onScroll}
+              onScrollEndDrag={onScrollEndDrag}
               ref={scrollRef}
             >
               {
                 (recordigns.length !== 0 && recordigns.map((item) => (
-                  <ProfileFeedVideo style={{ height: height - 66 }} key={(Math.random() * 1000000000).toString()}>
+                  <ProfileFeedVideo style={{ height: recordingHeight }} key={(Math.random() * 1000000000).toString()}>
                     <ProfileRecordingComponent
                       uri={item.list[0].url}
                       paused={(currentRecording === item._id) ? true : false}

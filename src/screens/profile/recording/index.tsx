@@ -17,30 +17,38 @@ interface IProps {
 }
 
 export const ProfileRecordingComponent = observer(({ uri, paused, height }: IProps): JSX.Element => {
-  const [showPlayBtn, changeShowPlayBtn] = useState(paused);
+  const [playStatus, setPlayStatus] = useState(paused);
+  const [showPlayButton, setShowPlayButton] = useState(false);
   const playerRef = useRef<Video>(null);
+
+  const pausePlay = () => {
+    setPlayStatus(false);
+    setShowPlayButton(true);
+  }
 
   const changePlaybackStatus = () => {
     if (!playerRef) return;
     
-    if (showPlayBtn) {
-      changeShowPlayBtn(false);
+    if (playStatus) {
+      setPlayStatus(false);
+      setShowPlayButton(true);
     } else {
-      changeShowPlayBtn(true);
+      setPlayStatus(true);
+      setShowPlayButton(false);
     }
   };
 
   return (
     <ProfileFeedContent>
       {
-        (!showPlayBtn) ? (
+        (showPlayButton) ? (
           <FeedPlayerContentWrapperView style={{ height: height }}>
             <FeedPlayerToolTip onPress={changePlaybackStatus}>
               <PlayIcon />
             </FeedPlayerToolTip>
           </FeedPlayerContentWrapperView>
         ) : (
-          <FeedPlayerContentWrapper style={{ height: height }} onPress={() => changeShowPlayBtn(false)}>
+          <FeedPlayerContentWrapper style={{ height: height }} onPress={pausePlay}>
             <FeedPlayerToolTip onPress={changePlaybackStatus} />
           </FeedPlayerContentWrapper>
         )
@@ -49,7 +57,7 @@ export const ProfileRecordingComponent = observer(({ uri, paused, height }: IPro
         source={{uri: uri}}
         resizeMode="cover"
         style={{ width: windowWidth, height: height, position: "absolute" }}
-        paused={showPlayBtn}
+        paused={playStatus}
       />
     </ProfileFeedContent>
   );

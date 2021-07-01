@@ -46,7 +46,8 @@ export const FeedVideoComponent = observer(({
   const playerRef = useRef<Video>(null);
   const [started, setStarted] = useState(false);
 
-  const [showPlayBtn, setShowPlayBtn] = useState(false);
+  const [playStatus, setPlayStatus] = useState(false);
+  const [showPlayButton, setShowPlayButton] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -54,17 +55,19 @@ export const FeedVideoComponent = observer(({
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
 
   const hidePlayBtn = () => {
-    setShowPlayBtn(true);
+    setShowPlayButton(true);
   }
 
   const changePlaybackStatus = () => {
     if (!playerRef) return;
     
-    if (showPlayBtn) {
-      setShowPlayBtn(false);
+    if (playStatus) {
+      setPlayStatus(false);
+      setShowPlayButton(true);
       console.log(`> Recoding ${recording?._id} was resumed manually`);
     } else {
-      setShowPlayBtn(true);
+      setPlayStatus(true);
+      setShowPlayButton(false);
       console.log(`> Recoding ${recording?._id} was paused manually`);
     }
   };
@@ -72,25 +75,25 @@ export const FeedVideoComponent = observer(({
   const feedOnScrollPlaybackHandler = () => {
     if (currentRecording._id === recording._id) {
       if (playerRef.current.paused) {
-        playerRef.current.play().then(() => setShowPlayBtn(false)).catch(() => {
+        playerRef.current.play().then(() => setPlayStatus(false)).catch(() => {
           console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
           if (playerRef.current.paused) {
-            setShowPlayBtn(true);
+            setPlayStatus(true);
           }
         });
       }
     } else if (!playerRef.current.paused) {
-      setShowPlayBtn(true);
+      setPlayStatus(true);
     }
     console.log(`> Feed recording ${recording?._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
   };
 
   const sharedPlaybackHandler = () => {
     if (playerRef.current.paused) {
-      playerRef.current.play().then(() => setShowPlayBtn(false)).catch(() => {
+      playerRef.current.play().then(() => setPlayStatus(false)).catch(() => {
         console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
         if (playerRef.current.paused) {
-          setShowPlayBtn(true);
+          setPlayStatus(true);
         }
       });
     }
@@ -98,7 +101,7 @@ export const FeedVideoComponent = observer(({
   };
 
   const onEnd = () => {
-    setShowPlayBtn(true);
+    setPlayStatus(true);
     setCurrentTime(0);
   }
 
@@ -109,7 +112,7 @@ export const FeedVideoComponent = observer(({
           // No reason to try to play it in Safari, it will be blocked in any case
           // trying to play only when it was played manually before
           console.log("> Skip play attempt in Safari for the first time");
-          setShowPlayBtn(true);
+          setPlayStatus(true);
         } else {
           sharedPlaybackHandler();
         }
@@ -121,14 +124,14 @@ export const FeedVideoComponent = observer(({
         console.log(`> Current recording changed to ${currentRecording._id}. Current recording component: ${recording._id} `);
         if (Utils.isSafari && !started) {
           console.log("> Skip play attempt in Safari for the first time");
-          setShowPlayBtn(true);
+          setPlayStatus(true);
         } else {
           feedOnScrollPlaybackHandler();
         }
       }
     }
 
-    setShowPlayBtn(paused);
+    setPlayStatus(paused);
   }, [playerRef, currentRecording, paused]);
 
   const contentText = useMemo(() => {
@@ -144,7 +147,7 @@ export const FeedVideoComponent = observer(({
   return (
     <>
       {
-        (showPlayBtn) ? (
+        (showPlayButton) ? (
           <FeedPlayerContentWrapperView>
             <FeedPlayerToolTip onPress={changePlaybackStatus}>
               <PlayIcon />
@@ -179,7 +182,7 @@ export const FeedVideoComponent = observer(({
         <SafeAreaProvider>
           <SafeAreaView>
             <Video
-              paused={showPlayBtn}
+              paused={playStatus}
               source={{uri: recording.list[0].url}}
               onEnd={onEnd}
               resizeMode="cover"
