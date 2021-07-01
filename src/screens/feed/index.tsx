@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { observer, Observer } from "mobx-react";
-import { FlatList, StyleSheet, Share, ShareContent } from "react-native";
+import { FlatList, StyleSheet, Share, ShareContent, Dimensions } from "react-native";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { tabBarHeight } from "../../utils/styles";
 import {
   BasicSafeAreaView,
 } from "../../components/styled";
@@ -32,6 +34,9 @@ export const FeedScreen = observer((): JSX.Element => {
     fetchSharedRecording,
     cleanSharedRecording,
   } = useContext(FeedStorageContext);
+
+  const insets = useSafeAreaInsets();
+  const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
 
   const [sharedRecordingId, setSharedRecordingId] = useState(null);
 
@@ -92,6 +97,18 @@ export const FeedScreen = observer((): JSX.Element => {
   const showReport = (id: string) => {
     setIsReport(id);
   }
+
+  const onScroll = (event) => {
+    const positionY = event.nativeEvent.contentOffset.y;
+    let index = 0;
+    allRecordings.forEach((item) => {
+      if (index === Math.floor(positionY / height)) {
+        setCurrentRecording(item._id);
+      }
+      index++;
+    });
+    console.log("currentRecording", currentRecording);
+  };
 
   const renderItem = ({ item }) => {
     return <Observer>{() => 
@@ -176,6 +193,8 @@ export const FeedScreen = observer((): JSX.Element => {
           viewabilityConfig={viewConfigRef.current}
           showsVerticalScrollIndicator={false}
           onEndReached={onEndReached}
+          onScroll={onScroll}
+          scrollEventThrottle={height}
         />
       </PageContent>
     </BasicSafeAreaView>

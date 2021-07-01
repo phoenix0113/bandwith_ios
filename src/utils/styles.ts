@@ -1,4 +1,4 @@
-import {Platform, Dimensions} from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 
 const isLandscape = () => {
   const dim = Dimensions.get('screen');
@@ -13,4 +13,3 @@ export const tabBarHeight = () => {
   if(isIOS11 && !isLandscape()) return 49;
   return 29;
 }
-
