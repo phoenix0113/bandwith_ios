@@ -165,7 +165,6 @@ export const FeedVideoComponent = observer(({
               <AddToFriendIcon source={require(tempProfileIcon)} />
             )
           }
-          
         </ViewProfile>
         <AddToFriendContent>
           <ContentText isTitle>{recording.user?.name}</ContentText>
