@@ -14,6 +14,7 @@ export interface OAuthAppleRequest {
   user: string;
   email: string;
   password: string;
+  imageUrl?: string;
 }
 
 export interface OAuthFacebookRequest {
@@ -56,6 +57,8 @@ export interface ImportedContactItem {
 
 interface UserExtraData {
   available: boolean;
+  status: string;
+  role: string;
   phone: string;
   countryCode: string;
   verified: boolean;
@@ -63,7 +66,8 @@ interface UserExtraData {
   contacts: ImportedContactItem[];
 }
 
-export interface UserProfileResponse extends RegistrationRequest, UserProfileRequest, Document, UserExtraData {
+export interface UserProfileResponse
+  extends RegistrationRequest, UserProfileRequest, Document, UserExtraData {
   hints?: UserHint[];
 }
 
@@ -103,17 +107,17 @@ export interface ResetPasswordResponse {
   code: string;
 }
 
-// TODO: most likely some user data has to be here
-export interface SubscribeToFirebasePushesRequest {
-  token: string;
-}
-
 export interface NotificationData {
   title: string;
   body: string;
   redirectUrl: string;
   callId: string;
   username: string;
+}
+
+// TODO: most likely some user data has to be here
+export interface SubscribeToFirebasePushesRequest {
+  token: string;
 }
 
 export interface FirebaseNotificationRequest extends NotificationData {
@@ -183,6 +187,7 @@ export interface GetUserDataResponse extends Document {
   name: string;
   email: string;
   imageUrl?: string;
+  status?: string;
 }
 
 export interface GetAllUsersResponse {
@@ -250,6 +255,10 @@ export interface CommentRequest {
   recordingIds?: Array<string>;
 }
 
+export interface BlockedVideoIdsResponse {
+  ids: Array<string>;
+}
+
 export interface Comment extends CommentRequest, Document {}
 
 // Type that can be used in the following way in express: `req.query as GetAllCommentsQuery`
@@ -296,6 +305,7 @@ export interface CreateCallRecordingRequest {
   pipeId: string;
   callId: string;
   createDate?: number;
+  status: string;
 }
 
 export interface PublishRecordingRequest {
@@ -306,6 +316,7 @@ export interface PublishRecordingRequest {
 export type RecordUser = ContactItem;
 
 export interface GetRecordResponse extends Document {
+  status: string;
   list: ListRecordingItem[];
   createDate?: number;
   pipeId: string;
@@ -320,9 +331,46 @@ export interface CallRecording extends Document, CreateCallRecordingRequest {
   participiants?: string[];
 }
 
+export interface BlockRecordingResponse {
+  ids: Array<string>;
+}
+
+export interface GetVerifyCodeRequest {
+  email: string;
+  role: string;
+}
+
+export interface GetVerifyCodeResponse {
+  code: string;
+}
+
+export interface ResetPasswordRequest extends GetVerifyCodeRequest {
+  password: string;
+}
+
+export interface BlockRecording extends Document, CreateBlockRecordingRequest{}
+
+export interface CreateBlockRecordingRequest {
+  callrecording: string;
+  user: string;
+}
+
 export interface GetAllRecordsQuery {
   limit?: number;
   offset?: number;
+}
+
+export interface UpdateRecordingQuery {
+  _id: string;
+  status: string;
+}
+
+export interface UpdateRecordingResponse {
+  code: number;
+}
+
+export interface GetFilterRecordsQuery extends Document, GetAllRecordsQuery{
+  
 }
 
 export interface GetAllRecordsResponse {

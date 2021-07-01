@@ -14,8 +14,7 @@ import { HintComponent } from "../../components/Hint";
 import { ReportRecordingComponent } from "./Report";
 
 import { FeedStorageContext } from "../../services/feed";
-import { ContactsServiceContext } from "../../services/contacts";
-import { showUnexpectedErrorAlert } from "../../utils/notifications";
+import { showGeneralErrorAlert } from "../../utils/notifications";
 import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../utils/constants";
 import { Params, Routes } from "../../utils/routes";
 
@@ -34,10 +33,6 @@ export const FeedScreen = observer((): JSX.Element => {
     cleanSharedRecording,
   } = useContext(FeedStorageContext);
 
-  recordings.map((recording) => {
-    console.log(recording._id);
-  })
-  
   const [sharedRecordingId, setSharedRecordingId] = useState(null);
 
   useEffect(() => {
@@ -51,11 +46,11 @@ export const FeedScreen = observer((): JSX.Element => {
   const hideComments = () => setOpenedComments(false);
   const [isReport, setIsReport] = useState("");
   const [currentProfileUser, setCurrentProfileUser] = useState("");
-  const [currentRecordings, setCurrentRecordings] = useState([]);
+  const [allRecordings, setAllRecordings] = useState([]);
 
   const shareCall = (recording: GetRecordResponse) => {
     if (!Share.share) {
-      showUnexpectedErrorAlert(NAVIGATOR_SHARE_ERROR, "");
+      showGeneralErrorAlert(NAVIGATOR_SHARE_ERROR);
     }
 
     const shareCallData: ShareContent = {
@@ -79,26 +74,6 @@ export const FeedScreen = observer((): JSX.Element => {
   const backToFeed = () => {
     cleanSharedRecording();
   };
-
-  const filterRecordings = (id: string) => {
-    let items = [];
-    currentRecordings.forEach(item => {
-      if (item.user._id === id) {
-        items.push(item);
-      }
-    });
-    setCurrentRecordings(items);
-  }
-
-  useEffect(() => {
-    loadRecordings();
-    setCurrentRecordings([]);
-    if (currentProfileUser === "") {
-      setCurrentRecordings(recordings);
-    } else if (currentProfileUser !== "") {
-      filterRecordings(currentProfileUser);
-    }
-  }, []);
 
   const onViewRef = useRef((viewableItems: any) => {
     let item = viewableItems;
@@ -134,6 +109,16 @@ export const FeedScreen = observer((): JSX.Element => {
       </BasicContentWrapper>
     }</Observer>;
   };
+
+  useEffect(() => {
+    setAllRecordings(recordings);
+  }, [recordings]);
+
+  const onEndReached = async () => {
+    await loadRecordings();
+    setAllRecordings(recordings);
+  }
+
   return (
     <BasicSafeAreaView>
       <PageContent>
@@ -141,7 +126,6 @@ export const FeedScreen = observer((): JSX.Element => {
           <ProfileScreen
             id={currentProfileUser}
             showUserProfile={showUserProfile}
-            currentRecordings={currentRecordings}
           />
         )}
 
@@ -181,7 +165,7 @@ export const FeedScreen = observer((): JSX.Element => {
         )}
 
         <FlatList
-          data={currentRecordings}
+          data={allRecordings}
           renderItem={renderItem}
           keyExtractor={(item) => (Math.random() * 1000000000).toString()}
           pagingEnabled={true}
@@ -191,7 +175,7 @@ export const FeedScreen = observer((): JSX.Element => {
           onViewableItemsChanged={onViewRef.current}
           viewabilityConfig={viewConfigRef.current}
           showsVerticalScrollIndicator={false}
-          onEndReached={loadRecordings}
+          onEndReached={onEndReached}
         />
       </PageContent>
     </BasicSafeAreaView>

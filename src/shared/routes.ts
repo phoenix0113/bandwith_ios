@@ -35,6 +35,7 @@ export const PATH = {
   AVAILABLE: "available",
   REPORT: "report",
   INVITE: "invite",
+  FILTER: "filter",
 };
 
 export const API = {
@@ -67,6 +68,7 @@ export const API = {
   BLOCK: `/${PATH.API}/${PATH.BLOCK}`,
   FEATURED: `/${PATH.API}/${PATH.FEATURED}`,
   RECORD_AVAILABLE: `/${PATH.API}/${PATH.RECORD}/${PATH.AVAILABLE}`,
+  RECORD_FILTER: `/${PATH.API}/${PATH.RECORD}/${PATH.FILTER}`,
   GET_VERIFY_CODE: `/${PATH.API}/${PATH.FORGOT_PASSWORD}`,
   RESET_PASSWORD: `/${PATH.API}/${PATH.RESET_PASSWORD}`,
   REPORT: `/${PATH.API}/${PATH.RECORD}/${PATH.REPORT}`,

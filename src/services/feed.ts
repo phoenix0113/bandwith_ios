@@ -1,10 +1,11 @@
-import { action, makeAutoObservable, observable, runInAction, toJS } from "mobx";
+import { action, makeAutoObservable, observable, runInAction, toJS, reaction } from "mobx";
 import { createContext } from "react";
-import { getRecordingById, getRecordingsList, sendRecordingReport } from "../axios/routes/feed";
-import { GetRecordResponse, ReportRequest } from "../shared/interfaces";
+import { getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID } from "../axios/routes/feed";
+import { GetRecordResponse } from "../shared/interfaces";
 import { LOAD_MORE_RECORDINGS_THRESHOLD, RECORDINGS_LOAD_LIMIT } from "../utils/constants";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
 import { SocketServiceInstance } from "./socket";
+import { UserServiceInstance } from "./user";
 
 class FeedMobxService {
   @observable currentRecording: GetRecordResponse = null;
@@ -13,10 +14,20 @@ class FeedMobxService {
 
   @observable recordings: Array<GetRecordResponse> = [];
 
+  @observable filterRecordings: Array<GetRecordResponse> = [];
+
   @observable allRecordingsLoaded = false;
 
   constructor() {
     makeAutoObservable(this);
+    reaction(
+      () => UserServiceInstance.profile,
+      (profile) => {
+        if (profile) {
+          this.loadRecordings();
+        }
+      }
+    );
   }
 
   public loadRecordings = async () => {
@@ -34,11 +45,11 @@ class FeedMobxService {
       });
 
       if (recordings.length < RECORDINGS_LOAD_LIMIT) {
-        this.allRecordingsLoaded = true;
         console.log("> All stored recordings were loaded");
       }
     } catch (err) {
-      showUnexpectedErrorAlert("Load Recordings", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Load Recordings Error");
     }
   }
 
@@ -55,7 +66,8 @@ class FeedMobxService {
       }
       SocketServiceInstance.joinRecordingCommentsRoom(recording._id);
     } catch (err) {
-      showUnexpectedErrorAlert("Fetch Shared Recording", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Fetch Shared Recording Error");
     }
   }
 
@@ -99,7 +111,30 @@ class FeedMobxService {
       });
       console.log("> Report recording: ", code);
     } catch (err) {
-      showUnexpectedErrorAlert("Report Recording", err.message);
+      console.log(err.message);
+      showGeneralErrorAlert("Report Recording Error");
+    }
+  }
+
+  public getRecordingsByUserID = async (id: string) => {
+    try {
+      const { recordings } = await getRecordingsByUserID(id);
+
+      runInAction(() => {
+        this.filterRecordings = [];
+        this.filterRecordings.push(...recordings);
+        if (!this.filterRecordings.length && recordings.length) {
+          this.currentRecording = recordings[0];
+          this.setCurrentRecording(recordings[0]._id);
+        }
+      });
+
+      if (recordings.length < RECORDINGS_LOAD_LIMIT) {
+        console.log("> All stored recordings were loaded");
+      }
+    } catch (err) {
+      console.log(err.message);
+      showGeneralErrorAlert("Load Recordings Error");
     }
   }
 }

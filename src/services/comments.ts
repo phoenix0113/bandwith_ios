@@ -6,7 +6,7 @@ import { SocketServiceInstance } from "./socket";
 import { ACTIONS, CLIENT_ONLY_ACTIONS, SendCommentRequest } from "../shared/socket";
 import { getComments } from "../axios/routes/comments";
 import { COMMENTS_LOAD_LIMIT } from "../utils/constants";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { showGeneralErrorAlert } from "../utils/notifications";
 import { UserServiceInstance } from "./user";
 
 class CommentsMobxService {
@@ -60,7 +60,7 @@ class CommentsMobxService {
       });
     } catch (err) {
       console.error(err);
-      showUnexpectedErrorAlert("Fetch Comments", err.message);
+      showGeneralErrorAlert("Fetch Comments Error");
     } finally {
       this.loading = false;
     }

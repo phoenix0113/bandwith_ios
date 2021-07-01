@@ -10,7 +10,7 @@ import {
 
 import SendImg from "../../assets/images/SendComment.svg";
 import CloseImg from "../../assets/images/close.svg";
-import { showUnexpectedErrorAlert } from "../../utils/notifications";
+import { showUnexpectedErrorAlert, showGeneralErrorAlert } from "../../utils/notifications";
 import { CommentsStorageContext } from "../../services/comments";
 
 import { CommentTimeComponent } from "./Time";
@@ -70,7 +70,7 @@ export const CommentsComponent = observer((
     const value = target;
 
     if (value.length === MAX_INPUT_LENGTH + 1) {
-      showUnexpectedErrorAlert(`Maximum of ${MAX_INPUT_LENGTH} characters`, "");
+      showGeneralErrorAlert(`Maximum of ${MAX_INPUT_LENGTH} characters`);
     } else {
       setInputValue(value);
     }

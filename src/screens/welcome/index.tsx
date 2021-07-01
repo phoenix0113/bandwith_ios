@@ -6,6 +6,7 @@ import appleAuth, {
 import { WelcomeScreenNavigationProps } from "../../navigation/welcome/types";
 
 import { UserServiceInstance } from "../../services/user";
+import { showGeneralErrorAlert } from "../../utils/notifications";
 
 import { WelcomeWrapper, ContentToolbox, HeaderContent, HeaderWrapper, ButtonContent, GoogleIcon } from "./styled";
 import { BasicButton, BasicButtonText, BasicSafeAreaView } from "../../components/styled";
@@ -30,13 +31,18 @@ export const WelcomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element 
       });
 
       console.log("> appleAuthRequestResponse", appleAuthRequestResponse);
-      
-      let username = appleAuthRequestResponse.fullName.givenName + " " + appleAuthRequestResponse.fullName.familyName;
-      let email = appleAuthRequestResponse.email;
 
-      UserServiceInstance.authWithApple(username, email);
+      if (appleAuthRequestResponse.fullName.givenName && appleAuthRequestResponse.fullName.familyName && appleAuthRequestResponse.email) {
+        let username = appleAuthRequestResponse.fullName.givenName + " " + appleAuthRequestResponse.fullName.familyName;
+        let email = appleAuthRequestResponse.email;
+  
+        UserServiceInstance.authWithApple(username, email);
+      } else {
+        showGeneralErrorAlert("Apple Auth Error. Please check your Apple accout again.");
+      }
     } catch (error) {
-      console.warn("error code", error);
+      console.log("error code", error);
+      showGeneralErrorAlert("Apple Sign In is not supported on this device.");
     }
   }
 

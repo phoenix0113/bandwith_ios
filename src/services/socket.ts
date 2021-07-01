@@ -24,7 +24,7 @@ import { addUserToContactListRequest, removeUserFromContactListRequest } from ".
 import { setReadHintRequest } from "../axios/routes/user";
 import { createAddToFriednsInvitation, createInvitationAcceptedNotification, createMissedCallNotification, createRemovedFromContactsNotification } from "../shared/utils";
 import { logOnServerRequest } from "../axios/routes/logs";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
 
 export interface LobbyCallEventDataExtended extends LobbyCallEventData {
   isFriend: boolean;
@@ -579,7 +579,7 @@ class SocketService {
 
         return true;
       }
-      showUnexpectedErrorAlert("Something went wrong while deleting a contact", "");
+      showGeneralErrorAlert("Something went wrong while deleting a contact");
       return false;
     } catch (err) {
       showUnexpectedErrorAlert("Remove Contacts", err.message);
