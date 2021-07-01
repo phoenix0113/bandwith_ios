@@ -277,7 +277,7 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Sign With Apple Error");
+        showGeneralErrorAlert("Already used this email by another user.");
       }
     }
   }

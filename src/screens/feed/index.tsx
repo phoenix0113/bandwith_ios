@@ -167,7 +167,7 @@ export const FeedScreen = observer((): JSX.Element => {
         <FlatList
           data={allRecordings}
           renderItem={renderItem}
-          keyExtractor={(item) => (Math.random() * 1000000000).toString()}
+          keyExtractor={(item) => item._id}
           pagingEnabled={true}
           style={styled.flatlist}
           horizontal={false}

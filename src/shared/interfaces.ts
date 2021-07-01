@@ -90,23 +90,6 @@ export interface UpdatePhoneRequest {
   countryCode: string;
 }
 
-export interface GetVerifyCodeRequest {
-  email: string;
-  role: string;
-}
-
-export interface ResetPasswordRequest extends GetVerifyCodeRequest {
-  password: string;
-}
-
-export interface GetVerifyCodeResponse {
-  code: string;
-}
-
-export interface ResetPasswordResponse {
-  code: string;
-}
-
 export interface NotificationData {
   title: string;
   body: string;
@@ -370,7 +353,7 @@ export interface UpdateRecordingResponse {
 }
 
 export interface GetFilterRecordsQuery extends Document, GetAllRecordsQuery{
-  
+
 }
 
 export interface GetAllRecordsResponse {

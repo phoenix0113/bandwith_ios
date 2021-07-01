@@ -38,11 +38,13 @@ export const WelcomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element 
   
         UserServiceInstance.authWithApple(username, email);
       } else {
-        showGeneralErrorAlert("Apple Auth Error. Please check your Apple accout again.");
+        showGeneralErrorAlert("Apple login no supported in this device.");
       }
     } catch (error) {
-      console.log("error code", error);
-      showGeneralErrorAlert("Apple Sign In is not supported on this device.");
+      if (!appleAuth.isSupported) {
+        showGeneralErrorAlert("Apple login no supported in this device.");
+      }
+      console.log(">error code", error);
     }
   }
 
