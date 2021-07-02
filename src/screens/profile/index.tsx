@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { observer } from "mobx-react";
-import Video from "react-native-video";
+import Video from "react-native-video/Video";
 import { Dimensions, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -18,6 +18,7 @@ import {
 } from "./styled";
 import BackIcon from "../../assets/images/feed/back.svg";
 const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
+const testVideoFile = "../../assets/test_video.mp4";
 
 interface IProps {
   id: string;
@@ -68,7 +69,6 @@ export const ProfileScreen = observer(({ id, showUserProfile }: IProps): JSX.Ele
       index = filterRecordings.length - 1;
     }
     setCurrentRecording(filterRecordings[index]._id);
-    console.log("+++++++++++++++++++++++++++", currentRecording);
   }
 
   useEffect(() => {
@@ -114,8 +114,10 @@ export const ProfileScreen = observer(({ id, showUserProfile }: IProps): JSX.Ele
                       <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
                         <Video
                           source={{uri: recording.list[0].url}}
+                          // source={require(testVideoFile)}
                           style={{ width: windowWidth / 3 - 8, height: 2 * windowWidth / 3 - 14, position: "absolute"}}
-                          paused={(recording._id === currentRecording) ? false : true}
+                          resizeMode="cover"
+                          paused={true}
                         />
                       </ProfileVideo>
                     ))
@@ -133,7 +135,7 @@ export const ProfileScreen = observer(({ id, showUserProfile }: IProps): JSX.Ele
                   <ProfileFeedVideo style={{ height: recordingHeight }} key={(Math.random() * 1000000000).toString()}>
                     <ProfileRecordingComponent
                       uri={item.list[0].url}
-                      paused={(currentRecording === item._id) ? true : false}
+                      paused={(currentRecording === item._id) ? false : true}
                       height={height - 70}
                     />
                   </ProfileFeedVideo>

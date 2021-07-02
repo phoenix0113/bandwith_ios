@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
 import { StyleSheet, Dimensions } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaProvider } from "react-native-safe-area-view";
-import Video from "react-native-video";
+import Video from "react-native-video/Video";
 
 import { Utils } from "avcore/client";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
@@ -25,6 +25,7 @@ import ShareIcon from "../../../assets/images/feed/share.svg";
 import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
 const reportIcon = "../../../assets/images/feed/report.png";
+const testVideoFile = "../../../assets/test_video.mp4";
 
 interface IProps {
   recording: GetRecordResponse;
@@ -43,31 +44,33 @@ export const FeedVideoComponent = observer(({
   recording, isShared, showComments, openRecordUser, shareCall, currentRecording, paused, showUserProfile, showReport
 }: IProps) => {
   const { contacts } = useContext(SocketServiceContext);
-  const playerRef = useRef<Video>(null);
+  let playerRef = useRef<Video>(null);
   const [started, setStarted] = useState(false);
 
-  const [playStatus, setPlayStatus] = useState(false);
+  const [pausedStatus, setPausedStatus] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(0);
 
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
+  const width = Dimensions.get('screen').width;
 
   const hidePlayBtn = () => {
     setShowPlayButton(true);
+    setPausedStatus(true);
   }
 
   const changePlaybackStatus = () => {
     if (!playerRef) return;
     
-    if (playStatus) {
-      setPlayStatus(false);
-      setShowPlayButton(true);
+    if (pausedStatus) {
+      setPausedStatus(false);
+      setShowPlayButton(false);
       console.log(`> Recoding ${recording?._id} was resumed manually`);
     } else {
-      setPlayStatus(true);
-      setShowPlayButton(false);
+      setPausedStatus(true);
+      setShowPlayButton(true);
       console.log(`> Recoding ${recording?._id} was paused manually`);
     }
   };
@@ -75,25 +78,25 @@ export const FeedVideoComponent = observer(({
   const feedOnScrollPlaybackHandler = () => {
     if (currentRecording._id === recording._id) {
       if (playerRef.current.paused) {
-        playerRef.current.play().then(() => setPlayStatus(false)).catch(() => {
+        playerRef.current.play().then(() => setPausedStatus(false)).catch(() => {
           console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
           if (playerRef.current.paused) {
-            setPlayStatus(true);
+            setPausedStatus(true);
           }
         });
       }
     } else if (!playerRef.current.paused) {
-      setPlayStatus(true);
+      setPausedStatus(true);
     }
     console.log(`> Feed recording ${recording?._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
   };
 
   const sharedPlaybackHandler = () => {
     if (playerRef.current.paused) {
-      playerRef.current.play().then(() => setPlayStatus(false)).catch(() => {
+      playerRef.current.play().then(() => setPausedStatus(false)).catch(() => {
         console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
         if (playerRef.current.paused) {
-          setPlayStatus(true);
+          setPausedStatus(true);
         }
       });
     }
@@ -101,7 +104,7 @@ export const FeedVideoComponent = observer(({
   };
 
   const onEnd = () => {
-    setPlayStatus(true);
+    setPausedStatus(true);
     setCurrentTime(0);
   }
 
@@ -112,7 +115,7 @@ export const FeedVideoComponent = observer(({
           // No reason to try to play it in Safari, it will be blocked in any case
           // trying to play only when it was played manually before
           console.log("> Skip play attempt in Safari for the first time");
-          setPlayStatus(true);
+          setPausedStatus(true);
         } else {
           sharedPlaybackHandler();
         }
@@ -124,14 +127,14 @@ export const FeedVideoComponent = observer(({
         console.log(`> Current recording changed to ${currentRecording._id}. Current recording component: ${recording._id} `);
         if (Utils.isSafari && !started) {
           console.log("> Skip play attempt in Safari for the first time");
-          setPlayStatus(true);
+          setPausedStatus(true);
         } else {
           feedOnScrollPlaybackHandler();
         }
       }
     }
 
-    setPlayStatus(paused);
+    setPausedStatus(paused);
   }, [playerRef, currentRecording, paused]);
 
   const contentText = useMemo(() => {
@@ -182,11 +185,15 @@ export const FeedVideoComponent = observer(({
         <SafeAreaProvider>
           <SafeAreaView>
             <Video
-              paused={playStatus}
+              paused={pausedStatus}
+              ref={(ref) => {
+                playerRef = ref;
+              }}
               source={{uri: recording.list[0].url}}
+              // source={require(testVideoFile)}
               onEnd={onEnd}
               resizeMode="cover"
-              style={{ height: height + 4 }}
+              style={{ height: height + 4, width: width }}
               currentTime={currentTime}
               repeat={true}
               loop

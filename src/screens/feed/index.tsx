@@ -196,6 +196,7 @@ export const FeedScreen = observer((): JSX.Element => {
           onScroll={onScroll}
           scrollEventThrottle={height}
         />
+
       </PageContent>
     </BasicSafeAreaView>
   )

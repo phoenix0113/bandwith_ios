@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { Dimensions } from "react-native";
-import Video from "react-native-video";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Video from "react-native-video/Video";
 
-import { tabBarHeight } from "../../../utils/styles";
 import { ProfileFeedContent, FeedPlayerContentWrapperView, FeedPlayerToolTip, FeedPlayerContentWrapper } from "../styled";
 import PlayIcon from "../../../assets/images/feed/play.svg";
+const testVideoFile = "../../../assets/test_video.mp4";
 
 const windowWidth = Dimensions.get('screen').width;
 
@@ -17,24 +16,23 @@ interface IProps {
 }
 
 export const ProfileRecordingComponent = observer(({ uri, paused, height }: IProps): JSX.Element => {
-  const [playStatus, setPlayStatus] = useState(paused);
+  const [pausedStatus, setPausedStatus] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(false);
-  const playerRef = useRef<Video>(null);
+  let playerRef = useRef<Video>(null);
 
   const pausePlay = () => {
-    setPlayStatus(false);
+    setPausedStatus(true);
     setShowPlayButton(true);
   }
 
   const changePlaybackStatus = () => {
     if (!playerRef) return;
-    
-    if (playStatus) {
-      setPlayStatus(false);
-      setShowPlayButton(true);
-    } else {
-      setPlayStatus(true);
+    if (pausedStatus) {
+      setPausedStatus(false);
       setShowPlayButton(false);
+    } else {
+      setPausedStatus(true);
+      setShowPlayButton(true);
     }
   };
 
@@ -55,9 +53,15 @@ export const ProfileRecordingComponent = observer(({ uri, paused, height }: IPro
       }
       <Video
         source={{uri: uri}}
+        // source={require(testVideoFile)}
         resizeMode="cover"
         style={{ width: windowWidth, height: height, position: "absolute" }}
-        paused={playStatus}
+        paused={pausedStatus}
+        ref={(ref) => {
+          playerRef = ref;
+        }}
+        repeat={true}
+        loop
       />
     </ProfileFeedContent>
   );

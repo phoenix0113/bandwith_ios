@@ -55,6 +55,7 @@ export const ProfileRecordingContent = styled.View`
   align-content: stretch;
   flex-direction: row;
   padding: 2px;
+  width: ${windowWidth}px;
 `;
 
 export const ProfileVideo = styled.TouchableOpacity`
