@@ -139,7 +139,7 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Login Error");
+        showGeneralErrorAlert("Your email or password incorrect.");
       }
     }
   }
