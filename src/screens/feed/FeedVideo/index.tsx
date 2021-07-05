@@ -1,53 +1,31 @@
 import { observer } from "mobx-react";
-import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { StyleSheet, Dimensions } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaProvider } from "react-native-safe-area-view";
 import Video from "react-native-video/Video";
 
-import { Utils } from "avcore/client";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
-
-import { SocketServiceInstance, SocketServiceContext } from "../../../services/socket";
-import { UserServiceInstance } from "../../../services/user";
 
 import { tabBarHeight } from "../../../utils/styles";
 import {
-  AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText, FeedPlayerContentWrapper, FeedPlayerToolTip,
-  CommonImgWrapper, CommentsFeedItemWrapper, FeedPlayerContentWrapperView, ViewProfile, ReportIcon
+  FeedPlayerContentWrapper, FeedPlayerToolTip, FeedPlayerContentWrapperView, 
 } from "../styled";
-import { CallPageToolbar } from "../../../components/styled";
 
-const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
-
-import CommentIcon from "../../../assets/images/feed/comment.svg";
-import ShareIcon from "../../../assets/images/feed/share.svg";
-import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
-const reportIcon = "../../../assets/images/feed/report.png";
 const testVideoFile = "../../../assets/test_video.mp4";
 
 interface IProps {
   recording: GetRecordResponse;
-  isShared?: boolean;
-  showUserProfile?: (id: string) => void;
-  showComments: () => void;
-  showReport?: (id: string) => void;
-  openRecordUser: (user: RecordUser) => void;
-  shareCall?: (recording: GetRecordResponse) => void;
-  backToFeed?: () => void;
-  currentRecording?: GetRecordResponse;
   paused?: boolean;
 }
 
 export const FeedVideoComponent = observer(({
-  recording, isShared, showComments, openRecordUser, shareCall, currentRecording, paused, showUserProfile, showReport
+  recording, paused
 }: IProps) => {
-  const { contacts } = useContext(SocketServiceContext);
   let playerRef = useRef<Video>(null);
-  const [started, setStarted] = useState(false);
 
-  const [pausedStatus, setPausedStatus] = useState(false);
+  const [pausedStatus, setPausedStatus] = useState(paused);
   const [showPlayButton, setShowPlayButton] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(0);
@@ -75,77 +53,10 @@ export const FeedVideoComponent = observer(({
     }
   };
 
-  const feedOnScrollPlaybackHandler = () => {
-    if (currentRecording._id === recording._id) {
-      if (playerRef.current.paused) {
-        playerRef.current.play().then(() => setPausedStatus(false)).catch(() => {
-          console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
-          if (playerRef.current.paused) {
-            setPausedStatus(true);
-          }
-        });
-      }
-    } else if (!playerRef.current.paused) {
-      setPausedStatus(true);
-    }
-    console.log(`> Feed recording ${recording?._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
-  };
-
-  const sharedPlaybackHandler = () => {
-    if (playerRef.current.paused) {
-      playerRef.current.play().then(() => setPausedStatus(false)).catch(() => {
-        console.log("> [Security error] User didn't interact with the page. Showing btn for manual resume");
-        if (playerRef.current.paused) {
-          setPausedStatus(true);
-        }
-      });
-    }
-    console.log(`> Shared recording ${recording._id} is ${playerRef.current.paused ? "paused" : "playing"}`);
-  };
-
   const onEnd = () => {
     setPausedStatus(true);
     setCurrentTime(0);
   }
-
-  useEffect(() => {
-    if (playerRef && playerRef.current) {
-      if (isShared) {
-        if (Utils.isSafari && !started) {
-          // No reason to try to play it in Safari, it will be blocked in any case
-          // trying to play only when it was played manually before
-          console.log("> Skip play attempt in Safari for the first time");
-          setPausedStatus(true);
-        } else {
-          sharedPlaybackHandler();
-        }
-      } else {
-        if (!currentRecording) {
-          return;
-        }
-
-        console.log(`> Current recording changed to ${currentRecording._id}. Current recording component: ${recording._id} `);
-        if (Utils.isSafari && !started) {
-          console.log("> Skip play attempt in Safari for the first time");
-          setPausedStatus(true);
-        } else {
-          feedOnScrollPlaybackHandler();
-        }
-      }
-    }
-
-    setPausedStatus(paused);
-  }, [playerRef, currentRecording, paused]);
-
-  const contentText = useMemo(() => {
-    if (UserServiceInstance.profile?._id === recording?.user?._id) {
-      return "You";
-    }
-    if (SocketServiceInstance.isContact(recording?.user?._id)) {
-      return "Friend";
-    }
-    return "Unknown User";
-  }, [recording, contacts]);
 
   return (
     <>
@@ -162,37 +73,16 @@ export const FeedVideoComponent = observer(({
           </FeedPlayerContentWrapper>
         )
       }
-      <AddToFriendsWrapper>
-        <ViewProfile onPress={() => showUserProfile(recording.user?._id)}>
-          {
-            (recording.user?.imageUrl) ? (
-              <AddToFriendIcon source={{uri: recording.user?.imageUrl}} />
-            ) : (
-              <AddToFriendIcon source={require(tempProfileIcon)} />
-            )
-          }
-        </ViewProfile>
-        <AddToFriendContent>
-          <ContentText isTitle>{recording.user?.name}</ContentText>
-          <ContentText>{contentText}</ContentText>
-        </AddToFriendContent>
-        <CommonImgWrapper onPress={() => openRecordUser(recording.user)}>
-          <AddIcon />
-        </CommonImgWrapper>
-      </AddToFriendsWrapper>
 
       {!!recording?.list?.length && (
         <SafeAreaProvider>
           <SafeAreaView>
             <Video
               paused={pausedStatus}
-              ref={(ref) => {
-                playerRef = ref;
-              }}
-              source={{uri: recording.list[0].url}}
-              // source={require(testVideoFile)}
+              // source={{uri: recording.list[0].url}}
+              source={require(testVideoFile)}
               onEnd={onEnd}
-              resizeMode="cover"
+              // resizeMode="cover"
               style={{ height: height + 4, width: width }}
               currentTime={currentTime}
               repeat={true}
@@ -201,23 +91,6 @@ export const FeedVideoComponent = observer(({
           </SafeAreaView>
         </SafeAreaProvider>
       )}
-
-      <CallPageToolbar>
-        <CommentsFeedItemWrapper onPress={showComments}>
-          <CommentIcon />
-        </CommentsFeedItemWrapper>
-        {
-          (!isShared) ?
-            <CommentsFeedItemWrapper onPress={() => shareCall(recording)}>
-              <ShareIcon />
-            </CommentsFeedItemWrapper>
-            :
-            <></>
-        }
-        <CommentsFeedItemWrapper onPress={() => showReport(recording?._id)}>
-          <ReportIcon source={require(reportIcon)} />
-        </CommentsFeedItemWrapper>
-      </CallPageToolbar>
     </>
   );
 });

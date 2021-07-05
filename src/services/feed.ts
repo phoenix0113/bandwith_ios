@@ -38,7 +38,7 @@ class FeedMobxService {
 
       runInAction(() => {
         this.recordings.push(...recordings);
-        if (!this.recordings.length && recordings.length) {
+        if (this.recordings.length <= RECORDINGS_LOAD_LIMIT && recordings.length) {
           this.currentRecording = recordings[0];
           this.setCurrentRecording(recordings[0]._id);
         }
