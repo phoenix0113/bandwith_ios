@@ -11,6 +11,7 @@ import {
 import { CallParticipantData } from "../../../interfaces/call";
 import { CALL_FINISHED_REDIRECT_TIMER } from "../../../utils/constants";
 import { SocketServiceInstance } from "../../../services/socket";
+import { publishRecording } from "../../../axios/routes/feed";
 
 interface IProps {
   callParticipantData: CallParticipantData;
@@ -19,6 +20,15 @@ interface IProps {
 }
 
 export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }: IProps): JSX.Element => {
+  const [published, setPublished] = useState(false);
+  const publishHandler = () => {
+    publishRecording({
+      callId,
+      participants: [callParticipantData.id],
+    });
+
+    setPublished(true);
+  };
   const [requestSent, setRequestSent] = useState(false);
   const addToFriendsHandler = () => {
     SocketServiceInstance.sendAddToFriendInvitation(callParticipantData?.id, () => {
@@ -71,7 +81,20 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
                 {requestSent ? "Invitation is sent" : "Add to Friends" }
               </BasicButtonText>
             </BasicButton>
-           )}
+          )}
+
+          <BasicButton
+            disabled={published}
+            width="100%"
+            margin="5% 0 20px 0"
+            onPress={publishHandler}
+            backgroundColor={published ? COLORS.ALTERNATIVE : COLORS.MAIN_LIGHT}
+            borderColor={published ? COLORS.ALTERNATIVE : COLORS.MAIN_LIGHT}
+          >
+            <BasicButtonText color={published ? COLORS.BLACK : COLORS.WHITE}>
+              {published ? "Published" : "Public Publish" }
+            </BasicButtonText>
+          </BasicButton>
 
         </ContentWrapper>
 

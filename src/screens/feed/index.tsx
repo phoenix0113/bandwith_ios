@@ -142,14 +142,6 @@ export const FeedScreen = observer((): JSX.Element => {
     setAllRecordings(recordings);
   }
 
-  const getInitialStatus = (item) => {
-    if (item?._id === currentRecording?._id) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   const renderItem = useCallback(({ item }) => {
     return <Observer>{() => 
       <BasicContentWrapper>
@@ -205,54 +197,58 @@ export const FeedScreen = observer((): JSX.Element => {
           />
         )}
 
-        <AddToFriendsWrapper>
-          <ViewProfile onPress={() => showUserProfile(currentRecording.user?._id)}>
-            {
-              (currentRecording.user?.imageUrl) ? (
-                <AddToFriendIcon source={{uri: currentRecording.user?.imageUrl}} />
-              ) : (
-                <AddToFriendIcon source={require(tempProfileIcon)} />
-              )
-            }
-          </ViewProfile>
-          <AddToFriendContent>
-            <ContentText isTitle>{currentRecording.user?.name}</ContentText>
-            <ContentText>{contentText}</ContentText>
-          </AddToFriendContent>
-          <CommonImgWrapper onPress={() => openRecordUser(currentRecording.user)}>
-            <AddIcon />
-          </CommonImgWrapper>
-        </AddToFriendsWrapper>
+        {recordings.length !== 0 && (
+          <>
+            <AddToFriendsWrapper>
+              <ViewProfile onPress={() => showUserProfile(currentRecording?.user?._id)}>
+                {
+                  (currentRecording?.user?.imageUrl) ? (
+                    <AddToFriendIcon source={{uri: currentRecording?.user?.imageUrl}} />
+                  ) : (
+                    <AddToFriendIcon source={require(tempProfileIcon)} />
+                  )
+                }
+              </ViewProfile>
+              <AddToFriendContent>
+                <ContentText isTitle>{currentRecording?.user?.name}</ContentText>
+                <ContentText>{contentText}</ContentText>
+              </AddToFriendContent>
+              <CommonImgWrapper onPress={() => openRecordUser(currentRecording?.user)}>
+                <AddIcon />
+              </CommonImgWrapper>
+            </AddToFriendsWrapper>
+          
+            <FlatList
+              data={allRecordings}
+              renderItem={renderItem}
+              keyExtractor={() => (Math.random() * 1000000000).toString()}
+              pagingEnabled={true}
+              style={styled.flatlist}
+              horizontal={false}
+              showsHorizontalScrollIndicator={false}
+              onViewableItemsChanged={onViewRef.current}
+              viewabilityConfig={viewConfigRef.current}
+              showsVerticalScrollIndicator={false}
+              onEndReached={onEndReached}
+              onScroll={onScroll}
+              scrollEventThrottle={height}
+            />
 
-        <FlatList
-          data={allRecordings}
-          renderItem={renderItem}
-          keyExtractor={() => (Math.random() * 1000000000).toString()}
-          pagingEnabled={true}
-          style={styled.flatlist}
-          horizontal={false}
-          showsHorizontalScrollIndicator={false}
-          onViewableItemsChanged={onViewRef.current}
-          viewabilityConfig={viewConfigRef.current}
-          showsVerticalScrollIndicator={false}
-          onEndReached={onEndReached}
-          onScroll={onScroll}
-          scrollEventThrottle={height}
-        />
+            <CallPageToolbar>
+              <CommentsFeedItemWrapper onPress={showComments}>
+                <CommentIcon />
+              </CommentsFeedItemWrapper>
 
-        <CallPageToolbar>
-          <CommentsFeedItemWrapper onPress={showComments}>
-            <CommentIcon />
-          </CommentsFeedItemWrapper>
+              <CommentsFeedItemWrapper onPress={() => shareCall(currentRecording)}>
+                <ShareIcon />
+              </CommentsFeedItemWrapper>
 
-          <CommentsFeedItemWrapper onPress={() => shareCall(currentRecording)}>
-            <ShareIcon />
-          </CommentsFeedItemWrapper>
-
-          <CommentsFeedItemWrapper onPress={() => showReport(currentRecording?._id)}>
-            <ReportIcon source={require(reportIcon)} />
-          </CommentsFeedItemWrapper>
-        </CallPageToolbar>
+              <CommentsFeedItemWrapper onPress={() => showReport(currentRecording?._id)}>
+                <ReportIcon source={require(reportIcon)} />
+              </CommentsFeedItemWrapper>
+            </CallPageToolbar>
+          </>
+        )}
       </PageContent>
     </BasicSafeAreaView>
   )
