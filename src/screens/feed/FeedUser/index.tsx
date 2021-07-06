@@ -8,6 +8,7 @@ import { OutgoingCallServiceInstance } from "../../../services/outgoingCall";
 import { showGeneralErrorAlert } from "../../../utils/notifications";
 import { UserServiceContext } from "../../../services/user";
 import { ContactsServiceContext } from "../../../services/contacts";
+import { REMOVE_FROM_FRIEND_LIST_ERROR, USER_STATUS_ERROR } from "../../../utils/constants";
 
 import { observer } from "mobx-react";
 import { RecordUserWrapper, RightItem, RightText, NavigationBar, LeftItem, CenterItem, NavigationText, ProfileImageContent,
@@ -39,7 +40,7 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
         closeHandler();
       }
     } catch (err) {
-      showGeneralErrorAlert("Sorry, You can't remove this user from your friends list.");
+      showGeneralErrorAlert(REMOVE_FROM_FRIEND_LIST_ERROR);
     }
   };
 
@@ -48,7 +49,7 @@ export const RecordUserComponent = observer(({ user, closeHandler }: IProps) => 
       OutgoingCallServiceInstance.makeCall(user._id);
       closeHandler();
     } else {
-      showGeneralErrorAlert("User is offline or busy at the moment");
+      showGeneralErrorAlert(USER_STATUS_ERROR);
     }
   };
   const isUserInContactList = useMemo(() => isContact(user._id), [contacts]);

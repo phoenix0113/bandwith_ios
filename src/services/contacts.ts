@@ -7,10 +7,15 @@ import { Alert } from "react-native";
 import { UserServiceInstance } from "./user";
 import { AppServiceInstance } from "./app";
 
-import { getContactListRequest, importContactsRequest, sendInvite, getInvite } from "../axios/routes/contacts";
+import {
+  getContactListRequest, importContactsRequest, sendInvite, getInvite
+} from "../axios/routes/contacts";
 import { ContactImportItem, ContactItem, ImportedContactItem } from "../shared/interfaces";
 import { UserStatus } from "../shared/socket";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { showGeneralErrorAlert } from "../utils/notifications";
+import {
+  IMPORT_USER_CONTACT_ERROR, FETCH_USER_CONTACT_ERROR, INVITE_REQUEST_ERROR
+} from "../utils/constants";
 
 export interface ContactItemWithStatus extends ContactItem {
   status: UserStatus;
@@ -125,7 +130,8 @@ class ContactsService {
       UserServiceInstance.profile = response.profile;
       this.initializeImportedContacts();
     } catch (err) {
-      showUnexpectedErrorAlert("importUserContacts()", err.message, err);
+      console.log("> Import User Contacts", err);
+      showGeneralErrorAlert(IMPORT_USER_CONTACT_ERROR);
     } finally {
       this.isImporting = false;
     }
@@ -224,7 +230,8 @@ class ContactsService {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.fetchUserContacts);
       } else {
-        showUnexpectedErrorAlert("fetchUserContacts()", err.message);
+        console.log("> Fetch User Contacts", err.message);
+        showGeneralErrorAlert(FETCH_USER_CONTACT_ERROR);
       }
     }
   }
@@ -275,7 +282,8 @@ class ContactsService {
       await sendInvite({ contactPerson: userId });
       this.fetchUserContacts();
     } catch (err) {
-      showUnexpectedErrorAlert("Invite Reqeust", err.message);
+      console.log("> Invite Reqeust", err.message);
+      showGeneralErrorAlert(INVITE_REQUEST_ERROR);
     }
   }
 

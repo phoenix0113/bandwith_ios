@@ -16,7 +16,12 @@ import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
 import { WelcomeScreensEnum } from "../navigation/welcome/types";
 import { MainScreensEnum } from "../navigation/main/types";
-import { TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE, VERIFY_CODE, VERIFY_STATUS, EMAIL, RESET_PASSWORD_STATUS } from "../utils/constants";
+import {
+  TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE, VERIFY_CODE, VERIFY_STATUS,
+  EMAIL, RESET_PASSWORD_STATUS, FETCH_USER_DATA_ERROR, EMAIL_PASSWORD_INCORRECT_ERROR, EMAIL_INCORRECT_ERROR,
+  RESET_PASSWORD_ERROR, EMAIL_EXIST_ERROR, INITIALIZE_AVCOR_ERROR, VERIFY_SMS_ERROR, VERIFY_SMS_CODE_ERROR,
+  PHONE_NUMBER_UPDATE_ERROR
+} from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
 
@@ -115,7 +120,7 @@ class UserService {
         this.scheduleActions(this.fetchUserData);
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Fetch User Data Error");
+        showGeneralErrorAlert(FETCH_USER_DATA_ERROR);
       }
     }
   }
@@ -139,7 +144,7 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Your email or password incorrect.");
+        showGeneralErrorAlert(EMAIL_PASSWORD_INCORRECT_ERROR);
       }
     }
   }
@@ -161,7 +166,7 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Forgot Password Error");
+        showGeneralErrorAlert(EMAIL_INCORRECT_ERROR);
       }
     }
   }
@@ -227,7 +232,7 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Reset Password Error");
+        showGeneralErrorAlert(RESET_PASSWORD_ERROR);
       }
     }
   }
@@ -277,7 +282,7 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Already used this email by another user.");
+        showGeneralErrorAlert(EMAIL_EXIST_ERROR);
       }
     }
   }
@@ -305,7 +310,7 @@ class UserService {
         showNetworkErrorAlert();
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Register Error");
+        showGeneralErrorAlert(EMAIL_EXIST_ERROR);
       }
     }
   }
@@ -362,7 +367,7 @@ class UserService {
         this.scheduleActions(this.initializeAvcoreCloudClient);
       } else {
         console.log(err.message);
-        showGeneralErrorAlert("Initialize Avcor eCloud Client Error");
+        showGeneralErrorAlert(INITIALIZE_AVCOR_ERROR);
       }
     }
   }
@@ -383,7 +388,7 @@ class UserService {
       }
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Send Verification SMS Error");
+      showGeneralErrorAlert(VERIFY_SMS_ERROR);
       return false;
     }
   }
@@ -403,7 +408,7 @@ class UserService {
       }
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Verify SMS Code Error");
+      showGeneralErrorAlert(VERIFY_SMS_CODE_ERROR);
     }
   }
 
@@ -414,7 +419,7 @@ class UserService {
       this.profile = updatedProfile;
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Update Phone Number Error");
+      showGeneralErrorAlert(PHONE_NUMBER_UPDATE_ERROR);
     }
   }
 
@@ -493,7 +498,7 @@ class UserService {
       console.log("> Get user data by ID: ", this.profileUser._id);
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Get User Data Error");
+      showGeneralErrorAlert(FETCH_USER_DATA_ERROR);
     }
   }
 }

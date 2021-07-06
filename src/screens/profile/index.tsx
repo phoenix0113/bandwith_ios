@@ -116,7 +116,6 @@ export const ProfileScreen = observer(({ id, showUserProfile }: IProps): JSX.Ele
                           source={{uri: recording.list[0].url}}
                           // source={require(testVideoFile)}
                           style={{ width: windowWidth / 3 - 8, height: 2 * windowWidth / 3 - 14, position: "absolute"}}
-                          resizeMode="cover"
                           paused={true}
                         />
                       </ProfileVideo>

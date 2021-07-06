@@ -1,10 +1,10 @@
 import React, { useState, useContext, useCallback } from "react";
 import { observer } from "mobx-react";
-import { View, TouchableOpacity, Animated, Modal } from "react-native";
+import { View, TouchableOpacity, Animated } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TabView } from "react-native-tab-view";
 
-import { showUnexpectedErrorAlert } from "../../utils/notifications";
+import { showGeneralErrorAlert } from "../../utils/notifications";
 
 import {
  CenterItem, LeftItem, NavigationBar, RightItem, NavigationText, BasicSafeAreaView,
@@ -20,6 +20,7 @@ import { ContactsServiceContext, ContactItemWithStatus } from "../../services/co
 import { SocketServiceInstance } from "../../services/socket";
 import { UserServiceInstance } from "../../services/user";
 import { ContactType } from "../../shared/interfaces";
+import { CONTACT_DELETE_ERROR } from "../../utils/constants";
 
 export const ContactListScreen = observer(() => {
   const { contacts, importedContacts } = useContext(ContactsServiceContext);
@@ -51,7 +52,8 @@ export const ContactListScreen = observer(() => {
         closeViewer();
       }
     } catch (err) {
-      showUnexpectedErrorAlert("screen.deleteContact()", err.message);
+      console.log("> Delete Contact", err);
+      showGeneralErrorAlert(CONTACT_DELETE_ERROR);
     }
   };
 

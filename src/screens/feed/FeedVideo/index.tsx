@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { StyleSheet, Dimensions } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaProvider } from "react-native-safe-area-view";
 import Video from "react-native-video/Video";
 
-import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
+import { GetRecordResponse } from "../../../shared/interfaces";
 
 import { tabBarHeight } from "../../../utils/styles";
 import {
@@ -79,10 +79,9 @@ export const FeedVideoComponent = observer(({
           <SafeAreaView>
             <Video
               paused={pausedStatus}
-              // source={{uri: recording.list[0].url}}
-              source={require(testVideoFile)}
+              source={{uri: recording.list[0].url}}
+              // source={require(testVideoFile)}
               onEnd={onEnd}
-              // resizeMode="cover"
               style={{ height: height + 4, width: width }}
               currentTime={currentTime}
               repeat={true}

@@ -54,7 +54,6 @@ export const ProfileRecordingComponent = observer(({ uri, paused, height }: IPro
       <Video
         source={{uri: uri}}
         // source={require(testVideoFile)}
-        resizeMode="cover"
         style={{ width: windowWidth, height: height, position: "absolute" }}
         paused={pausedStatus}
         ref={(ref) => {

@@ -1,7 +1,6 @@
 import { createContext } from "react";
-import axios from "axios";
 import SocketIO from "socket.io-client";
-import { makeObservable, observable, reaction, runInAction, toJS, action } from "mobx";
+import { makeObservable, observable, reaction, runInAction, toJS } from "mobx";
 import { CloudClient } from "avcore/client";
 import { Alert } from "react-native";
 
@@ -12,19 +11,30 @@ import { APNServiceInstance } from "./APNs";
 import { AppServiceInstance } from "./app";
 
 import { CallSocket } from "../interfaces/Socket";
-import { SERVER_BASE_URL } from "../utils/constants";
+import {
+  SERVER_BASE_URL, CONTACT_REMOVE_ERROR, UPDATE_HINT_PROFILE_ERROR, REFETCH_CONTACT_ERROR,
+  CONTACT_DELETE_ERROR, DELETE_CONTACT_AND_NOTIFY_ERROR, ADD_CONTACT_AND_NOTIFY_ERROR,
+} from "../utils/constants";
 import { GlobalServiceStatus, ActionStatus } from "../interfaces/global";
 
 import {
-  ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData, JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, 
-  SendAPNDeviceIdRequest, SetCallAvailabilityRequest, SetOnlineStatus, SocketData, UserStatus, 
+  ACTIONS, APNCallCancel, APNCallRequest, APNCallTimeout, CLIENT_ONLY_ACTIONS, ErrorData,
+  JoinLobbyRequest, LobbyCallEventData, MakeLobbyCallResponse, SendAPNDeviceIdRequest,
+  SetCallAvailabilityRequest, SetOnlineStatus, SocketData, UserStatus, 
 } from "../shared/socket";
-import { NotificationTypes, ContactItem, UserProfileResponse, Notification, CloudCredentials, HintTypes } from "../shared/interfaces";
-import { addUserToContactListRequest, removeUserFromContactListRequest } from "../axios/routes/contacts";
+import {
+  NotificationTypes, ContactItem, UserProfileResponse, Notification, CloudCredentials, HintTypes
+} from "../shared/interfaces";
+import {
+  addUserToContactListRequest, removeUserFromContactListRequest
+} from "../axios/routes/contacts";
 import { setReadHintRequest } from "../axios/routes/user";
-import { createAddToFriednsInvitation, createInvitationAcceptedNotification, createMissedCallNotification, createRemovedFromContactsNotification } from "../shared/utils";
+import {
+  createAddToFriednsInvitation, createInvitationAcceptedNotification,
+  createMissedCallNotification, createRemovedFromContactsNotification
+} from "../shared/utils";
 import { logOnServerRequest } from "../axios/routes/logs";
-import { showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
+import { showGeneralErrorAlert } from "../utils/notifications";
 
 export interface LobbyCallEventDataExtended extends LobbyCallEventData {
   isFriend: boolean;
@@ -178,7 +188,8 @@ class SocketService {
     try {
       this.profile = await setReadHintRequest({ type });
     } catch (err) {
-      showUnexpectedErrorAlert("Update Hint And Profile", err.message);
+      console.log("> Update Hint And Profile", err.message);
+      showGeneralErrorAlert(UPDATE_HINT_PROFILE_ERROR);
     }
   }
 
@@ -505,7 +516,8 @@ class SocketService {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.addContactAndNotify);
       } else {
-        showUnexpectedErrorAlert("addContactAndNotify()", err.message);
+        console.log("> Add Contact And Notify", err.message);
+        showGeneralErrorAlert(ADD_CONTACT_AND_NOTIFY_ERROR);
       }
     }
   };
@@ -532,13 +544,15 @@ class SocketService {
 
         return true;
       }
-      showUnexpectedErrorAlert("removeContactAndNotify()", "Something went wrong while deleting a contact");
+      console.log("> Remove Contact And Notify");
+      showGeneralErrorAlert(CONTACT_DELETE_ERROR);
       return false;
     } catch (err) {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.removeContactAndNotify);
       } else {
-        showUnexpectedErrorAlert("removeContactAndNotify()", err.message);
+        console.log("> Remove Contact And Notify", err.message);
+        showGeneralErrorAlert(DELETE_CONTACT_AND_NOTIFY_ERROR);
       }
       return false;
     }
@@ -552,7 +566,8 @@ class SocketService {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.refetchContacts);
       } else {
-        showUnexpectedErrorAlert("refetchContacts()", err.message);
+        console.log("> Refetch Contacts", err.message);
+        showGeneralErrorAlert(REFETCH_CONTACT_ERROR);
       }
     }
   }
@@ -579,10 +594,11 @@ class SocketService {
 
         return true;
       }
-      showGeneralErrorAlert("Something went wrong while deleting a contact");
+      showGeneralErrorAlert(CONTACT_REMOVE_ERROR);
       return false;
     } catch (err) {
-      showUnexpectedErrorAlert("Remove Contacts", err.message);
+      console.log("> Remove Contacts", err);
+      showGeneralErrorAlert(CONTACT_REMOVE_ERROR);
       return false;
     }
   }

@@ -1,11 +1,10 @@
 import { format } from "date-fns";
 
 import { UserServiceInstance } from "./user";
-import { AppServiceInstance } from "./app";
 
 import { logOnServerRequest, sendLogsRequest } from "../axios/routes/logs";
-import { SEND_LOGS_THRESHOLD } from "../utils/constants";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { LOGGER_SEND_ERROR } from "../utils/constants";
+import { showGeneralErrorAlert } from "../utils/notifications";
 
 interface LogItem {
   date: string;
@@ -73,7 +72,8 @@ class LoggerService {
         logs,
       });
     } catch (err) {
-      showUnexpectedErrorAlert("logger.send()", err.message);
+      console.log("> Logger Send", err.message);
+      showGeneralErrorAlert(LOGGER_SEND_ERROR);
     }
   }
 

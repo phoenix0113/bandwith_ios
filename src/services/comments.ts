@@ -8,6 +8,7 @@ import { getComments } from "../axios/routes/comments";
 import { COMMENTS_LOAD_LIMIT } from "../utils/constants";
 import { showGeneralErrorAlert } from "../utils/notifications";
 import { UserServiceInstance } from "./user";
+import { FETCH_COMMENTS_ERROR } from "../utils/constants";
 
 class CommentsMobxService {
   @observable comments: Array<Comment> = [];
@@ -60,7 +61,7 @@ class CommentsMobxService {
       });
     } catch (err) {
       console.error(err);
-      showGeneralErrorAlert("Fetch Comments Error");
+      showGeneralErrorAlert(FETCH_COMMENTS_ERROR);
     } finally {
       this.loading = false;
     }

@@ -1,13 +1,17 @@
 import { makeObservable, observable, reaction, runInAction } from "mobx";
 import { createContext } from "react";
-import { Alert } from "react-native";
 
 import { UserServiceInstance } from "./user";
 import { AppServiceInstance } from "./app";
 
-import { checkNotificationsRequest, getNotificationListRequest, removeNotificationRequest } from "../axios/routes/notifications";
+import {
+  checkNotificationsRequest, getNotificationListRequest, removeNotificationRequest
+} from "../axios/routes/notifications";
 import { Notification, NotificationTypes } from "../shared/interfaces";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { showGeneralErrorAlert } from "../utils/notifications";
+import {
+  FETCH_USER_NOTIFICATION, DELETE_USER_NOTIFICATION, CHECK_NOTIFICATION_STATUS
+} from "../utils/constants";
 
 class NotificationService {
   private onReconnectActions: Array<Function> = [];
@@ -49,7 +53,8 @@ class NotificationService {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.fetchUserNotifications);
       } else {
-        showUnexpectedErrorAlert("fetchUserNotifications()", err.message);
+        console.log("> Fetch User Notifications", err.message);
+        showGeneralErrorAlert(FETCH_USER_NOTIFICATION);
       }
     }
   }
@@ -63,7 +68,8 @@ class NotificationService {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.deleteNotification);
       } else {
-        showUnexpectedErrorAlert("deleteNotification()", err.message);
+        console.log("> Delete Notification", err.message);
+        showGeneralErrorAlert(DELETE_USER_NOTIFICATION);
       }
     }
   }
@@ -88,7 +94,8 @@ class NotificationService {
       if (!AppServiceInstance.netAccessible) {
         this.scheduleActions(this.checkNotificationsStatus);
       } else {
-        showUnexpectedErrorAlert("checkNotificationsStatus()", err.message);
+        console.log("> Check Notifications Status", err.message);
+        showGeneralErrorAlert(CHECK_NOTIFICATION_STATUS);
       }
     }
   }

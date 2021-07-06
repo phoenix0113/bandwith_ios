@@ -2,11 +2,11 @@ import { observable, makeObservable, action, computed, runInAction } from "mobx"
 import { createContext } from "react";
 import { mediaDevices, MediaStream } from "react-native-webrtc";
 import Sound from "react-native-sound";
-import { Alert } from "react-native";
 
 import { MediaType } from "../interfaces/global";
 import { Kinds } from "../shared/socket";
-import { showUnexpectedErrorAlert } from "../utils/notifications";
+import { showGeneralErrorAlert } from "../utils/notifications";
+import { REQUEST_MEDIA_PERMISSION_ERROR } from "../utils/constants";
 
 class MediaService {
   private ringtone: Sound = null;
@@ -134,7 +134,8 @@ class MediaService {
       return true;
     } catch (err) {
       // TODO: success handler for "permission denied"
-      showUnexpectedErrorAlert("requestMediaPermissions()", err.message);
+      console.log("> Request Media Permissions", err.message);
+      showGeneralErrorAlert(REQUEST_MEDIA_PERMISSION_ERROR);
       return false;
     }
   };

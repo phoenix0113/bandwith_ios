@@ -70,7 +70,7 @@ export const CommentsComponent = observer((
     const value = target;
 
     if (value.length === MAX_INPUT_LENGTH + 1) {
-      showGeneralErrorAlert(`Maximum of ${MAX_INPUT_LENGTH} characters`);
+      showGeneralErrorAlert(`Maximum of ${MAX_INPUT_LENGTH} characters.`);
     } else {
       setInputValue(value);
     }

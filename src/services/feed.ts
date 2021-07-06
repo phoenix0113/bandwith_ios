@@ -2,8 +2,11 @@ import { action, makeAutoObservable, observable, runInAction, toJS, reaction } f
 import { createContext } from "react";
 import { getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID } from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
-import { LOAD_MORE_RECORDINGS_THRESHOLD, RECORDINGS_LOAD_LIMIT } from "../utils/constants";
-import { showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
+import {
+  LOAD_MORE_RECORDINGS_THRESHOLD, RECORDINGS_LOAD_LIMIT, LOADING_RECORDING_ERROR, FETCH_SHARED_RECORDING_ERROR,
+  LOADING_RECORDINGS_ERROR, REPORT_ERROR,
+} from "../utils/constants";
+import { showGeneralErrorAlert } from "../utils/notifications";
 import { SocketServiceInstance } from "./socket";
 import { UserServiceInstance } from "./user";
 
@@ -49,7 +52,7 @@ class FeedMobxService {
       }
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Load Recordings Error");
+      showGeneralErrorAlert(LOADING_RECORDINGS_ERROR);
     }
   }
 
@@ -67,7 +70,7 @@ class FeedMobxService {
       SocketServiceInstance.joinRecordingCommentsRoom(recording._id);
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Fetch Shared Recording Error");
+      showGeneralErrorAlert(FETCH_SHARED_RECORDING_ERROR);
     }
   }
 
@@ -112,7 +115,7 @@ class FeedMobxService {
       console.log("> Report recording: ", code);
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Report Recording Error");
+      showGeneralErrorAlert(REPORT_ERROR);
     }
   }
 
@@ -134,7 +137,7 @@ class FeedMobxService {
       }
     } catch (err) {
       console.log(err.message);
-      showGeneralErrorAlert("Load Recordings Error");
+      showGeneralErrorAlert(LOADING_RECORDING_ERROR);
     }
   }
 }
