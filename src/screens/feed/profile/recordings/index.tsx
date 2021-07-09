@@ -1,13 +1,11 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { Dimensions, FlatList, StyleSheet } from "react-native";
-import Video from "react-native-video/Video";
+import { Dimensions } from "react-native";
 
 import { GetRecordResponse } from "../../../../shared/interfaces";
 
 import { ProfileFeedVideo } from "../styled";
 import { RecordingItemComponent } from "../recordingItem";
-const testVideoFile = "../../../../assets/test_video.mp4";
 
 const width = Dimensions.get('screen').width;
 
@@ -33,12 +31,4 @@ export const ProfileRecordingComponent = observer(({ recordings, height }: IProp
       }
     </>
   );
-});
-
-const styled = StyleSheet.create({
-  flatlist: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  }
 });

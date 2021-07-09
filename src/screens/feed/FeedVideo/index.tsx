@@ -77,8 +77,8 @@ export const FeedVideoComponent = observer(({
             <Video
               paused={paused}
               ref={playerRef}
-              // source={{uri: recording.list[0].url}}
-              source={require(testVideoFile)}
+              source={{uri: recording.list[0].url}}
+              // source={require(testVideoFile)}
               style={{ height: height + 4, width: width }}
               repeat={true}
               loop

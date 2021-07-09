@@ -109,8 +109,8 @@ export const FeedScreen = observer((): JSX.Element => {
         <Video
           paused={false}
           ref={playerRef[item._id.toString()]}
-          // source={{uri: recording.list[0].url}}
-          source={require(testVideoFile)}
+          source={{uri: item.list[0].url}}
+          // source={require(testVideoFile)}
           style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
           repeat={true}
           loop={true}

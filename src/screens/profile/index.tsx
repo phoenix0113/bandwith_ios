@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import Video from "react-native-video/Video";
 import { Dimensions, ScrollView } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { tabBarHeight } from "../../../utils/styles";
-import { UserServiceContext } from "../../../services/user";
-import { FeedStorageContext } from "../../../services/feed";
-import { ProfileRecordingComponent } from "./recordings";
+import { tabBarHeight } from "../../utils/styles";
+import { UserServiceContext } from "../../services/user";
+import { FeedStorageContext } from "../../services/feed";
 
 import {
   NavigationBar, LeftItem, CenterItem, RightItem, COLORS
-} from "../../../components/styled";
+} from "../../components/styled";
 import {
   ProfileUserWrapper, BackContent, ProfileName, ProfileImageWrapper, ProfileEmail, ProfileContentWrapper,
   ProfileRecordingContent, ProfileVideo,
@@ -110,46 +109,29 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
       </NavigationBar>
       <ProfileContentWrapper style={{backgroundColor: COLORS.BLACK}}>
         {
-          (currentRecording === "") ? (
-            <>
-              {
-                (profileUser?.imageUrl) ? (
-                  <ProfileImageWrapper source={{uri: (profileUser?.imageUrl) }} />
-                ) : (
-                  <ProfileImageWrapper source={require(tempProfileIcon)} />
-                )
-              }
-              <ProfileEmail>{profileUser?.email}</ProfileEmail>
-              <ScrollView>
-                <ProfileRecordingContent>
-                  {
-                    recordigns.map((recording) => (
-                      <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
-                        <Video
-                          source={{uri: recording.list[0].url}}
-                          // source={require(testVideoFile)}
-                          style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
-                          paused={true}
-                        />
-                      </ProfileVideo>
-                    ))
-                  }
-                </ProfileRecordingContent>
-              </ScrollView>
-            </>
+          (profileUser?.imageUrl) ? (
+            <ProfileImageWrapper source={{uri: (profileUser?.imageUrl) }} />
           ) : (
-            <ScrollView
-              onScrollEndDrag={onScrollEndDrag}
-              ref={scrollRef}
-              onScroll={onScroll}
-            >
-              <ProfileRecordingComponent
-                recordings={filterRecordings}
-                height={recordingHeight}
-              />
-            </ScrollView>
+            <ProfileImageWrapper source={require(tempProfileIcon)} />
           )
         }
+        <ProfileEmail>{profileUser?.email}</ProfileEmail>
+        <ScrollView>
+          <ProfileRecordingContent>
+            {
+              recordigns.map((recording) => (
+                <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
+                  <Video
+                    source={{uri: recording.list[0].url}}
+                    // source={require(testVideoFile)}
+                    style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
+                    paused={true}
+                  />
+                </ProfileVideo>
+              ))
+            }
+          </ProfileRecordingContent>
+        </ScrollView>
       </ProfileContentWrapper>
     </ProfileUserWrapper>
   );
