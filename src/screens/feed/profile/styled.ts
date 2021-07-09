@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { Z_INDEX } from "../../components/styled";
+import { Z_INDEX } from "../../../components/styled";
 import { Dimensions } from "react-native";
 
 const windowWidth = Dimensions.get('window').width;
@@ -33,6 +33,7 @@ export const ProfileEmail = styled.Text`
   line-height: 20px;
   color: #E6E6E6;
   margin-bottom: 50px;
+  z-index: ${Z_INDEX.HIGH};
 `;
 
 export const ProfileContentWrapper = styled.View`
@@ -40,6 +41,7 @@ export const ProfileContentWrapper = styled.View`
   width: 100%;
   height: 100%;
   flex: 1;
+  z-index: ${Z_INDEX.HIGH};
 `;
 
 export const ProfileImageWrapper = styled.Image`

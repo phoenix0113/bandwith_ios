@@ -296,6 +296,11 @@ export interface PublishRecordingRequest {
   participants: string[];
 }
 
+export interface CheckRecordingNameRequest {
+  _id: string;
+  name: string;
+}
+
 export type RecordUser = ContactItem;
 
 export interface GetRecordResponse extends Document {
@@ -359,6 +364,10 @@ export interface GetFilterRecordsQuery extends Document, GetAllRecordsQuery{
 export interface GetAllRecordsResponse {
   amount: number;
   recordings: Array<GetRecordResponse>;
+}
+
+export interface GetAllRecordingID {
+  ids: Array<String>;
 }
 
 export interface PipeId {

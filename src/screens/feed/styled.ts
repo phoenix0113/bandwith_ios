@@ -46,6 +46,7 @@ export const BasicContentWrapper = styled.View<BasicContentWrapperProps>`
 
 export const VideoWrapper = styled.View<VideoWrapperProps>`
   display: flex;
+  position: relative;
   width: 100%;
   height: 100%;
   flex: 1;
@@ -113,7 +114,6 @@ export const CommonImgWrapper = styled.TouchableOpacity`
 
 export const FeedPlayerContentWrapper = styled.TouchableOpacity`
   position: absolute;
-  z-index: ${Z_INDEX.MIDDLE};
   width: 100%;
   height: 100%;
   display: flex;
@@ -123,7 +123,6 @@ export const FeedPlayerContentWrapper = styled.TouchableOpacity`
 
 export const FeedPlayerContentWrapperView = styled.View`
   position: absolute;
-  z-index: ${Z_INDEX.MIDDLE};
   width: 100%;
   height: 100%;
   display: flex;
@@ -348,5 +347,16 @@ export const ReportFooter = styled.View`
   margin: 20px 0;
   display: flex;
   align-items: center;
+  width: 100%;
+`;
+
+export const VideoPlayerWrapper = styled.View`
+  position: relative;
+  width: 100%;
+`;
+
+
+export const VideoPlayerContent = styled.View`
+  position: absolute;
   width: 100%;
 `;

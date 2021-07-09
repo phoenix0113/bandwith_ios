@@ -1,10 +1,12 @@
 import { action, makeAutoObservable, observable, runInAction, toJS, reaction } from "mobx";
 import { createContext } from "react";
-import { getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID } from "../axios/routes/feed";
+import {
+  getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID, getAllRecordingsList
+} from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
 import {
-  LOAD_MORE_RECORDINGS_THRESHOLD, RECORDINGS_LOAD_LIMIT, LOADING_RECORDING_ERROR, FETCH_SHARED_RECORDING_ERROR,
-  LOADING_RECORDINGS_ERROR, REPORT_ERROR,
+  RECORDINGS_LOAD_LIMIT, LOADING_RECORDING_ERROR, FETCH_SHARED_RECORDING_ERROR,
+  LOADING_RECORDINGS_ERROR, REPORT_ERROR, LOADING_ALL_RECORDINGS_ERROR,
 } from "../utils/constants";
 import { showGeneralErrorAlert } from "../utils/notifications";
 import { SocketServiceInstance } from "./socket";
@@ -21,6 +23,8 @@ class FeedMobxService {
 
   @observable allRecordingsLoaded = false;
 
+  @observable allRecordingsList: Array<String> = [];
+
   constructor() {
     makeAutoObservable(this);
     reaction(
@@ -28,6 +32,7 @@ class FeedMobxService {
       (profile) => {
         if (profile) {
           this.loadRecordings();
+          this.loadRecordingList();
         }
       }
     );
@@ -53,6 +58,20 @@ class FeedMobxService {
     } catch (err) {
       console.log(err.message);
       showGeneralErrorAlert(LOADING_RECORDINGS_ERROR);
+    }
+  }
+
+  public loadRecordingList = async () => {
+    try {
+      const { ids } = await getAllRecordingsList();
+
+      runInAction(() => {
+        this.allRecordingsList.push(...ids);
+      });
+
+    } catch (err) {
+      console.log(err.message);
+      showGeneralErrorAlert(LOADING_ALL_RECORDINGS_ERROR);
     }
   }
 
@@ -85,23 +104,32 @@ class FeedMobxService {
     }
   }
 
-  @action public setCurrentRecording = (_id: string) => {
-    if (SocketServiceInstance.currentCommentRoomSubscribtion) {
-      SocketServiceInstance.leaveRecordingCommentsRoom(this.currentRecording._id);
-    }
+  // @action public setCurrentRecording = (_id: string) => {
+  //   if (SocketServiceInstance.currentCommentRoomSubscribtion) {
+  //     SocketServiceInstance.leaveRecordingCommentsRoom(this.currentRecording._id);
+  //   }
 
-    const currentIndex = this.recordings.findIndex((r) => r._id === _id);
-    console.log(`> Current recording (index: ${currentIndex}):`, toJS(this.recordings[currentIndex]));
-    this.currentRecording = this.recordings[currentIndex];
+  //   const currentIndex = this.recordings.findIndex((r) => r._id === _id);
+  //   console.log(`> Current recording (index: ${currentIndex}):`, toJS(this.recordings[currentIndex]));
+  //   this.currentRecording = this.recordings[currentIndex];
 
-    SocketServiceInstance.joinRecordingCommentsRoom(this.currentRecording._id);
+  //   SocketServiceInstance.joinRecordingCommentsRoom(this.currentRecording._id);
 
-    if (
-      currentIndex + LOAD_MORE_RECORDINGS_THRESHOLD >= this.recordings.length
-       && !this.allRecordingsLoaded) {
-      console.log("> Loading more recordings due to threshold");
-      this.loadRecordings();
-    }
+  //   if (
+  //     currentIndex + LOAD_MORE_RECORDINGS_THRESHOLD >= this.recordings.length
+  //      && !this.allRecordingsLoaded) {
+  //     console.log("> Loading more recordings due to threshold");
+  //     this.loadRecordings();
+  //   }
+  // }
+
+  public setCurrentRecording = (_id: string) => {
+    this.recordings.forEach((recording) => {
+      if (recording?._id === _id) {
+        this.currentRecording = recording;
+      }
+    });
+    console.log(">  Current Recording ", _id);
   }
 
   public sendReport = async (id: string, email: string, title: string, body: string) => {

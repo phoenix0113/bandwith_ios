@@ -17,7 +17,7 @@ const testVideoFile = "../../../assets/test_video.mp4";
 
 interface IProps {
   recording: GetRecordResponse;
-  paused?: boolean;
+  paused: boolean;
 }
 
 export const FeedVideoComponent = observer(({
@@ -25,37 +25,34 @@ export const FeedVideoComponent = observer(({
 }: IProps) => {
   let playerRef = useRef<Video>(null);
 
-  const [pausedStatus, setPausedStatus] = useState(paused);
   const [showPlayButton, setShowPlayButton] = useState(false);
-
-  const [currentTime, setCurrentTime] = useState(0);
 
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
   const width = Dimensions.get('screen').width;
 
-  const hidePlayBtn = () => {
+  const onPause = () => {
+    playerRef.current?.setNativeProps({
+      paused: true
+    })
     setShowPlayButton(true);
-    setPausedStatus(true);
+    console.log(`> Recoding ${recording?._id} was paused manually`);
   }
 
-  const changePlaybackStatus = () => {
-    if (!playerRef) return;
-    
-    if (pausedStatus) {
-      setPausedStatus(false);
-      setShowPlayButton(false);
-      console.log(`> Recoding ${recording?._id} was resumed manually`);
-    } else {
-      setPausedStatus(true);
-      setShowPlayButton(true);
-      console.log(`> Recoding ${recording?._id} was paused manually`);
-    }
-  };
+  const onPlay = () => {
+    playerRef.current?.setNativeProps({
+      paused: false
+    })
+    setShowPlayButton(false);
+    console.log(`> Recoding ${recording?._id} was resumed manually`);
+  }
 
-  const onEnd = () => {
-    setPausedStatus(true);
-    setCurrentTime(0);
+  const onStop = () => {
+    playerRef.current?.setNativeProps({
+      paused: true
+    })
+    setShowPlayButton(true);
+    console.log(`> Recoding ${recording?._id} was paused manually`);
   }
 
   return (
@@ -63,13 +60,13 @@ export const FeedVideoComponent = observer(({
       {
         (showPlayButton) ? (
           <FeedPlayerContentWrapperView>
-            <FeedPlayerToolTip onPress={changePlaybackStatus}>
+            <FeedPlayerToolTip onPress={onPlay}>
               <PlayIcon />
             </FeedPlayerToolTip>
           </FeedPlayerContentWrapperView>
         ) : (
-          <FeedPlayerContentWrapper onPress={hidePlayBtn}>
-            <FeedPlayerToolTip onPress={changePlaybackStatus} />
+          <FeedPlayerContentWrapper onPress={onPause}>
+            <FeedPlayerToolTip onPress={onStop} />
           </FeedPlayerContentWrapper>
         )
       }
@@ -78,12 +75,11 @@ export const FeedVideoComponent = observer(({
         <SafeAreaProvider>
           <SafeAreaView>
             <Video
-              paused={pausedStatus}
-              source={{uri: recording.list[0].url}}
-              // source={require(testVideoFile)}
-              onEnd={onEnd}
+              paused={paused}
+              ref={playerRef}
+              // source={{uri: recording.list[0].url}}
+              source={require(testVideoFile)}
               style={{ height: height + 4, width: width }}
-              currentTime={currentTime}
               repeat={true}
               loop
             />

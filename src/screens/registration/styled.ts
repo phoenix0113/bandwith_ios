@@ -23,6 +23,7 @@ export const InputGroup = styled.View`
   width: 100%;
   margin: 10px 0;
 `;
+
 export const ModalContent = styled.View`
   position: absolute;
   width: ${windowWidth}px;

@@ -110,3 +110,7 @@ export const ADD_CONTACT_AND_NOTIFY_ERROR = "Something went wrong while adding c
 export const DELETE_CONTACT_AND_NOTIFY_ERROR = "Something went wrong while deleting contact and notify.";
 
 export const REFETCH_CONTACT_ERROR = "Something went wrong while refetching contact.";
+
+export const CHECK_RECORDING_NAME_ERROR = "Something went wrong while checking recording's name.";
+
+export const LOADING_ALL_RECORDINGS_ERROR = "Something went wrong while getting all recording's id.";

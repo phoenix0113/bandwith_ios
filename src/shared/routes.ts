@@ -36,6 +36,7 @@ export const PATH = {
   REPORT: "report",
   INVITE: "invite",
   FILTER: "filter",
+  ALL: "all",
 };
 
 export const API = {
@@ -59,6 +60,8 @@ export const API = {
   RECORDING_COMMENTS: `${PATH.API}/${PATH.COMMENTS}/${PATH.REC_COMMENTS}`,
   RECORD: `${PATH.API}/${PATH.RECORD}`,
   RECORD_PUBLISH: `${PATH.API}/${PATH.RECORD}/${PATH.PUBLISH}`,
+  CHECK_RECORD_NAME: `/${PATH.API}/${PATH.RECORD}/${PATH.CHECK}`,
+  ALL_RECORD_IDS: `/${PATH.API}/${PATH.RECORD}/${PATH.ALL}`,
   SEND_LOGS: `${PATH.API}/${PATH.LOGS}`,
   LOG_ON_SERVER: `${PATH.API}/${PATH.LOGS}/${PATH.SERVER_SIDE}`,
   SEND_SMS: `${PATH.API}/${PATH.USER}/${PATH.SEND_SMS}`,

@@ -4,8 +4,8 @@ import { IAxiosError } from "../interfaces";
 import { getError } from "../utils";
 
 import {
-  GetAllRecordsQuery, PublishRecordingRequest, BasicResponse, GetAllRecordsResponse, GetRecordResponse, GetVerifyCodeResponse,
-  ReportRequest, GetFilterRecordsQuery,
+  GetAllRecordsQuery, PublishRecordingRequest, Document, GetAllRecordsResponse, GetRecordResponse, GetVerifyCodeResponse,
+  ReportRequest, CheckRecordingNameRequest, GetAllRecordingID
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
@@ -23,15 +23,40 @@ export const getRecordingsList = async (
   }
 };
 
+export const getAllRecordingsList = async (): Promise<GetAllRecordingID> => {
+  try {
+    const response = await instance.post<GetAllRecordingID>(API.ALL_RECORD_IDS);
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+}
+
 export const publishRecording = async (
   request: PublishRecordingRequest,
-): Promise<boolean> => {
+): Promise<Document> => {
   try {
-    const response = await instance.post<BasicResponse>(API.RECORD_PUBLISH, request);
+    const response = await instance.post<Document>(API.RECORD_PUBLISH, request);
 
     console.log("> Publish response: ", response.data);
 
-    return response.data.success;
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const checkRecordingName = async (
+  request: CheckRecordingNameRequest,
+): Promise<GetVerifyCodeResponse> => {
+  try {
+    const response = await instance.post<GetVerifyCodeResponse>(API.CHECK_RECORD_NAME, request);
+
+    console.log("> Check Recording Name Response: ", response.data);
+
+    return response.data;
   } catch (err) {
     const { response } = err as IAxiosError;
     throw new Error(getError(response));

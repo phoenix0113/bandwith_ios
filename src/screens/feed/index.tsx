@@ -1,97 +1,32 @@
-import React, { useContext, useEffect, useRef, useState, useMemo, useCallback } from "react";
+import React, { useContext, useEffect, useRef, useState, useCallback } from "react";
 import { observer, Observer } from "mobx-react";
-import { FlatList, StyleSheet, Share, ShareContent, Dimensions } from "react-native";
+import { FlatList, StyleSheet, Dimensions } from "react-native";
+import Video from "react-native-video/Video";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { tabBarHeight } from "../../utils/styles";
-import {
-  BasicSafeAreaView, CallPageToolbar,
-} from "../../components/styled";
-import { CommentsComponent } from "../../components/Comments";
-import { ProfileScreen } from "../profile";
+import { BasicSafeAreaView } from "../../components/styled";
 
 import { FeedItemComponent } from "./FeedItem";
-import { SharedFeedItemComponent } from "./SharedItem";
-import { RecordUserComponent } from "./FeedUser";
-import { HintComponent } from "../../components/Hint";
-import { ReportRecordingComponent } from "./Report";
 
-import { SocketServiceInstance, SocketServiceContext } from "../../services/socket";
-import { UserServiceInstance } from "../../services/user";
 import { FeedStorageContext } from "../../services/feed";
-import { showGeneralErrorAlert } from "../../utils/notifications";
-import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../utils/constants";
-import { Params, Routes } from "../../utils/routes";
 
-import { GetRecordResponse, RecordUser } from "../../shared/interfaces";
+import { PageContent, BasicContentWrapper } from "./styled";
 
-import { AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText,
-  CommonImgWrapper, ViewProfile, PageContent, BasicContentWrapper, CommentsFeedItemWrapper,
-  ReportIcon
-} from "./styled";
-
-import AddIcon from "../../assets/images/feed/feedAddIcon.svg";
-import CommentIcon from "../../assets/images/feed/comment.svg";
-import ShareIcon from "../../assets/images/feed/share.svg";
-const reportIcon = "../../assets/images/feed/report.png";
-const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
+const testVideoFile = "../../assets/test_video.mp4";
 
 export const FeedScreen = observer((): JSX.Element => {
   const {
-    currentRecording,
-    sharedRecording,
     recordings,
+    allRecordingsList,
     loadRecordings,
     setCurrentRecording,
-    fetchSharedRecording,
-    cleanSharedRecording,
   } = useContext(FeedStorageContext);
-
-  const { contacts } = useContext(SocketServiceContext);
 
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
+  const width = Dimensions.get('screen').width;
 
-  const [sharedRecordingId, setSharedRecordingId] = useState(null);
-
-  useEffect(() => {
-    if (sharedRecordingId) {
-      fetchSharedRecording(sharedRecordingId);
-    }
-  }, [sharedRecordingId]);
-
-  const [openedComments, setOpenedComments] = useState(false);
-  const showComments = () => setOpenedComments(true);
-  const hideComments = () => setOpenedComments(false);
-  const [isReport, setIsReport] = useState("");
-  const [currentProfileUser, setCurrentProfileUser] = useState("");
   const [allRecordings, setAllRecordings] = useState([]);
-
-  const shareCall = (recording: GetRecordResponse) => {
-    if (!Share.share) {
-      showGeneralErrorAlert(NAVIGATOR_SHARE_ERROR);
-    }
-
-    const shareCallData: ShareContent = {
-      title: `Check out ${recording.user?.name}'s recording`,
-      url: `${SERVER_BASE_URL}${Routes.FEED}?${Params.RECORDING_ID}=${recording._id}`,
-    };
-
-    Share.share(shareCallData);
-  };
-
-  const [recordUser, setRecordUser] = useState<RecordUser>(null);
-
-  const openRecordUser = (user: RecordUser) => {
-    setRecordUser(user);
-  };
-
-  const closeRecordUser = () => {
-    setRecordUser(null);
-  };
-
-  const backToFeed = () => {
-    cleanSharedRecording();
-  };
 
   const onViewRef = useRef((viewableItems: any) => {
     let item = viewableItems;
@@ -103,36 +38,6 @@ export const FeedScreen = observer((): JSX.Element => {
     viewAreaCoveragePercentThreshold: 50
   });
 
-  const showUserProfile = (id: string) => {
-    setCurrentProfileUser(id);
-  }
-
-  const showReport = (id: string) => {
-    setIsReport(id);
-  }
-
-  const onScroll = (event) => {
-    const positionY = event.nativeEvent.contentOffset.y;
-    let index = 0;
-    allRecordings.forEach((item) => {
-      if (index === Math.floor(positionY / height) && currentRecording?._id !== item._id) {
-        setCurrentRecording(item._id);
-      }
-      index++;
-    });
-    console.log("currentRecording", currentRecording);
-  };
-
-  const contentText = useMemo(() => {
-    if (UserServiceInstance.profile?._id === currentRecording?.user?._id) {
-      return "You";
-    }
-    if (SocketServiceInstance.isContact(currentRecording?.user?._id)) {
-      return "Friend";
-    }
-    return "Unknown User";
-  }, [currentRecording, contacts]);
-
   useEffect(() => {
     setAllRecordings(recordings);
   }, [recordings]);
@@ -142,11 +47,73 @@ export const FeedScreen = observer((): JSX.Element => {
     setAllRecordings(recordings);
   }
 
+  const playerRef = [];
+
+  allRecordingsList.forEach((item) => {
+    playerRef[item.toString()] = useRef<Video>(null);
+  });
+
+  const onScroll = (event) => {
+    const positionY = event.nativeEvent.contentOffset.y;
+    let index = 0;
+    allRecordings.forEach((item) => {
+      if (index === Math.floor(positionY / height)) {
+        playerRef[item._id.toString()].current?.setNativeProps({
+          paused: false
+        });
+        setCurrentRecording(item._id);
+      } else {
+        if (playerRef[item._id.toString()].current !== null) {
+          playerRef[item._id.toString()].current?.setNativeProps({
+            paused: true
+          });
+          playerRef[item._id.toString()].current?.seek(0);
+        }
+      }
+      index++;
+    });
+  };
+
+  const onPlay = (id: string) => {
+    playerRef[id.toString()].current?.setNativeProps({
+      paused: false
+    })
+    console.log(`> Recoding ${id} was resumed manually`);
+  }
+
+  const onPause = (id: string) => {
+    playerRef[id.toString()].current?.setNativeProps({
+      paused: true
+    })
+    console.log(`> Recoding ${id} was paused manually`);
+  }
+
+  const onStop = (id: string) => {
+    playerRef[id.toString()].current?.setNativeProps({
+      paused: true
+    })
+    console.log(`> Recoding ${id} was paused manually`);
+  }
+
   const renderItem = useCallback(({ item }) => {
     return <Observer>{() => 
       <BasicContentWrapper>
         <FeedItemComponent
           recording={item}
+          height={height + 4}
+          onPlay={onPlay}
+          onPause={onPause}
+          onStop={onStop}
+        />
+        
+        <Video
+          paused={false}
+          ref={playerRef[item._id.toString()]}
+          // source={{uri: recording.list[0].url}}
+          source={require(testVideoFile)}
+          style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
+          repeat={true}
+          loop={true}
         />
       </BasicContentWrapper>
     }</Observer>;
@@ -155,100 +122,21 @@ export const FeedScreen = observer((): JSX.Element => {
   return (
     <BasicSafeAreaView>
       <PageContent>
-        {(currentProfileUser !== "") && (
-          <ProfileScreen
-            id={currentProfileUser}
-            showUserProfile={showUserProfile}
-          />
-        )}
-
-        {(isReport !== "") && (
-          <ReportRecordingComponent
-            closeHandler={() => setIsReport("")}
-            id={isReport}
-          />
-        )}
-
-        {recordUser && (
-          <RecordUserComponent
-            closeHandler={closeRecordUser}
-            user={recordUser}
-          />
-        )}
-
-        <HintComponent page={Routes.FEED} />
-
-        {openedComments && (
-          <CommentsComponent
-            id={currentRecording?._id}
-            visible={openedComments}
-            hide={hideComments}
-            isRecording
-          />
-        )}
-
-        {sharedRecording && (
-          <SharedFeedItemComponent
-            key={sharedRecording._id}
-            openRecordUser={openRecordUser}
-            recording={sharedRecording}
-            showComments={showComments}
-            backToFeed={backToFeed}
-          />
-        )}
-
-        {recordings.length !== 0 && (
-          <>
-            <AddToFriendsWrapper>
-              <ViewProfile onPress={() => showUserProfile(currentRecording?.user?._id)}>
-                {
-                  (currentRecording?.user?.imageUrl) ? (
-                    <AddToFriendIcon source={{uri: currentRecording?.user?.imageUrl}} />
-                  ) : (
-                    <AddToFriendIcon source={require(tempProfileIcon)} />
-                  )
-                }
-              </ViewProfile>
-              <AddToFriendContent>
-                <ContentText isTitle>{currentRecording?.user?.name}</ContentText>
-                <ContentText>{contentText}</ContentText>
-              </AddToFriendContent>
-              <CommonImgWrapper onPress={() => openRecordUser(currentRecording?.user)}>
-                <AddIcon />
-              </CommonImgWrapper>
-            </AddToFriendsWrapper>
-          
-            <FlatList
-              data={allRecordings}
-              renderItem={renderItem}
-              keyExtractor={() => (Math.random() * 1000000000).toString()}
-              pagingEnabled={true}
-              style={styled.flatlist}
-              horizontal={false}
-              showsHorizontalScrollIndicator={false}
-              onViewableItemsChanged={onViewRef.current}
-              viewabilityConfig={viewConfigRef.current}
-              showsVerticalScrollIndicator={false}
-              onEndReached={onEndReached}
-              onScroll={onScroll}
-              scrollEventThrottle={height}
-            />
-
-            <CallPageToolbar>
-              <CommentsFeedItemWrapper onPress={showComments}>
-                <CommentIcon />
-              </CommentsFeedItemWrapper>
-
-              <CommentsFeedItemWrapper onPress={() => shareCall(currentRecording)}>
-                <ShareIcon />
-              </CommentsFeedItemWrapper>
-
-              <CommentsFeedItemWrapper onPress={() => showReport(currentRecording?._id)}>
-                <ReportIcon source={require(reportIcon)} />
-              </CommentsFeedItemWrapper>
-            </CallPageToolbar>
-          </>
-        )}
+        <FlatList
+          data={allRecordings}
+          renderItem={renderItem}
+          keyExtractor={(item) => (item?._id + Math.random() * 1000000000).toString()}
+          pagingEnabled={true}
+          style={styled.flatlist}
+          horizontal={false}
+          showsHorizontalScrollIndicator={false}
+          onViewableItemsChanged={onViewRef.current}
+          viewabilityConfig={viewConfigRef.current}
+          showsVerticalScrollIndicator={false}
+          onEndReached={onEndReached}
+          onScroll={onScroll}
+          scrollEventThrottle={height}
+        />
       </PageContent>
     </BasicSafeAreaView>
   )
