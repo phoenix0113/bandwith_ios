@@ -70,6 +70,8 @@ export const ProfileVideo = styled.TouchableOpacity`
 
 export const ProfileFeedContent = styled.View`
   position: relative;
+  width: ${windowWidth}px;
+  height: 100%;
 `;
 
 

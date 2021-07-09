@@ -16,6 +16,7 @@ import {
   ProfileUserWrapper, BackContent, ProfileName, ProfileImageWrapper, ProfileEmail, ProfileContentWrapper,
   ProfileRecordingContent, ProfileVideo,
 } from "./styled";
+
 import BackIcon from "../../../assets/images/feed/back.svg";
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
 const testVideoFile = "../../../assets/test_video.mp4";
@@ -27,7 +28,9 @@ interface IProps {
 
 export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.Element => {
   const { profileUser, getUserData } = useContext(UserServiceContext);
-  const { filterRecordings, getRecordingsByUserID } = useContext(FeedStorageContext);
+  const {
+    setCurrentFilterRecording, filterRecordings, getRecordingsByUserID
+  } = useContext(FeedStorageContext);
   const width = Dimensions.get('screen').width;
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
@@ -48,6 +51,7 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
       index++;
     });
   }
+
   useEffect(() => {
     getUserData(id);
     getRecordingsByUserID(id);
@@ -63,6 +67,33 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
   useEffect(() => {
     setRecordings(filterRecordings);
   }, [filterRecordings]);
+
+  const onScrollEndDrag = (event) => {
+    if (position > event.nativeEvent.contentOffset.y) {
+      setPosition((position > 0) ? position - recordingHeight : 0);
+    } else {
+      setPosition(position + recordingHeight);
+    }
+    scrollRef.current?.scrollTo({
+      y: position,
+      animated: true,
+    });
+    let index = Math.floor(position/recordingHeight);
+    if (index > filterRecordings.length - 1) {
+      index = filterRecordings.length - 1;
+    }
+  }
+
+  const onScroll = (event) => {
+    const positionY = event.nativeEvent.contentOffset.y;
+    let index = 0;
+    filterRecordings.forEach((item) => {
+      if (index === Math.floor(positionY / recordingHeight)) {
+        setCurrentFilterRecording(item._id);
+      }
+      index++;
+    });
+  }
 
   return (
     <ProfileUserWrapper>
@@ -107,12 +138,16 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
               </ScrollView>
             </>
           ) : (
-            
-            <ProfileRecordingComponent
-              recordings={filterRecordings}
-              currentRecording={currentRecording}
-              height={recordingHeight}
-            />
+            <ScrollView
+              onScrollEndDrag={onScrollEndDrag}
+              ref={scrollRef}
+              onScroll={onScroll}
+            >
+              <ProfileRecordingComponent
+                recordings={filterRecordings}
+                height={recordingHeight}
+              />
+            </ScrollView>
           )
         }
       </ProfileContentWrapper>

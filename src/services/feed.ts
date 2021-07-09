@@ -21,6 +21,8 @@ class FeedMobxService {
 
   @observable filterRecordings: Array<GetRecordResponse> = [];
 
+  @observable currentFilterRecording: GetRecordResponse = null;
+
   @observable allRecordingsLoaded = false;
 
   @observable allRecordingsList: Array<String> = [];
@@ -104,25 +106,6 @@ class FeedMobxService {
     }
   }
 
-  // @action public setCurrentRecording = (_id: string) => {
-  //   if (SocketServiceInstance.currentCommentRoomSubscribtion) {
-  //     SocketServiceInstance.leaveRecordingCommentsRoom(this.currentRecording._id);
-  //   }
-
-  //   const currentIndex = this.recordings.findIndex((r) => r._id === _id);
-  //   console.log(`> Current recording (index: ${currentIndex}):`, toJS(this.recordings[currentIndex]));
-  //   this.currentRecording = this.recordings[currentIndex];
-
-  //   SocketServiceInstance.joinRecordingCommentsRoom(this.currentRecording._id);
-
-  //   if (
-  //     currentIndex + LOAD_MORE_RECORDINGS_THRESHOLD >= this.recordings.length
-  //      && !this.allRecordingsLoaded) {
-  //     console.log("> Loading more recordings due to threshold");
-  //     this.loadRecordings();
-  //   }
-  // }
-
   public setCurrentRecording = (_id: string) => {
     this.recordings.forEach((recording) => {
       if (recording?._id === _id) {
@@ -130,6 +113,15 @@ class FeedMobxService {
       }
     });
     console.log(">  Current Recording ", _id);
+  }
+
+  public setCurrentFilterRecording = (_id: string) => {
+    this.recordings.forEach((recording) => {
+      if (recording?._id === _id) {
+        this.currentFilterRecording = recording;
+      }
+    });
+    console.log(">  Current Filter Recording ", _id);
   }
 
   public sendReport = async (id: string, email: string, title: string, body: string) => {
