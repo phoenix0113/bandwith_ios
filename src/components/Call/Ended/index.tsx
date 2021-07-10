@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { Modal } from "react-native";
 import { Input } from "react-native-elements";
+import Spinner from "react-native-loading-spinner-overlay";
 
 import { ProfileImageWrapper } from "../../ProfileImageWrapper";
 import { TimerComponent } from "../../Timer";
+import { SpinnerOverlayText } from "../../../components/styled";
 import { ContentWrapper } from "./styled";
 import {
   COLORS, NavigationBar, LeftItem, CenterItem, RightItem,
@@ -29,16 +31,20 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
   const [modalStatus, setModalStatus] = useState(false);
   const [name, setName] = useState("");
   const [recordingID, setRecordingID] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const isSubmitDisabled = useMemo(() => {
     return !name;
   }, [name]);
   const publishHandler = async () => {
+    setIsLoading(true);
     const { _id } = await publishRecording({
       callId,
       participants: [callParticipantData.id],
     });
+    setIsLoading(false);
 
-    setRecordingID(_id);
+    setRecordingID(_id.toString());
     setPublished(true);
     setModalStatus(true);
   };
@@ -50,13 +56,16 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
     });
   };
 
-  const setRecordingName = () => {
+  const setRecordingName = async () => {
     setModalStatus(false);
     try {
-      checkRecordingName({
+      setIsLoading(true);
+      let data = await checkRecordingName({
         _id: recordingID,
-        name: name + Date.now().toString(),
+        name: name,
       });
+      setIsLoading(false);
+      console.log("> data", data);
     } catch(err) {
       showGeneralErrorAlert(CHECK_RECORDING_NAME_ERROR);
       console.log(">  Check recording name error", err);
@@ -118,6 +127,15 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
               </NavigationBar>
 
               <ContentWrapper>
+                <Spinner
+                  visible={isLoading}
+                  textContent="Please wait..."
+                  textStyle={SpinnerOverlayText.text}
+                  size="large"
+                  color={COLORS.WHITE}
+                  overlayColor={COLORS.BLACK}
+                  animation="fade"
+                />
                 <ProfileImageWrapper src={callParticipantData?.image} />
 
                 <BasicText lineHeight="40px">Call Ended</BasicText>
