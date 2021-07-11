@@ -3,29 +3,28 @@ import { Share, ShareContent } from "react-native";
 import Video from "react-native-video/Video";
 import { observer } from "mobx-react";
 
-import { SharedFeedItemComponent } from "../../SharedItem";
-import { CommentsComponent } from "../../../../components/Comments";
-import { ReportRecordingComponent } from "../../Report";
+import { SharedFeedItemComponent } from "../../feed/SharedItem";
+import { CommentsComponent } from "../../../components/Comments";
+import { ReportRecordingComponent } from "../../feed/Report";
 
-import { FeedStorageContext } from "../../../../services/feed";
+import { FeedStorageContext } from "../../../services/feed";
+import { UserServiceContext } from "../../../services/user";
 
-import { showGeneralErrorAlert } from "../../../../utils/notifications";
+import { showGeneralErrorAlert } from "../../../utils/notifications";
 
-import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../../../utils/constants";
-import { GetRecordResponse, RecordUser } from "../../../../shared/interfaces";
-import { Params, Routes } from "../../../../utils/routes";
+import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../../utils/constants";
+import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
+import { Params, Routes } from "../../../utils/routes";
 
-import { VideoWrapper, CommentsFeedItemWrapper, ReportIcon } from "../../styled";
-import { CallPageToolbar } from "../../../../components/styled";
-import {
-  FeedPlayerContentWrapper, FeedPlayerToolTip, FeedPlayerContentWrapperView
-} from "../styled";
+import { VideoWrapper, CommentsFeedItemWrapper, ReportIcon, FeedPlayerContentWrapper,
+  FeedPlayerToolTip, FeedPlayerContentWrapperView } from "../../feed/styled";
+import { CallPageToolbar } from "../../../components/styled";
 
-import PlayIcon from "../../../../assets/images/feed/play.svg";
-import CommentIcon from "../../../../assets/images/feed/comment.svg";
-import ShareIcon from "../../../../assets/images/feed/share.svg";
-const reportIcon = "../../../../assets/images/feed/report.png";
-const testVideoFile = "../../../../assets/test_video.mp4";
+import PlayIcon from "../../../assets/images/feed/play.svg";
+import CommentIcon from "../../../assets/images/feed/comment.svg";
+import ShareIcon from "../../../assets/images/feed/share.svg";
+const reportIcon = "../../../assets/images/feed/report.png";
+const testVideoFile = "../../../assets/test_video.mp4";
 
 interface IProps {
   recording: GetRecordResponse;
@@ -35,12 +34,11 @@ interface IProps {
 
 export const RecordingItemComponent  = observer((
   { recording, width, height }: IProps) => {
+  const { currentProfileRecording, setCurrentProfileRecording } = useContext(UserServiceContext);
   const {
-    currentRecording,
     sharedRecording,
     fetchSharedRecording,
     cleanSharedRecording,
-    currentFilterRecording,
   } = useContext(FeedStorageContext);
 
   const playerRef = useRef<Video>(null);
@@ -55,10 +53,10 @@ export const RecordingItemComponent  = observer((
   }, [sharedRecordingId]);
 
   useEffect(() => {
-    if (currentRecording?._id !== recording?._id) {
+    if (currentProfileRecording?._id !== recording?._id) {
       setShowPlayButton(false);
     }
-  }, [currentRecording]);
+  }, [currentProfileRecording]);
 
   const [openedComments, setOpenedComments] = useState(false);
   const showComments = () => setOpenedComments(true);
@@ -118,9 +116,8 @@ export const RecordingItemComponent  = observer((
   }
 
   useEffect(() => {
-    console.log("currentFilterRecording", currentFilterRecording);
-    console.log("recording", recording);
-    if (currentFilterRecording?._id !== recording._id) {
+    console.log("currentProfileRecording", currentProfileRecording);
+    if (currentProfileRecording?._id !== recording._id) {
       playerRef.current?.setNativeProps({
         paused: true
       })
@@ -130,24 +127,10 @@ export const RecordingItemComponent  = observer((
       })
     }
     playerRef.current?.seek(0);
-  }, [currentFilterRecording])
+  }, [currentProfileRecording])
   
   return (
     <VideoWrapper key={recording?._id} style={{ height: height }}>
-      {
-        (showPlayButton) ? (
-          <FeedPlayerContentWrapperView>
-            <FeedPlayerToolTip onPress={onPlay}>
-              <PlayIcon />
-            </FeedPlayerToolTip>
-          </FeedPlayerContentWrapperView>
-        ) : (
-          <FeedPlayerContentWrapper onPress={onPause}>
-            <FeedPlayerToolTip onPress={onStop} />
-          </FeedPlayerContentWrapper>
-        )
-      }
-
       {sharedRecording && (
         <SharedFeedItemComponent
           key={sharedRecording._id}
@@ -197,6 +180,20 @@ export const RecordingItemComponent  = observer((
         repeat={true}
         loop={true}
       />
+
+      {
+        (showPlayButton) ? (
+          <FeedPlayerContentWrapperView>
+            <FeedPlayerToolTip onPress={onPlay}>
+              <PlayIcon />
+            </FeedPlayerToolTip>
+          </FeedPlayerContentWrapperView>
+        ) : (
+          <FeedPlayerContentWrapper onPress={onPause}>
+            <FeedPlayerToolTip onPress={onStop} />
+          </FeedPlayerContentWrapper>
+        )
+      }
     </VideoWrapper>
   )
 });

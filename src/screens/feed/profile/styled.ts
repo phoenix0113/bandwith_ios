@@ -74,7 +74,6 @@ export const ProfileFeedContent = styled.View`
   height: 100%;
 `;
 
-
 export const ProfileFeedVideo = styled.View`
   width: ${windowWidth}px;
 `;

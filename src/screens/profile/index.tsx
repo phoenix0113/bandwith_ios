@@ -1,49 +1,45 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
-import { observer } from "mobx-react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import Video from "react-native-video/Video";
-import { Dimensions, ScrollView } from "react-native";
+import { observer } from "mobx-react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { tabBarHeight } from "../../utils/styles";
-import { UserServiceContext } from "../../services/user";
-import { FeedStorageContext } from "../../services/feed";
+import { ProfileRecordingComponent } from "./recordings";
 
+import { tabBarHeight } from "../../utils/styles";
 import {
-  NavigationBar, LeftItem, CenterItem, RightItem, COLORS
+  COLORS, NavigationBar, LeftItem, CenterItem, RightItem, BasicContentWrapper,
+  PageWrapper, BasicText, NavigationText, BasicSafeAreaView,
 } from "../../components/styled";
 import {
-  ProfileUserWrapper, BackContent, ProfileName, ProfileImageWrapper, ProfileEmail, ProfileContentWrapper,
-  ProfileRecordingContent, ProfileVideo,
+  ProfileRecordingContent, ProfileImageWrapper, ProfileVideo, ProfileContentWrapper,
+  BackContent,
 } from "./styled";
 
-import BackIcon from "../../../assets/images/feed/back.svg";
-const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
-const testVideoFile = "../../../assets/test_video.mp4";
+import { UserServiceContext, UserServiceInstance } from "../../services/user";
 
-interface IProps {
-  id: string;
-  showUserProfile: (id: string) => void;
-}
+const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
+const testVideoFile = "../../assets/test_video.mp4";
+import BackIcon from "../../assets/images/feed/back.svg";
 
-export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.Element => {
-  const { profileUser, getUserData } = useContext(UserServiceContext);
+export const ProfileScreen = observer(() => {
   const {
-    setCurrentFilterRecording, filterRecordings, getRecordingsByUserID
-  } = useContext(FeedStorageContext);
+    profile, profileRecordings, setCurrentProfileRecording,
+  } = useContext(UserServiceContext);
+
   const width = Dimensions.get('screen').width;
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
   const recordingHeight = height - 66;
   const [currentRecording, setCurrentRecording] = useState("");
   const [position, setPosition] = useState(0);
-  const [recordigns, setRecordings] = useState([]);
 
   const scrollRef = useRef<ScrollView>();
 
   const onViewRecordings = (id: string) => {
     let index = 0;
     setCurrentRecording(id);
-    filterRecordings.forEach((item) => {
+    profileRecordings.forEach((item) => {
       if (item?._id === id) {
         setPosition(index * recordingHeight);
       }
@@ -52,20 +48,11 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
   }
 
   useEffect(() => {
-    getUserData(id);
-    getRecordingsByUserID(id);
-  }, [id]);
-
-  useEffect(() => {
     scrollRef.current?.scrollTo({
       y: position,
       animated: true,
     });
   });
-
-  useEffect(() => {
-    setRecordings(filterRecordings);
-  }, [filterRecordings]);
 
   const onScrollEndDrag = (event) => {
     if (position > event.nativeEvent.contentOffset.y) {
@@ -78,61 +65,99 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
       animated: true,
     });
     let index = Math.floor(position/recordingHeight);
-    if (index > filterRecordings.length - 1) {
-      index = filterRecordings.length - 1;
+    if (index > profileRecordings.length - 1) {
+      index = profileRecordings.length - 1;
     }
   }
 
   const onScroll = (event) => {
     const positionY = event.nativeEvent.contentOffset.y;
     let index = 0;
-    filterRecordings.forEach((item) => {
+    profileRecordings.forEach((item) => {
       if (index === Math.floor(positionY / recordingHeight)) {
-        setCurrentFilterRecording(item._id);
+        setCurrentProfileRecording(item._id);
       }
       index++;
     });
   }
 
+  const onBack = () => {
+    setCurrentRecording("");
+  }
+
   return (
-    <ProfileUserWrapper>
-      <NavigationBar>
+    <BasicSafeAreaView>
+      <PageWrapper>
+
+        <NavigationBar>
         <LeftItem>
-          <BackContent onPress={() => showUserProfile("")}>
+          <BackContent onPress={onBack}>
             <BackIcon />
           </BackContent>
         </LeftItem>
-        <CenterItem>
-          <ProfileName>{profileUser?.name}</ProfileName>
-        </CenterItem>
-        <RightItem />
-      </NavigationBar>
-      <ProfileContentWrapper style={{backgroundColor: COLORS.BLACK}}>
+          <CenterItem>
+            <NavigationText>Profile</NavigationText>
+          </CenterItem>
+          <RightItem>
+            {/* <TouchableOpacity onPress={UserServiceInstance.editProfile}>
+              <BasicText
+                fontSize="16px"
+                lineHeight="16px"
+                color={COLORS.ALTERNATIVE}
+                textAlign="left"
+              >
+                Change
+              </BasicText>
+            </TouchableOpacity> */}
+          </RightItem>
+        </NavigationBar>
+
+        <ProfileContentWrapper>
         {
-          (profileUser?.imageUrl) ? (
-            <ProfileImageWrapper source={{uri: (profileUser?.imageUrl) }} />
+          (currentRecording === "") ? (
+            <>
+              {
+                (profile?.imageUrl) ? (
+                  <ProfileImageWrapper source={{uri: (profile?.imageUrl) }} />
+                ) : (
+                  <ProfileImageWrapper source={require(tempProfileIcon)} />
+                )
+              }
+              <BasicText lineHeight="40px">{profile?.name}</BasicText>
+              <ScrollView>
+                <ProfileRecordingContent>
+                  {
+                    profileRecordings.map((recording) => (
+                      <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
+                        <Video
+                          source={{uri: recording.list[0].url}}
+                          // source={require(testVideoFile)}
+                          style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
+                          paused={true}
+                          loop={true}
+                        />
+                      </ProfileVideo>
+                    ))
+                  }
+                </ProfileRecordingContent>
+              </ScrollView>
+            </>
           ) : (
-            <ProfileImageWrapper source={require(tempProfileIcon)} />
+            <ScrollView
+              onScrollEndDrag={onScrollEndDrag}
+              ref={scrollRef}
+              onScroll={onScroll}
+            >
+              <ProfileRecordingComponent
+                recordings={profileRecordings}
+                height={recordingHeight}
+              />
+            </ScrollView>
           )
         }
-        <ProfileEmail>{profileUser?.email}</ProfileEmail>
-        <ScrollView>
-          <ProfileRecordingContent>
-            {
-              recordigns.map((recording) => (
-                <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
-                  <Video
-                    source={{uri: recording.list[0].url}}
-                    // source={require(testVideoFile)}
-                    style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
-                    paused={true}
-                  />
-                </ProfileVideo>
-              ))
-            }
-          </ProfileRecordingContent>
-        </ScrollView>
-      </ProfileContentWrapper>
-    </ProfileUserWrapper>
+        </ProfileContentWrapper>
+
+      </PageWrapper>
+    </BasicSafeAreaView>
   );
 });

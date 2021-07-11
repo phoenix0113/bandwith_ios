@@ -6,12 +6,13 @@ import { CloudClient } from "avcore/client";
 import { Alert } from "react-native";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 
-import { CloudCredentials, UserProfileResponse } from "../shared/interfaces";
+import { CloudCredentials, UserProfileResponse, GetRecordResponse } from "../shared/interfaces";
 import {
   loginRequest, registerRequest, userProfileRequest, avcoreCredentialsRequest, resetPasswordRequest,
   authWithGoogleRequest, sendSMSRequest, verifyCodeRequest, updatePhoneRequest, getVerifyCodeRequest,
   getUserDataByID, authWithAppleRequest,
 } from "../axios/routes/user";
+import { getRecordingsByUserID } from "../axios/routes/feed";
 import { setBearerToken, clearBearerToken } from "../axios/instance";
 import { navigateToScreen } from "../navigation/helper";
 import { WelcomeScreensEnum } from "../navigation/welcome/types";
@@ -20,7 +21,7 @@ import {
   TOKEN_STORAGE_KEY, GOOGLE_CLIENT_ID, SMS_PHONE, SMS_REQUEST_ID,COUNTRY_CODE, VERIFY_CODE, VERIFY_STATUS,
   EMAIL, RESET_PASSWORD_STATUS, FETCH_USER_DATA_ERROR, EMAIL_PASSWORD_INCORRECT_ERROR, EMAIL_INCORRECT_ERROR,
   RESET_PASSWORD_ERROR, EMAIL_EXIST_ERROR, INITIALIZE_AVCOR_ERROR, VERIFY_SMS_ERROR, VERIFY_SMS_CODE_ERROR,
-  PHONE_NUMBER_UPDATE_ERROR
+  PHONE_NUMBER_UPDATE_ERROR, LOADING_PROFILE_RECORDINGS_ERROR,
 } from "../utils/constants";
 import { AppServiceInstance } from "./app";
 import { showNetworkErrorAlert, showUnexpectedErrorAlert, showGeneralErrorAlert } from "../utils/notifications";
@@ -38,6 +39,10 @@ interface SmsRequest {
 
 class UserService {
   @observable profile: UserProfileResponse = null;
+
+  @observable currentProfileRecording: GetRecordResponse = null;
+  
+  @observable profileRecordings: Array<GetRecordResponse> = [];
 
   @observable token: string = null;
 
@@ -114,6 +119,7 @@ class UserService {
     try {
       // empty string in place of firebaseToken is just for compatibility
       this.profile = await userProfileRequest({firebaseToken: ""});
+      this.loadProfileRecordings(this.profile._id);
       console.log("> Fetched user profile:", this.profile.name);
     } catch (err) {
       if (!AppServiceInstance.netAccessible) {
@@ -486,6 +492,20 @@ class UserService {
     navigateToScreen(MainScreensEnum.Profile);
   }
 
+  @observable profileEditMode = false;
+
+  public editProfile = () => {
+    navigateToScreen(WelcomeScreensEnum.EditProfile);
+    this.profileEditMode = true;
+  }
+
+  public cancelEditProfile = () => {
+    this.profileEditMode = false;
+    this.nexmoRequestId = null;
+    this.removeSMSRequestFromStorage();
+    navigateToScreen(MainScreensEnum.Profile);
+  }
+
   private scheduleActions = (action: Function) => {
     this.onReconnectActions.push(action);
   }
@@ -501,6 +521,35 @@ class UserService {
       showGeneralErrorAlert(FETCH_USER_DATA_ERROR);
     }
   }
+
+  public loadProfileRecordings = async (id: string) => {
+    try {
+      const { recordings } = await getRecordingsByUserID(id);
+
+      runInAction(() => {
+        this.profileRecordings.push(...recordings);
+      });
+      if (this.currentProfileRecording === null) {
+        this.currentProfileRecording = this.profileRecordings[0];
+      }
+
+      console.log(">  Profile Recordings", this.profileRecordings);
+
+    } catch (err) {
+      console.log(err.message);
+      showGeneralErrorAlert(LOADING_PROFILE_RECORDINGS_ERROR);
+    }
+  }
+
+  public setCurrentProfileRecording = async (id: string) => {
+    this.profileRecordings.forEach((recording) => {
+      if (recording?._id === id) {
+        this.currentProfileRecording = recording;
+      }
+    });
+    console.log(">  Current Filter Recording ", id);
+  }
+
 }
 
 export const UserServiceInstance = new UserService();

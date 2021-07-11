@@ -11,6 +11,7 @@ export type WelcomeStackParamList = {
   ForgotPassword: undefined;
   VerifyCode: undefined;
   ResetPassword: undefined;
+  EditProfile: undefined;
 };
 
 export enum WelcomeScreensEnum {
@@ -24,6 +25,7 @@ export enum WelcomeScreensEnum {
   ForgotPassword="ForgotPassword",
   VerifyCode="VerifyCode",
   ResetPassword="ResetPassword",
+  EditProfile="EditProfile",
 }
 
 export type WelcomeScreenNavigationProps = StackNavigationProp<

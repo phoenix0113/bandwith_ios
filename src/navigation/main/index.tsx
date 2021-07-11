@@ -70,6 +70,7 @@ export const MainNavigation = observer(() => {
       <Tab.Screen name="Feed" component={FeedScreen} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ tabBarBadge: unreadCounter || null }} />
       <Tab.Screen name="ContactList" component={ContactListScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 });

@@ -14,6 +14,7 @@ import { PhoneSetupScreen } from "../../screens/phoneSetup";
 import { ForgotPasswordScreen } from "../../screens/forgotPassword";
 import { VerifyCodeScreen } from "../../screens/verifyCode";
 import { ResetPasswordScreen } from "../../screens/resetPassword";
+import { EditProfileScreen } from "../../screens/editProfile";
 
 import { UserServiceContext } from "../../services/user";
 
@@ -38,6 +39,7 @@ export const WelcomeNavigation = observer(() => {
       <WelcomeStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <WelcomeStack.Screen name="VerifyCode" component={VerifyCodeScreen} />
       <WelcomeStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+      <WelcomeStack.Screen name="EditProfile" component={EditProfileScreen} />
     </WelcomeStack.Navigator>
   );
 });

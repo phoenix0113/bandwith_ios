@@ -1,7 +1,7 @@
 import { action, makeAutoObservable, observable, runInAction, toJS, reaction } from "mobx";
 import { createContext } from "react";
 import {
-  getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID, getAllRecordingsList
+  getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID, getAllRecordingsList,
 } from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
 import {

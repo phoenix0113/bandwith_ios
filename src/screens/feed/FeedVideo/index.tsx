@@ -81,7 +81,7 @@ export const FeedVideoComponent = observer(({
               // source={require(testVideoFile)}
               style={{ height: height + 4, width: width }}
               repeat={true}
-              loop
+              loop={true}
             />
           </SafeAreaView>
         </SafeAreaProvider>

@@ -114,3 +114,5 @@ export const REFETCH_CONTACT_ERROR = "Something went wrong while refetching cont
 export const CHECK_RECORDING_NAME_ERROR = "Something went wrong while checking recording's name.";
 
 export const LOADING_ALL_RECORDINGS_ERROR = "Something went wrong while getting all recording's id.";
+
+export const LOADING_PROFILE_RECORDINGS_ERROR = "Something went wrong while getting recordings for profile.";
