@@ -91,9 +91,15 @@ export const ProfileScreen = observer(() => {
 
         <NavigationBar>
         <LeftItem>
-          <BackContent onPress={onBack}>
-            <BackIcon />
-          </BackContent>
+          {
+            (currentRecording === "") ? (
+              <></>
+            ) : (
+              <BackContent onPress={onBack}>
+                <BackIcon />
+              </BackContent>
+            )
+          }
         </LeftItem>
           <CenterItem>
             <NavigationText>Profile</NavigationText>

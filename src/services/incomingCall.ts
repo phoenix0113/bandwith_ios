@@ -162,6 +162,7 @@ class IncomingCallService extends AVCoreCall {
       this.stopStreaming(() => {
         this.leaveCall();
       });
+      
     });
   }
 
