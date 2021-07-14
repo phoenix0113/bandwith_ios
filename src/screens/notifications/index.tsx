@@ -20,8 +20,10 @@ import { NotificationServiceContext, NotificationServiceInstance } from "../../s
 import { SocketServiceInstance } from "../../services/socket";
 import { UserServiceInstance } from "../../services/user";
 
+const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
+
 export const NotificationsScreen = observer(() => {
-  const { notifications } = useContext(NotificationServiceContext);
+  const { notifications, fetchUserNotifications } = useContext(NotificationServiceContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -44,10 +46,10 @@ export const NotificationsScreen = observer(() => {
   };
 
   const handleNotificationClick = (notification: Notification) => {
-    // if (notification.type === NotificationTypes.INVITATION) {
-    setViewerInvitationId(notification._id);
-    setViewerInvitationUser(notification.user);
-    // }
+    if (notification.type === NotificationTypes.INVITATION || NotificationTypes.ACCEPTED_INVITATION) {
+      setViewerInvitationId(notification._id);
+      setViewerInvitationUser(notification.user);
+    }
   };
 
   const closeViewer = () => {
@@ -57,12 +59,13 @@ export const NotificationsScreen = observer(() => {
 
   const removeNotification = (_id: string) => {
     handleDelete(notifications.find((n) => n._id === _id));
+    fetchUserNotifications();
     closeViewer();
   };
 
   const acceptInvitation = (_id: string, userId: string) => {
     SocketServiceInstance.addContactAndNotify(userId, () => {
-      removeNotification(_id);
+      closeViewer();
     });
   };
 
@@ -107,7 +110,13 @@ export const NotificationsScreen = observer(() => {
               >
                 <NotificationBlock key={item._id} onPress={() => handleNotificationClick(item)}>
                   <NotificationHeader>
-                    <NotificationUserImage source={{ uri: item.user.imageUrl || "DefaultProfileImage" }} />
+                    {
+                      (item.user.imageUrl) ? (
+                        <NotificationUserImage source={{uri: (item.user.imageUrl) }} />
+                      ) : (
+                        <NotificationUserImage source={require(tempProfileIcon)} />
+                      )
+                    }
                     <BasicText margin="0 10px" fontSize="14px" lineHeight="16px">{`@${item.user.name}`}</BasicText>
                     <VerifiedIcon />
                   </NotificationHeader>

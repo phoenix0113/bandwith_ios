@@ -582,9 +582,9 @@ class SocketService {
           {
             target_id: userId,
             notification: createRemovedFromContactsNotification({
-              _id: this.profile._id,
-              name: this.profile.name,
-              imageUrl: this.profile.imageUrl,
+              _id: this.profile?._id,
+              name: this.profile?.name,
+              imageUrl: this.profile?.imageUrl,
             }),
           },
           () => {
