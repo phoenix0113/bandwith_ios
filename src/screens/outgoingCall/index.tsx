@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 
 import { OutgoingCallComponent } from "../../components/Call/Outgoing";
 import { OngoingCallComponent } from "../../components/Call/Ongoing";
+import { CallEndedComponent } from "../../components/Call/Ended";
 
 import { OutgoingCallServiceContext } from "../../services/outgoingCall";
 
@@ -28,6 +29,7 @@ export const OutgoingCallScreen = observer((): JSX.Element => {
     callParticipantData,
     playback,
     callId,
+    resetOutgoingCall,
     participantAppStatus,
     participantCallDetectorStatus,
     isReconnecting,
@@ -43,24 +45,22 @@ export const OutgoingCallScreen = observer((): JSX.Element => {
   const setRecordingName = async () => {
     try {
       setIsLoading(true);
-      console.log("callId", callId);
-      console.log("callParticipantData.id", callParticipantData.id);
       const { _id } = await publishRecording({
         callId,
         participants: [callParticipantData.id],
       });
 
-      console.log("_id", _id);
-      
       let data = await checkRecordingName({
         _id: _id,
         name: name,
       });
       setIsLoading(false);
       console.log("> data", data);
+      return resetOutgoingCall();
     } catch(err) {
       showGeneralErrorAlert(CHECK_RECORDING_NAME_ERROR);
       console.log("> Check recording name error", err);
+      return resetOutgoingCall();
     }
   }
 

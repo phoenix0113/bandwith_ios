@@ -79,11 +79,11 @@ export const FeedItemComponent  = observer((
     setCurrentProfileUser(id);
   }
 
-  const contentText = useMemo(() => {
-    if (UserServiceInstance.profile?._id === recording?.user?._id) {
+  const contentText = (id: string) => useMemo(() => {
+    if (UserServiceInstance.profile?._id === id) {
       return "You";
     }
-    if (SocketServiceInstance.isContact(recording?.user?._id)) {
+    if (SocketServiceInstance.isContact(id)) {
       return "Friend";
     }
     return "Unknown User";
@@ -147,9 +147,28 @@ export const FeedItemComponent  = observer((
         </ViewProfile>
         <AddToFriendContent>
           <ContentText isTitle>{recording?.user?.name}</ContentText>
-          <ContentText>{contentText}</ContentText>
+          <ContentText>{contentText(recording?.user?._id)}</ContentText>
         </AddToFriendContent>
         <CommonImgWrapper onPress={() => openRecordUser(recording?.user)}>
+          <AddIcon />
+        </CommonImgWrapper>
+      </AddToFriendsWrapper>
+
+      <AddToFriendsWrapper style={{ top: "20%" }}>
+        <ViewProfile onPress={() => showUserProfile(recording?.participants[0]?._id)}>
+          {
+            (recording?.participants[0]?.imageUrl) ? (
+              <AddToFriendIcon source={{uri: recording?.participants[0]?.imageUrl}} />
+            ) : (
+              <AddToFriendIcon source={require(tempProfileIcon)} />
+            )
+          }
+        </ViewProfile>
+        <AddToFriendContent>
+          <ContentText isTitle>{recording?.participants[0]?.name}</ContentText>
+          <ContentText>{contentText(recording?.participants[0]?._id)}</ContentText>
+        </AddToFriendContent>
+        <CommonImgWrapper onPress={() => openRecordUser(recording?.participants[0])}>
           <AddIcon />
         </CommonImgWrapper>
       </AddToFriendsWrapper>

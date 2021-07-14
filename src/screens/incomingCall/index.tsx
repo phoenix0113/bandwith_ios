@@ -1,23 +1,15 @@
 import { IncomingCallServiceContext } from "../../services/incomingCall";
 
 import { IncomingCallStatus } from "../../interfaces/call";
-import React, { useState, useContext, useMemo } from "react";
+import React, { useContext } from "react";
 import { Modal } from "react-native";
-import { Input } from "react-native-elements";
-import Spinner from "react-native-loading-spinner-overlay";
 import { observer } from "mobx-react";
 
 import { OngoingCallComponent } from "../../components/Call/Ongoing";
-
 import { IncomingCallComponent } from "../../components/Call/Incoming";
 
-import { publishRecording, checkRecordingName } from "../../axios/routes/feed";
-import { showGeneralErrorAlert } from "../../utils/notifications";
-import { CHECK_RECORDING_NAME_ERROR } from "../../utils/constants";
-
-import { inputStyles } from "../login/utils";
 import { ModalWrapper, ModalContent, ModalBody, InputLabel } from "../../components/Call/Ended/styled";
-import { COLORS, BasicButtonText, BasicButton, SpinnerOverlayText } from "../../components/styled";
+import { BasicButtonText, BasicButton } from "../../components/styled";
 
 
 export const IncomingCallScreen = observer((): JSX.Element => {
@@ -29,41 +21,11 @@ export const IncomingCallScreen = observer((): JSX.Element => {
     callParticipantData,
     playback,
     callId,
+    resetIncomingCall,
     participantAppStatus,
     participantCallDetectorStatus,
     isReconnecting,
   } = useContext(IncomingCallServiceContext);
-
-  const [name, setName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const isSubmitDisabled = useMemo(() => {
-    return !name;
-  }, [name]);
-
-  const setRecordingName = async () => {
-    try {
-      setIsLoading(true);
-      console.log("callId", callId);
-      console.log("callParticipantData.id", callParticipantData.id);
-      const { _id } = await publishRecording({
-        callId,
-        participants: [callParticipantData.id],
-      });
-      
-      console.log("_id", _id);
-      
-      let data = await checkRecordingName({
-        _id: _id,
-        name: name,
-      });
-      setIsLoading(false);
-      console.log("> data", data);
-    } catch(err) {
-      showGeneralErrorAlert(CHECK_RECORDING_NAME_ERROR);
-      console.log(">  Check recording name error", err);
-    }
-  }
 
   switch (status) {
     case IncomingCallStatus.INITIALIZED:
@@ -75,15 +37,6 @@ export const IncomingCallScreen = observer((): JSX.Element => {
     case IncomingCallStatus.FINISHED:
       return (
         <>
-          <Spinner
-            visible={isLoading}
-            textContent="Please wait..."
-            textStyle={SpinnerOverlayText.text}
-            size="large"
-            color={COLORS.WHITE}
-            overlayColor={COLORS.BLACK}
-            animation="fade"
-          />
           <Modal
               animationType="slide"
               transparent={true}
@@ -93,20 +46,11 @@ export const IncomingCallScreen = observer((): JSX.Element => {
             <ModalWrapper>
               <ModalContent>
                 <ModalBody>
-                <InputLabel>Your recordin's name</InputLabel>
-                  <Input
-                    onChangeText={(value: string) => setName(value)}
-                    placeholder="ENTER RECORDING NAME"
-                    textContentType="oneTimeCode"
-                    inputStyle={inputStyles.inputText}
-                    containerStyle={inputStyles.inputContainer}
-                    value={name}
-                  />
+                  <InputLabel>Your call completed.</InputLabel>
                   <BasicButton
-                    disabled={isSubmitDisabled}
                     margin="5% 0 20px 0"
                     width="100%"
-                    onPress={setRecordingName}
+                    onPress={resetIncomingCall}
                   >
                     <BasicButtonText>OK</BasicButtonText>
                   </BasicButton>
