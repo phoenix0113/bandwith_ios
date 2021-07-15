@@ -310,7 +310,8 @@ class UserService {
 
       this.token = token;
       this.saveTokenToStotage(token);
-      setBearerToken(this.token);
+      setBearerToken(token);
+      this.fetchUserData();
     } catch (err) {
       if (AppServiceInstance.hasNetworkProblems()) {
         showNetworkErrorAlert();

@@ -367,7 +367,7 @@ export interface GetAllRecordsResponse {
 }
 
 export interface GetAllRecordingID {
-  ids: Array<String>;
+  ids: Array<string>;
 }
 
 export interface PipeId {
@@ -385,4 +385,8 @@ export interface SendLogsRequest {
 
 export interface LogOnServerRequest {
   log: string;
+}
+
+export interface ResetPasswordResponse {
+  code: string;
 }
