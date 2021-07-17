@@ -135,44 +135,6 @@ export const FeedItemComponent  = observer((
   
   return (
     <VideoWrapper key={recording?._id} style={{ height: height }}>
-      <AddToFriendsWrapper>
-        <ViewProfile onPress={() => showUserProfile(recording?.user?._id)}>
-          {
-            (recording?.user?.imageUrl) ? (
-              <AddToFriendIcon source={{uri: recording?.user?.imageUrl}} />
-            ) : (
-              <AddToFriendIcon source={require(tempProfileIcon)} />
-            )
-          }
-        </ViewProfile>
-        <AddToFriendContent>
-          <ContentText isTitle>{recording?.user?.name}</ContentText>
-          <ContentText>{contentText(recording?.user?._id)}</ContentText>
-        </AddToFriendContent>
-        <CommonImgWrapper onPress={() => openRecordUser(recording?.user)}>
-          <AddIcon />
-        </CommonImgWrapper>
-      </AddToFriendsWrapper>
-
-      <AddToFriendsWrapper style={{ top: "20%" }}>
-        <ViewProfile onPress={() => showUserProfile(recording?.participants[0]?._id)}>
-          {
-            (recording?.participants[0]?.imageUrl) ? (
-              <AddToFriendIcon source={{uri: recording?.participants[0]?.imageUrl}} />
-            ) : (
-              <AddToFriendIcon source={require(tempProfileIcon)} />
-            )
-          }
-        </ViewProfile>
-        <AddToFriendContent>
-          <ContentText isTitle>{recording?.participants[0]?.name}</ContentText>
-          <ContentText>{contentText(recording?.participants[0]?._id)}</ContentText>
-        </AddToFriendContent>
-        <CommonImgWrapper onPress={() => openRecordUser(recording?.participants[0])}>
-          <AddIcon />
-        </CommonImgWrapper>
-      </AddToFriendsWrapper>
-
       {
         (showPlayButton) ? (
           <FeedPlayerContentWrapperView>
@@ -230,6 +192,17 @@ export const FeedItemComponent  = observer((
       <HintComponent page={Routes.FEED} />
 
       <CallPageToolbar>
+        <CommentsFeedItemWrapper onPress={() => showUserProfile(recording?.user?._id)}>
+          {
+            (recording?.user?.imageUrl) ? (
+              <AddToFriendIcon source={{uri: recording?.user?.imageUrl}} />
+            ) : (
+              <AddToFriendIcon source={require(tempProfileIcon)} />
+            )
+          }
+          <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
+        </CommentsFeedItemWrapper>
+
         <CommentsFeedItemWrapper onPress={showComments}>
           <CommentIcon />
         </CommentsFeedItemWrapper>
@@ -240,6 +213,17 @@ export const FeedItemComponent  = observer((
 
         <CommentsFeedItemWrapper onPress={() => showReport(recording?._id)}>
           <ReportIcon source={require(reportIcon)} />
+        </CommentsFeedItemWrapper>
+
+        <CommentsFeedItemWrapper onPress={() => showUserProfile(recording?.participants[0]._id)}>
+          {
+            (recording?.participants[0]?.imageUrl) ? (
+              <AddToFriendIcon source={{uri: recording?.participants[0]?.imageUrl}} />
+            ) : (
+              <AddToFriendIcon source={require(tempProfileIcon)} />
+            )
+          }
+          <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
         </CommentsFeedItemWrapper>
       </CallPageToolbar>
     </VideoWrapper>

@@ -70,9 +70,9 @@ export const ViewProfile = styled.TouchableOpacity`
 `;
 
 export const AddToFriendIcon = styled.Image`
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
+  width: 54px;
+  height: 54px;
+  border-radius: 27px;
 `;
 
 export const UserProfileIcon = styled.Image`
@@ -160,7 +160,7 @@ export const CommentsFeedItemWrapper = styled.TouchableOpacity`
   height: 54px;
   border-radius: 27px;
   background-color: #ffffff;
-  margin: 16px 0;
+  margin: 10px 0;
 `;
 
 
