@@ -8,6 +8,8 @@ export const ContentWrapper = styled.View`
   align-items: center;
   flex-grow: 1;
   padding: 20px;
+  align-items: center;
+  margin-top: 20px;
 `;
 
 export const SwitchWrapper = styled.View`
@@ -27,7 +29,7 @@ export const ContentTitle = styled.Text`
   letter-spacing: 0px;
   text-align: center;
   color: ${COLORS.WHITE};
-  margin: 40px 0 5px 0;
+  margin: 70px 0 5px 0;
 `;
 
 export const ContentText = styled.Text`
@@ -40,6 +42,7 @@ export const ContentText = styled.Text`
   letter-spacing: 0px;
   text-align: center;
   color: ${COLORS.WHITE_VAGUE};
+  padding-bottom: 50px;
 `;
 
 interface PageWrapperProps {

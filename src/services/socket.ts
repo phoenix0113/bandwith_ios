@@ -340,6 +340,7 @@ class SocketService {
     } else {
       // there are online users in the lobby, prioritize them
       const randomOnlineUser = this.onlineUsers[Math.floor(Math.random() * this.onlineUsers.length)];
+      console.log("> random calling user is ", randomOnlineUser);
 
       this.callSpecificUser(callId, randomOnlineUser, callback, true);
     }

@@ -48,10 +48,14 @@ export const HomeScreen = observer(() => {
         </RightItem>
       </NavigationBar>
 
-      <BandwwithTextLogo />
+      
 
       <ContentWrapper>
-        <ArtistLoaderIcon />
+        <BandwwithTextLogo />
+        <ContentTitle>Make Random Call</ContentTitle>
+        <ContentText>Make calls to complete strangers, meet, invite friends and share your calls</ContentText>
+        <MakeCallIcon onPress={() => OutgoingCallServiceInstance.makeCall()} />
+        {/* <ArtistLoaderIcon /> */}
         <ContentTitle>
           Support Team:
         </ContentTitle>
