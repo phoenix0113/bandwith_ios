@@ -294,11 +294,7 @@ export interface CreateCallRecordingRequest {
 export interface PublishRecordingRequest {
   callId: string;
   participants: string[];
-}
-
-export interface CheckRecordingNameRequest {
-  _id: string;
-  name: string;
+  recordingName: string;
 }
 
 export type RecordUser = ContactItem;

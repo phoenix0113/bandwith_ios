@@ -23,7 +23,7 @@ import { UserServiceInstance } from "../../services/user";
 const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
 
 export const NotificationsScreen = observer(() => {
-  const { notifications, fetchUserNotifications } = useContext(NotificationServiceContext);
+  const { notifications } = useContext(NotificationServiceContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -46,7 +46,7 @@ export const NotificationsScreen = observer(() => {
   };
 
   const handleNotificationClick = (notification: Notification) => {
-    if (notification.type === NotificationTypes.INVITATION || NotificationTypes.ACCEPTED_INVITATION) {
+    if (notification.type === NotificationTypes.INVITATION) {
       setViewerInvitationId(notification._id);
       setViewerInvitationUser(notification.user);
     }
@@ -59,13 +59,12 @@ export const NotificationsScreen = observer(() => {
 
   const removeNotification = (_id: string) => {
     handleDelete(notifications.find((n) => n._id === _id));
-    fetchUserNotifications();
     closeViewer();
   };
 
   const acceptInvitation = (_id: string, userId: string) => {
     SocketServiceInstance.addContactAndNotify(userId, () => {
-      closeViewer();
+      removeNotification(_id);
     });
   };
 
@@ -110,7 +109,7 @@ export const NotificationsScreen = observer(() => {
               >
                 <NotificationBlock key={item._id} onPress={() => handleNotificationClick(item)}>
                   <NotificationHeader>
-                    {
+                  {
                       (item.user.imageUrl) ? (
                         <NotificationUserImage source={{uri: (item.user.imageUrl) }} />
                       ) : (
