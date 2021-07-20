@@ -76,6 +76,7 @@ export const FeedItemComponent  = observer((
   const [recordUser, setRecordUser] = useState<RecordUser>(null);
 
   const showUserProfile = (id: string) => {
+    console.log(id);
     setCurrentProfileUser(id);
   }
 
@@ -192,10 +193,10 @@ export const FeedItemComponent  = observer((
       <HintComponent page={Routes.FEED} />
 
       <CallPageToolbar>
-        <CommentsFeedItemWrapper onPress={() => showUserProfile(recording?.user?._id)}>
+        <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[0] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
           {
-            (recording?.user?.imageUrl) ? (
-              <AddToFriendIcon source={{uri: recording?.user?.imageUrl}} />
+            ((recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
+              <AddToFriendIcon source={{uri: (recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
             ) : (
               <AddToFriendIcon source={require(tempProfileIcon)} />
             )
@@ -215,16 +216,18 @@ export const FeedItemComponent  = observer((
           <ReportIcon source={require(reportIcon)} />
         </CommentsFeedItemWrapper>
 
-        <CommentsFeedItemWrapper onPress={() => showUserProfile(recording?.participants[0]._id)}>
+        {recording?.authorList.length === 2 && (
+          <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[1] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
           {
-            (recording?.participants[0]?.imageUrl) ? (
-              <AddToFriendIcon source={{uri: recording?.participants[0]?.imageUrl}} />
+            ((recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
+              <AddToFriendIcon source={{uri: (recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
             ) : (
               <AddToFriendIcon source={require(tempProfileIcon)} />
             )
           }
           <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
         </CommentsFeedItemWrapper>
+        )}
       </CallPageToolbar>
     </VideoWrapper>
   )

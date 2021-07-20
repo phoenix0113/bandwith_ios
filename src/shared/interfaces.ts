@@ -306,6 +306,7 @@ export interface GetRecordResponse extends Document {
   pipeId: string;
   callId: string;
   participants?: RecordUser[];
+  authorList?: string[];
   user?: RecordUser;
 }
 

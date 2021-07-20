@@ -66,9 +66,6 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
           <ProfileImageWrapper src={callParticipantData?.image} />
 
           <BasicText lineHeight="40px">Call Ended</BasicText>
-          <BasicText fontSize="12px" lineHeight="24px" color={COLORS.WHITE_VAGUE} >
-            You will be automatically redirected to the home page
-          </BasicText>
 
           {!callParticipantData?.isFriend && (
             <BasicButton

@@ -10,7 +10,6 @@ export const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10% 0;
   width: 100%;
 `;
 
