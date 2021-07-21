@@ -12,9 +12,10 @@ const width = Dimensions.get('screen').width;
 interface IProps {
   recordings: GetRecordResponse[];
   height: number;
+  onBack: () => void;
 }
 
-export const ProfileRecordingComponent = observer(({ recordings, height }: IProps): JSX.Element => {
+export const ProfileRecordingComponent = observer(({ recordings, height, onBack }: IProps): JSX.Element => {
   
   return (
     <>
@@ -25,6 +26,7 @@ export const ProfileRecordingComponent = observer(({ recordings, height }: IProp
               recording={item}
               width={width}
               height={height}
+              onBack={onBack}
             />
           </ProfileFeedVideo>
         )))

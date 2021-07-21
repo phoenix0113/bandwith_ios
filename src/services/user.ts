@@ -527,6 +527,7 @@ class UserService {
     try {
       const { recordings } = await getRecordingsByUserID(id);
 
+      this.profileRecordings = [];
       runInAction(() => {
         this.profileRecordings.push(...recordings);
       });

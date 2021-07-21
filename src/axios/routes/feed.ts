@@ -5,7 +5,7 @@ import { getError } from "../utils";
 
 import {
   GetAllRecordsQuery, PublishRecordingRequest, Document, GetAllRecordsResponse, GetRecordResponse, GetVerifyCodeResponse,
-  ReportRequest, GetAllRecordingID
+  ReportRequest, GetAllRecordingID, DeleteCallRecordingRequest
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
@@ -79,3 +79,14 @@ export const getRecordingsByUserID = async (id: string): Promise<GetAllRecordsRe
     throw new Error(getError(response));
   }
 };
+
+export const deleteCallRecording = async (request: DeleteCallRecordingRequest): Promise<GetVerifyCodeResponse> => {
+  try {
+    const response = await instance.post<GetVerifyCodeResponse>(API.DELETE, request);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+}

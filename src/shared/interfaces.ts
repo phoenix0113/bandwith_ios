@@ -49,6 +49,11 @@ export interface ReportRequest {
   body: string;
 }
 
+export interface DeleteCallRecordingRequest {
+  recordId: string;
+  authorId: string;
+}
+
 export interface ImportedContactItem {
   recordId: string;
   name: string;

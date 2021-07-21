@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import { ScrollView, Dimensions } from "react-native";
 import Video from "react-native-video/Video";
 import { observer } from "mobx-react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,15 +8,15 @@ import { ProfileRecordingComponent } from "./recordings";
 
 import { tabBarHeight } from "../../utils/styles";
 import {
-  COLORS, NavigationBar, LeftItem, CenterItem, RightItem, BasicContentWrapper,
-  PageWrapper, BasicText, NavigationText, BasicSafeAreaView,
+  NavigationBar, LeftItem, CenterItem, RightItem, PageWrapper, BasicText,
+  NavigationText, BasicSafeAreaView,
 } from "../../components/styled";
 import {
   ProfileRecordingContent, ProfileImageWrapper, ProfileVideo, ProfileContentWrapper,
   BackContent,
 } from "./styled";
 
-import { UserServiceContext, UserServiceInstance } from "../../services/user";
+import { UserServiceContext } from "../../services/user";
 
 const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
 const testVideoFile = "../../assets/test_video.mp4";
@@ -157,6 +157,7 @@ export const ProfileScreen = observer(() => {
               <ProfileRecordingComponent
                 recordings={profileRecordings}
                 height={recordingHeight}
+                onBack={onBack}
               />
             </ScrollView>
           )

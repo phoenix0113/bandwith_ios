@@ -21,8 +21,7 @@ import { Params, Routes } from "../../../utils/routes";
 
 import { VideoWrapper } from "../styled";
 import {CallPageToolbar } from "../../../components/styled";
-import { AddToFriendContent, AddToFriendIcon, AddToFriendsWrapper, ContentText,
-  CommonImgWrapper, ViewProfile, CommentsFeedItemWrapper, ReportIcon,
+import { AddToFriendIcon, CommentsFeedItemWrapper, ReportIcon,
   FeedPlayerContentWrapper, FeedPlayerToolTip, FeedPlayerContentWrapperView
 } from "../styled";
 
@@ -215,19 +214,6 @@ export const FeedItemComponent  = observer((
         <CommentsFeedItemWrapper onPress={() => showReport(recording?._id)}>
           <ReportIcon source={require(reportIcon)} />
         </CommentsFeedItemWrapper>
-
-        {recording?.authorList.length === 2 && (
-          <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[1] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
-          {
-            ((recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
-              <AddToFriendIcon source={{uri: (recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
-            ) : (
-              <AddToFriendIcon source={require(tempProfileIcon)} />
-            )
-          }
-          <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
-        </CommentsFeedItemWrapper>
-        )}
       </CallPageToolbar>
     </VideoWrapper>
   )

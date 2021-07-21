@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { Share, ShareContent } from "react-native";
+import { Share, ShareContent, Alert } from "react-native";
 import Video from "react-native-video/Video";
 import { observer } from "mobx-react";
 
@@ -15,6 +15,7 @@ import { showGeneralErrorAlert } from "../../../utils/notifications";
 import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../../utils/constants";
 import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
 import { Params, Routes } from "../../../utils/routes";
+import { deleteCallRecording } from "../../../axios/routes/feed";
 
 import { VideoWrapper, CommentsFeedItemWrapper, ReportIcon, FeedPlayerContentWrapper,
   FeedPlayerToolTip, FeedPlayerContentWrapperView } from "../../feed/styled";
@@ -24,17 +25,21 @@ import PlayIcon from "../../../assets/images/feed/play.svg";
 import CommentIcon from "../../../assets/images/feed/comment.svg";
 import ShareIcon from "../../../assets/images/feed/share.svg";
 const reportIcon = "../../../assets/images/feed/report.png";
+const deleteIcon = "../../../assets/images/general/delete.png";
 const testVideoFile = "../../../assets/test_video.mp4";
 
 interface IProps {
   recording: GetRecordResponse;
   width: number;
   height: number;
+  onBack: () => void;
 }
 
 export const RecordingItemComponent  = observer((
-  { recording, width, height }: IProps) => {
-  const { currentProfileRecording, setCurrentProfileRecording } = useContext(UserServiceContext);
+  { recording, width, height, onBack }: IProps) => {
+  const {
+    currentProfileRecording, profile, loadProfileRecordings
+  } = useContext(UserServiceContext);
   const {
     sharedRecording,
     fetchSharedRecording,
@@ -128,6 +133,34 @@ export const RecordingItemComponent  = observer((
     }
     playerRef.current?.seek(0);
   }, [currentProfileRecording])
+
+  const onDelete = async () => {
+    await deleteCallRecording({
+      recordId: recording?._id,
+      authorId: profile?._id,
+    });
+
+    await loadProfileRecordings(profile?._id);
+    onBack();
+  }
+
+  const onDeleteAlert = () => {
+    Alert.alert(
+      'Delete Call Recording',
+      'Are you sure you want to remove this call recording?',
+      [
+        {
+          text: 'OK',
+          onPress: () => onDelete()
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      {cancelable: false},
+    );
+  }
   
   return (
     <VideoWrapper key={recording?._id} style={{ height: height }}>
@@ -168,6 +201,10 @@ export const RecordingItemComponent  = observer((
 
         <CommentsFeedItemWrapper onPress={() => showReport(recording?._id)}>
           <ReportIcon source={require(reportIcon)} />
+        </CommentsFeedItemWrapper>
+
+        <CommentsFeedItemWrapper onPress={onDeleteAlert}>
+          <ReportIcon source={require(deleteIcon)} />
         </CommentsFeedItemWrapper>
       </CallPageToolbar>
 

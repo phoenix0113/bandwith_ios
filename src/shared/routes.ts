@@ -37,6 +37,7 @@ export const PATH = {
   INVITE: "invite",
   FILTER: "filter",
   ALL: "all",
+  DELETE: "delete",
 };
 
 export const API = {
@@ -74,4 +75,5 @@ export const API = {
   GET_VERIFY_CODE: `/${PATH.API}/${PATH.FORGOT_PASSWORD}`,
   RESET_PASSWORD: `/${PATH.API}/${PATH.RESET_PASSWORD}`,
   REPORT: `/${PATH.API}/${PATH.RECORD}/${PATH.REPORT}`,
+  DELETE: `/${PATH.API}/${PATH.RECORD}/${PATH.DELETE}`,
 };
