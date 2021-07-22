@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ScrollView, Dimensions } from "react-native";
+import { ScrollView, Dimensions, TouchableOpacity } from "react-native";
 import Video from "react-native-video/Video";
 import { observer } from "mobx-react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,14 +9,14 @@ import { ProfileRecordingComponent } from "./recordings";
 import { tabBarHeight } from "../../utils/styles";
 import {
   NavigationBar, LeftItem, CenterItem, RightItem, PageWrapper, BasicText,
-  NavigationText, BasicSafeAreaView,
+  NavigationText, BasicSafeAreaView, COLORS
 } from "../../components/styled";
 import {
   ProfileRecordingContent, ProfileImageWrapper, ProfileVideo, ProfileContentWrapper,
   BackContent,
 } from "./styled";
 
-import { UserServiceContext } from "../../services/user";
+import { UserServiceContext, UserServiceInstance } from "../../services/user";
 
 const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
 const testVideoFile = "../../assets/test_video.mp4";
@@ -105,7 +105,7 @@ export const ProfileScreen = observer(() => {
             <NavigationText>Profile</NavigationText>
           </CenterItem>
           <RightItem>
-            {/* <TouchableOpacity onPress={UserServiceInstance.editProfile}>
+            <TouchableOpacity onPress={UserServiceInstance.editProfile}>
               <BasicText
                 fontSize="16px"
                 lineHeight="16px"
@@ -114,7 +114,7 @@ export const ProfileScreen = observer(() => {
               >
                 Change
               </BasicText>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </RightItem>
         </NavigationBar>
 

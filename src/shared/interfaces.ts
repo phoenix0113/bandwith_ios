@@ -54,6 +54,12 @@ export interface DeleteCallRecordingRequest {
   authorId: string;
 }
 
+export interface UpdateUserProfileRequest {
+  id: string,
+  photoUrl: string,
+  username: string,
+}
+
 export interface ImportedContactItem {
   recordId: string;
   name: string;

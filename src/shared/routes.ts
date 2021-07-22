@@ -38,6 +38,7 @@ export const PATH = {
   FILTER: "filter",
   ALL: "all",
   DELETE: "delete",
+  UPDATE: "update",
 };
 
 export const API = {
@@ -76,4 +77,5 @@ export const API = {
   RESET_PASSWORD: `/${PATH.API}/${PATH.RESET_PASSWORD}`,
   REPORT: `/${PATH.API}/${PATH.RECORD}/${PATH.REPORT}`,
   DELETE: `/${PATH.API}/${PATH.RECORD}/${PATH.DELETE}`,
+  PROFILE_UPDATE: `/${PATH.API}/${PATH.PROFILE}/${PATH.UPDATE}`,
 };
