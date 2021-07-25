@@ -60,6 +60,10 @@
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone permission description</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like upload your photo to server</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like upload your photo to server</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MaterialCommunityIcons.ttf</string>

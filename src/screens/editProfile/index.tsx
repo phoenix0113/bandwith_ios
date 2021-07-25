@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, Alert } from "react-native";
 import { observer } from "mobx-react";
 import { Input } from "react-native-elements";
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -35,10 +35,12 @@ export const EditProfileScreen = observer(() => {
       maxWidth: 96,
     }, (response) => {
       if (response) {
-        let splitted = response.assets[0].type.split("/", 2); 
-        setPhotoType(splitted[1]);
-        setPhoto(`data:image/${photoType};base64,${response.assets[0].base64}`);
-        setUpdateStatus(true);
+        if (!response?.didCancel) {
+          let splitted = response.assets[0].type.split("/", 2); 
+          setPhotoType(splitted[1]);
+          setPhoto(`data:image/${photoType};base64,${response.assets[0].base64}`);
+          setUpdateStatus(true);
+        }
       }
     });
   };

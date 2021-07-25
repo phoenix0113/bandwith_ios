@@ -13,11 +13,18 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ScrollViewContent, COLORS
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton,
+  BasicSafeAreaView, ScrollViewContent, COLORS,
 } from "../../components/styled";
-import { CheckBoxContent, InputGroup, ModalButton, ModalWrapper, ModalContent, ModalBody, ModalFooter, AgreementText } from "./styled";
+import {
+  CheckBoxContent, InputGroup, ModalButton, ModalWrapper, ModalContent, ModalBody, ModalFooter, AgreementText
+} from "./styled";
+import { PasswordInput, PasswordIconTooltip, PasswordIcon } from "../login/styled";
 import { UserServiceInstance } from "../../services/user";
 import { TERMS_CONDITIONS_URL } from "../../utils/constants";
+
+const showPasswordIcon = "../../assets/images/general/show.png";
+const hidePasswordIcon = "../../assets/images/general/hide.png";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -47,6 +54,26 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
     return !username || !email || !password || !rPassword || !agree
       || !!usernameErrorMessage || !!emailErrorMessage || !!passwordErrorMessage || !!rPasswordErrorMessage;
   }, [username, email, password, rPassword, usernameErrorMessage, passwordErrorMessage, emailErrorMessage, rPasswordErrorMessage, agree]);
+
+  const [type, setType] = useState("password");
+
+  const onChangeType = () => {
+    if (type === "password") {
+      setType("text");
+    } else {
+      setType("password");
+    }
+  }
+
+  const [confirmType, setConfirmType] = useState("password");
+
+  const onChangeConfirmType = () => {
+    if (confirmType === "password") {
+      setConfirmType("text");
+    } else {
+      setConfirmType("password");
+    }
+  }
 
   return (
     <BasicSafeAreaView>
@@ -114,29 +141,51 @@ export const RegistrationScreen = ({navigation}: WithNavigatorScreen) => {
                 </InputGroup>
 
                 <InputGroup>
-                  <Input
-                    secureTextEntry={true}
-                    onChangeText={(value: string) => setPassword(value)}
-                    placeholder="ENTER YOUR PASSWORD"
-                    textContentType="oneTimeCode"
-                    errorMessage={passwordErrorMessage}
-                    inputStyle={inputStyles.inputText}
-                    containerStyle={inputStyles.inputContainer}
-                    value={password}
-                  />
+                  <PasswordInput>
+                    <Input
+                      secureTextEntry={(type === "password" ? true : false)}
+                      onChangeText={(value: string) => setPassword(value)}
+                      placeholder="ENTER YOUR PASSWORD"
+                      textContentType="oneTimeCode"
+                      errorMessage={passwordErrorMessage}
+                      inputStyle={inputStyles.inputText}
+                      containerStyle={inputStyles.inputContainer}
+                      value={password}
+                    />
+                    <PasswordIconTooltip onPress={onChangeType}>
+                      {
+                        (type === "password") ? (
+                          <PasswordIcon source={require(showPasswordIcon)} />
+                        ) : (
+                          <PasswordIcon source={require(hidePasswordIcon)} />
+                        )
+                      }
+                    </PasswordIconTooltip>
+                  </PasswordInput>
                 </InputGroup>
 
                 <InputGroup>
-                  <Input
-                    secureTextEntry={true}
-                    onChangeText={(value: string) => setRPassword(value)}
-                    placeholder="REPEAT YOUR PASSWORD"
-                    textContentType="oneTimeCode"
-                    errorMessage={rPasswordErrorMessage}
-                    inputStyle={inputStyles.inputText}
-                    containerStyle={inputStyles.inputContainer}
-                    value={rPassword}
-                  />
+                  <PasswordInput>
+                    <Input
+                      secureTextEntry={(type === "password" ? true : false)}
+                      onChangeText={(value: string) => setRPassword(value)}
+                      placeholder="REPEAT YOUR PASSWORD"
+                      textContentType="oneTimeCode"
+                      errorMessage={rPasswordErrorMessage}
+                      inputStyle={inputStyles.inputText}
+                      containerStyle={inputStyles.inputContainer}
+                      value={rPassword}
+                    />
+                    <PasswordIconTooltip onPress={onChangeConfirmType}>
+                      {
+                        (confirmType === "password") ? (
+                          <PasswordIcon source={require(showPasswordIcon)} />
+                        ) : (
+                          <PasswordIcon source={require(hidePasswordIcon)} />
+                        )
+                      }
+                    </PasswordIconTooltip>
+                  </PasswordInput>
                 </InputGroup>
 
                 <InputGroup>

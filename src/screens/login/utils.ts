@@ -33,7 +33,7 @@ export const inputStyles = StyleSheet.create({
   inputText: {
     color: COLORS.WHITE,
     fontFamily: "Kefa",
-    fontSize: 24,
+    fontSize: 20,
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 24,

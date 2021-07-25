@@ -10,10 +10,16 @@ import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import {
-  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText, BasicButton, BasicSafeAreaView, ContentGroup, ScrollViewContent
+  CenterItem, LeftItem, NavigationBar, PageWrapper, RightItem, NavigationText, BasicButtonText,
+  BasicButton, BasicSafeAreaView, ContentGroup, ScrollViewContent,
 } from "../../components/styled";
-import { InputLabel, InputGroup } from "./styled";
+import {
+  InputLabel, InputGroup, PasswordIcon, PasswordInput, PasswordIconTooltip,
+} from "./styled";
 import { UserServiceInstance } from "../../services/user";
+
+const showPasswordIcon = "../../assets/images/general/show.png";
+const hidePasswordIcon = "../../assets/images/general/hide.png";
 
 type WithNavigatorScreen = {
   navigation: LoginScreenNavigationProps;
@@ -51,6 +57,16 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
     return !email || !password || !!emailErrorMessage || !!passwordErrorMessage;
   }, [email, password, passwordErrorMessage, emailErrorMessage]);
 
+  const [type, setType] = useState("password");
+
+  const onChangeType = () => {
+    if (type === "password") {
+      setType("text");
+    } else {
+      setType("password");
+    }
+  }
+
   return (
     <BasicSafeAreaView>
       <PageWrapper justifyContent="space-around">
@@ -83,15 +99,26 @@ export const LoginScreen = ({navigation}: WithNavigatorScreen) => {
 
             <InputGroup>
               <InputLabel>Your password it's your safety</InputLabel>
-              <Input
-                secureTextEntry={true}
-                onChangeText={(value: string) => setPassword(value)}
-                placeholder="ENTER YOUR PASSWORD"
-                textContentType="oneTimeCode"
-                errorMessage={passwordErrorMessage}
-                inputStyle={inputStyles.inputText}
-                containerStyle={inputStyles.inputContainer}
-              />
+              <PasswordInput>
+                <Input
+                  secureTextEntry={(type === "password" ? true : false)}
+                  onChangeText={(value: string) => setPassword(value)}
+                  placeholder="ENTER YOUR PASSWORD"
+                  textContentType="oneTimeCode"
+                  errorMessage={passwordErrorMessage}
+                  inputStyle={inputStyles.inputText}
+                  containerStyle={inputStyles.inputContainer}
+                />
+                <PasswordIconTooltip onPress={onChangeType}>
+                  {
+                    (type === "password") ? (
+                      <PasswordIcon source={require(showPasswordIcon)} />
+                    ) : (
+                      <PasswordIcon source={require(hidePasswordIcon)} />
+                    )
+                  }
+                </PasswordIconTooltip>
+              </PasswordInput>
             </InputGroup>
 
             <ContentGroup>

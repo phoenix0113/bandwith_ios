@@ -18,3 +18,21 @@ export const InputGroup = styled.View`
   flex-direction: column;
   width: 100%;
 `;
+
+export const PasswordIcon = styled.Image`
+  width: 28px;
+  height: 18.4px;
+`;
+
+export const PasswordInput = styled.View`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+
+export const PasswordIconTooltip = styled.TouchableOpacity`
+  position: absolute;
+  right: 0;
+  top: 13px;
+`;
