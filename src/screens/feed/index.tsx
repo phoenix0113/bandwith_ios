@@ -1,142 +1,73 @@
-import React, { useContext, useEffect, useRef, useState, useCallback } from "react";
-import { observer, Observer } from "mobx-react";
-import { FlatList, StyleSheet, Dimensions } from "react-native";
-import Video from "react-native-video/Video";
+import React, { useContext, useRef, useState } from "react";
+import { observer } from "mobx-react";
+import { StyleSheet, Dimensions, ScrollView } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { tabBarHeight } from "../../utils/styles";
 import { BasicSafeAreaView } from "../../components/styled";
 
-import { FeedItemComponent } from "./FeedItem";
+import { ProfileRecordingComponent } from "../profile/recordings";
 
 import { FeedStorageContext } from "../../services/feed";
 
-import { PageContent, BasicContentWrapper } from "./styled";
+import { PageContent } from "./styled";
 
 const testVideoFile = "../../assets/test_video.mp4";
 
 export const FeedScreen = observer((): JSX.Element => {
   const {
     recordings,
-    allRecordingsList,
-    loadRecordings,
     setCurrentRecording,
   } = useContext(FeedStorageContext);
 
+  let scrollRef = useRef<ScrollView>(null);
+
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
-  const width = Dimensions.get('screen').width;
+  const recordingHeight = height + 4;
 
-  const [allRecordings, setAllRecordings] = useState([]);
+  const [position, setPosition] = useState(0);
 
-  const onViewRef = useRef((viewableItems: any) => {
-    let item = viewableItems;
-    let currentRecording = item.changed[0]["item"];
-    setCurrentRecording(currentRecording?._id);
-  });
-
-  const viewConfigRef = useRef({
-    viewAreaCoveragePercentThreshold: 50
-  });
-
-  useEffect(() => {
-    setAllRecordings(recordings);
-  }, [recordings]);
-
-  const onEndReached = async () => {
-    await loadRecordings();
-    setAllRecordings(recordings);
+  const onScrollEndDrag = (event) => {
+    if (position > event.nativeEvent.contentOffset.y) {
+      setPosition((position > 0) ? position - recordingHeight : 0);
+    } else {
+      setPosition(position + recordingHeight);
+    }
+    scrollRef.current?.scrollTo({
+      y: position,
+      animated: true,
+    });
+    let index = Math.floor(position/recordingHeight);
+    if (index > recordings.length - 1) {
+      index = recordings.length - 1;
+    }
   }
-
-  const playerRef = [];
-
-  allRecordingsList.forEach((item) => {
-    playerRef[item.toString()] = useRef<Video>(null);
-  });
 
   const onScroll = (event) => {
     const positionY = event.nativeEvent.contentOffset.y;
     let index = 0;
-    allRecordings.forEach((item) => {
-      if (index === Math.floor(positionY / height)) {
-        playerRef[item._id.toString()].current?.setNativeProps({
-          paused: false
-        });
+    recordings.forEach((item) => {
+      if (index === Math.floor(positionY / recordingHeight)) {
         setCurrentRecording(item._id);
-      } else {
-        if (playerRef[item._id.toString()].current !== null) {
-          playerRef[item._id.toString()].current?.setNativeProps({
-            paused: true
-          });
-          playerRef[item._id.toString()].current?.seek(0);
-        }
       }
       index++;
     });
-  };
-
-  const onPlay = (id: string) => {
-    playerRef[id.toString()].current?.setNativeProps({
-      paused: false
-    })
-    console.log(`> Recoding ${id} was resumed manually`);
   }
-
-  const onPause = (id: string) => {
-    playerRef[id.toString()].current?.setNativeProps({
-      paused: true
-    })
-    console.log(`> Recoding ${id} was paused manually`);
-  }
-
-  const onStop = (id: string) => {
-    playerRef[id.toString()].current?.setNativeProps({
-      paused: true
-    })
-    console.log(`> Recoding ${id} was paused manually`);
-  }
-
-  const renderItem = useCallback(({ item }) => {
-    return <Observer>{() => 
-      <BasicContentWrapper>
-        <FeedItemComponent
-          recording={item}
-          height={height + 4}
-          onPlay={onPlay}
-          onPause={onPause}
-          onStop={onStop}
-        />
-        
-        <Video
-          paused={false}
-          ref={playerRef[item._id.toString()]}
-          source={{uri: item.list[0].url}}
-          // source={require(testVideoFile)}
-          style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
-          repeat={true}
-          loop={true}
-        />
-      </BasicContentWrapper>
-    }</Observer>;
-  }, []);
 
   return (
     <BasicSafeAreaView>
       <PageContent>
-        <FlatList
-          data={allRecordings}
-          renderItem={renderItem}
-          keyExtractor={(item) => (item?._id + Math.random() * 1000000000).toString()}
-          pagingEnabled={true}
-          style={styled.flatlist}
-          horizontal={false}
-          showsHorizontalScrollIndicator={false}
-          onViewableItemsChanged={onViewRef.current}
-          viewabilityConfig={viewConfigRef.current}
-          showsVerticalScrollIndicator={false}
-          onEndReached={onEndReached}
+        <ScrollView
+          onScrollEndDrag={onScrollEndDrag}
+          ref={scrollRef}
           onScroll={onScroll}
-          scrollEventThrottle={height}
-        />
+        >
+          <ProfileRecordingComponent
+            recordings={recordings}
+            height={height + 4}
+            page="feed"
+          />
+        </ScrollView>
       </PageContent>
     </BasicSafeAreaView>
   )

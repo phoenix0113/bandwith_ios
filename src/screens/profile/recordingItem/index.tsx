@@ -3,6 +3,7 @@ import { Share, ShareContent, Alert } from "react-native";
 import Video from "react-native-video/Video";
 import { observer } from "mobx-react";
 
+import { ProfileComponent } from "../../feed/profile";
 import { SharedFeedItemComponent } from "../../feed/SharedItem";
 import { CommentsComponent } from "../../../components/Comments";
 import { ReportRecordingComponent } from "../../feed/Report";
@@ -18,25 +19,28 @@ import { Params, Routes } from "../../../utils/routes";
 import { deleteCallRecording } from "../../../axios/routes/feed";
 
 import { VideoWrapper, CommentsFeedItemWrapper, ReportIcon, FeedPlayerContentWrapper,
-  FeedPlayerToolTip, FeedPlayerContentWrapperView } from "../../feed/styled";
+  FeedPlayerToolTip, FeedPlayerContentWrapperView, AddToFriendIcon } from "../../feed/styled";
 import { CallPageToolbar } from "../../../components/styled";
 
+import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
 import CommentIcon from "../../../assets/images/feed/comment.svg";
 import ShareIcon from "../../../assets/images/feed/share.svg";
 const reportIcon = "../../../assets/images/feed/report.png";
 const deleteIcon = "../../../assets/images/general/delete.png";
 const testVideoFile = "../../../assets/test_video.mp4";
+const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
 
 interface IProps {
   recording: GetRecordResponse;
   width: number;
   height: number;
+  page: string;
   onBack: () => void;
 }
 
 export const RecordingItemComponent  = observer((
-  { recording, width, height, onBack }: IProps) => {
+  { recording, width, height, page, onBack }: IProps) => {
   const {
     currentProfileRecording, profile, loadProfileRecordings
   } = useContext(UserServiceContext);
@@ -68,6 +72,7 @@ export const RecordingItemComponent  = observer((
   const hideComments = () => setOpenedComments(false);
   const [isReport, setIsReport] = useState("");
   const [recordUser, setRecordUser] = useState<RecordUser>(null);
+  const [currentProfileUser, setCurrentProfileUser] = useState("");
 
   const openRecordUser = (user: RecordUser) => {
     setRecordUser(user);
@@ -162,8 +167,20 @@ export const RecordingItemComponent  = observer((
     );
   }
   
+  const showUserProfile = (id: string) => {
+    console.log(id);
+    setCurrentProfileUser(id);
+  }
+
   return (
     <VideoWrapper key={recording?._id} style={{ height: height }}>
+      {(currentProfileUser !== "") && (
+        <ProfileComponent
+          id={currentProfileUser}
+          showUserProfile={showUserProfile}
+        />
+      )}
+
       {sharedRecording && (
         <SharedFeedItemComponent
           key={sharedRecording._id}
@@ -191,6 +208,21 @@ export const RecordingItemComponent  = observer((
       )}
 
       <CallPageToolbar>
+        {
+          (page === "feed") && (
+            <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[0] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
+              {
+                ((recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
+                  <AddToFriendIcon source={{uri: (recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
+                ) : (
+                  <AddToFriendIcon source={require(tempProfileIcon)} />
+                )
+              }
+              <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
+            </CommentsFeedItemWrapper>
+          )
+        }
+
         <CommentsFeedItemWrapper onPress={showComments}>
           <CommentIcon />
         </CommentsFeedItemWrapper>
@@ -202,10 +234,28 @@ export const RecordingItemComponent  = observer((
         <CommentsFeedItemWrapper onPress={() => showReport(recording?._id)}>
           <ReportIcon source={require(reportIcon)} />
         </CommentsFeedItemWrapper>
-
-        <CommentsFeedItemWrapper onPress={onDeleteAlert}>
-          <ReportIcon source={require(deleteIcon)} />
-        </CommentsFeedItemWrapper>
+        
+        {
+          (page === "feed") ? (
+            (recording.authorList.length === 2) && (
+              <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[1] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
+                {
+                  ((recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
+                    <AddToFriendIcon source={{uri: (recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
+                  ) : (
+                    <AddToFriendIcon source={require(tempProfileIcon)} />
+                  )
+                }
+                <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
+              </CommentsFeedItemWrapper>
+            )
+          ) : (
+            <CommentsFeedItemWrapper onPress={onDeleteAlert}>
+              <ReportIcon source={require(deleteIcon)} />
+            </CommentsFeedItemWrapper>
+          )
+        }
+        
       </CallPageToolbar>
 
       <Video

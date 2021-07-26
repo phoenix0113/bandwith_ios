@@ -66,6 +66,7 @@ class FeedMobxService {
   public loadRecordingList = async () => {
     try {
       const { ids } = await getAllRecordingsList();
+      this.allRecordingsList = [];
 
       runInAction(() => {
         this.allRecordingsList.push(...ids);

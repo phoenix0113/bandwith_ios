@@ -20,7 +20,7 @@ import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
 import { Params, Routes } from "../../../utils/routes";
 
 import { VideoWrapper } from "../styled";
-import {CallPageToolbar } from "../../../components/styled";
+import { CallPageToolbar } from "../../../components/styled";
 import { AddToFriendIcon, CommentsFeedItemWrapper, ReportIcon,
   FeedPlayerContentWrapper, FeedPlayerToolTip, FeedPlayerContentWrapperView
 } from "../styled";
@@ -33,7 +33,7 @@ const reportIcon = "../../../assets/images/feed/report.png";
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
 
 interface IProps {
-  recording: GetRecordResponse;
+  // recording: GetRecordResponse;
   height: number;
   onPlay: (id: string) => void;
   onPause: (id: string) => void;
@@ -41,7 +41,7 @@ interface IProps {
 }
 
 export const FeedItemComponent  = observer((
-  { recording, height, onPlay, onPause, onStop }: IProps) => {
+  { height, onPlay, onPause, onStop }: IProps) => {
   const {
     currentRecording,
     sharedRecording,
@@ -60,11 +60,11 @@ export const FeedItemComponent  = observer((
     }
   }, [sharedRecordingId]);
 
-  useEffect(() => {
-    if (currentRecording?._id !== recording?._id) {
-      setShowPlayButton(false);
-    }
-  }, [currentRecording]);
+  // useEffect(() => {
+  //   if (currentRecording?._id !== recording?._id) {
+  //     setShowPlayButton(false);
+  //   }
+  // }, [currentRecording]);
 
   const [openedComments, setOpenedComments] = useState(false);
   const showComments = () => setOpenedComments(true);
@@ -120,21 +120,21 @@ export const FeedItemComponent  = observer((
 
   const play = () => {
     setShowPlayButton(false);
-    return onPlay(recording._id);
+    return onPlay(currentRecording._id);
   }
 
   const pause = () => {
     setShowPlayButton(true);
-    return onPause(recording._id);
+    return onPause(currentRecording._id);
   }
   
   const stop = () => {
     setShowPlayButton(true);
-    return onStop(recording._id);
+    return onStop(currentRecording._id);
   }
   
   return (
-    <VideoWrapper key={recording?._id} style={{ height: height }}>
+    <VideoWrapper key={currentRecording?._id} style={{ height: height }}>
       {
         (showPlayButton) ? (
           <FeedPlayerContentWrapperView>
@@ -168,7 +168,7 @@ export const FeedItemComponent  = observer((
 
       {openedComments && (
         <CommentsComponent
-          id={recording?._id}
+          id={currentRecording?._id}
           visible={openedComments}
           hide={hideComments}
           isRecording
@@ -192,10 +192,10 @@ export const FeedItemComponent  = observer((
       <HintComponent page={Routes.FEED} />
 
       <CallPageToolbar>
-        <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[0] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
+        <CommentsFeedItemWrapper onPress={() => showUserProfile((currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?._id : currentRecording?.participants[0]?._id)}>
           {
-            ((recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
-              <AddToFriendIcon source={{uri: (recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
+            ((currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl) ? (
+              <AddToFriendIcon source={{uri: (currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl}} />
             ) : (
               <AddToFriendIcon source={require(tempProfileIcon)} />
             )
@@ -207,11 +207,11 @@ export const FeedItemComponent  = observer((
           <CommentIcon />
         </CommentsFeedItemWrapper>
 
-        <CommentsFeedItemWrapper onPress={() => shareCall(recording)}>
+        <CommentsFeedItemWrapper onPress={() => shareCall(currentRecording)}>
           <ShareIcon />
         </CommentsFeedItemWrapper>
 
-        <CommentsFeedItemWrapper onPress={() => showReport(recording?._id)}>
+        <CommentsFeedItemWrapper onPress={() => showReport(currentRecording?._id)}>
           <ReportIcon source={require(reportIcon)} />
         </CommentsFeedItemWrapper>
       </CallPageToolbar>
