@@ -12,12 +12,11 @@ const width = Dimensions.get('screen').width;
 interface IProps {
   recordings: GetRecordResponse[];
   height: number;
-  page?: string;
   onBack?: () => void;
 }
 
 export const ProfileRecordingComponent = observer(({
-  recordings, height, page, onBack
+  recordings, height, onBack
 }: IProps): JSX.Element => {
   
   return (
@@ -29,7 +28,6 @@ export const ProfileRecordingComponent = observer(({
               recording={item}
               width={width}
               height={height}
-              page={page}
               onBack={onBack}
             />
           </ProfileFeedVideo>

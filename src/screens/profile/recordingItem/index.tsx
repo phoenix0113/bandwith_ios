@@ -35,12 +35,11 @@ interface IProps {
   recording: GetRecordResponse;
   width: number;
   height: number;
-  page: string;
   onBack: () => void;
 }
 
 export const RecordingItemComponent  = observer((
-  { recording, width, height, page, onBack }: IProps) => {
+  { recording, width, height, onBack }: IProps) => {
   const {
     currentProfileRecording, profile, loadProfileRecordings
   } = useContext(UserServiceContext);
@@ -208,21 +207,6 @@ export const RecordingItemComponent  = observer((
       )}
 
       <CallPageToolbar>
-        {
-          (page === "feed") && (
-            <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[0] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
-              {
-                ((recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
-                  <AddToFriendIcon source={{uri: (recording?.authorList[0] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
-                ) : (
-                  <AddToFriendIcon source={require(tempProfileIcon)} />
-                )
-              }
-              <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
-            </CommentsFeedItemWrapper>
-          )
-        }
-
         <CommentsFeedItemWrapper onPress={showComments}>
           <CommentIcon />
         </CommentsFeedItemWrapper>
@@ -235,34 +219,17 @@ export const RecordingItemComponent  = observer((
           <ReportIcon source={require(reportIcon)} />
         </CommentsFeedItemWrapper>
         
-        {
-          (page === "feed") ? (
-            (recording.authorList.length === 2) && (
-              <CommentsFeedItemWrapper onPress={() => showUserProfile((recording?.authorList[1] === recording?.user?._id) ? recording?.user?._id : recording?.participants[0]?._id)}>
-                {
-                  ((recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl) ? (
-                    <AddToFriendIcon source={{uri: (recording?.authorList[1] === recording?.user?._id) ? recording?.user?.imageUrl : recording?.participants[0]?.imageUrl}} />
-                  ) : (
-                    <AddToFriendIcon source={require(tempProfileIcon)} />
-                  )
-                }
-                <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
-              </CommentsFeedItemWrapper>
-            )
-          ) : (
-            <CommentsFeedItemWrapper onPress={onDeleteAlert}>
-              <ReportIcon source={require(deleteIcon)} />
-            </CommentsFeedItemWrapper>
-          )
-        }
+        <CommentsFeedItemWrapper onPress={onDeleteAlert}>
+          <ReportIcon source={require(deleteIcon)} />
+        </CommentsFeedItemWrapper>
         
       </CallPageToolbar>
 
       <Video
         paused={false}
         ref={playerRef}
-        source={{uri: recording.list[0].url}}
-        // source={require(testVideoFile)}
+        // source={{uri: recording.list[0].url}}
+        source={require(testVideoFile)}
         style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
         repeat={true}
         loop={true}

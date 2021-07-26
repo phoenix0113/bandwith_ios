@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { tabBarHeight } from "../../utils/styles";
 import { BasicSafeAreaView } from "../../components/styled";
 
-import { ProfileRecordingComponent } from "../profile/recordings";
+import { FeedRecordingComponent } from "./FeedItem";
 
 import { FeedStorageContext } from "../../services/feed";
 
@@ -62,10 +62,9 @@ export const FeedScreen = observer((): JSX.Element => {
           ref={scrollRef}
           onScroll={onScroll}
         >
-          <ProfileRecordingComponent
+          <FeedRecordingComponent
             recordings={recordings}
             height={height + 4}
-            page="feed"
           />
         </ScrollView>
       </PageContent>

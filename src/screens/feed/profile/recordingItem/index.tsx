@@ -118,8 +118,6 @@ export const RecordingItemComponent  = observer((
   }
 
   useEffect(() => {
-    console.log("currentFilterRecording", currentFilterRecording);
-    console.log("recording", recording);
     if (currentFilterRecording?._id !== recording._id) {
       playerRef.current?.setNativeProps({
         paused: true
@@ -191,8 +189,8 @@ export const RecordingItemComponent  = observer((
       <Video
         paused={false}
         ref={playerRef}
-        source={{uri: recording.list[0].url}}
-        // source={require(testVideoFile)}
+        // source={{uri: recording.list[0].url}}
+        source={require(testVideoFile)}
         style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
         repeat={true}
         loop={true}
