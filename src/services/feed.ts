@@ -2,11 +2,12 @@ import { action, makeAutoObservable, observable, runInAction, toJS, reaction } f
 import { createContext } from "react";
 import {
   getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID, getAllRecordingsList,
+  updateFeatured, checkFeatured
 } from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
 import {
-  RECORDINGS_LOAD_LIMIT, LOADING_RECORDING_ERROR, FETCH_SHARED_RECORDING_ERROR,
-  LOADING_RECORDINGS_ERROR, REPORT_ERROR, LOADING_ALL_RECORDINGS_ERROR,
+  RECORDINGS_LOAD_LIMIT, LOADING_RECORDING_ERROR, FETCH_SHARED_RECORDING_ERROR, CHECK_FEATURED_ERROR,
+  LOADING_RECORDINGS_ERROR, REPORT_ERROR, LOADING_ALL_RECORDINGS_ERROR, UPDATE_FEATURED_ERROR
 } from "../utils/constants";
 import { showGeneralErrorAlert } from "../utils/notifications";
 import { SocketServiceInstance } from "./socket";
@@ -14,6 +15,10 @@ import { UserServiceInstance } from "./user";
 
 class FeedMobxService {
   @observable currentRecording: GetRecordResponse = null;
+
+  @observable featuredStatus = false;
+
+  @observable featuredCount = 0;
 
   @observable sharedRecording: GetRecordResponse = null;
 
@@ -159,6 +164,33 @@ class FeedMobxService {
     } catch (err) {
       console.log(err.message);
       showGeneralErrorAlert(LOADING_RECORDING_ERROR);
+    }
+  }
+
+  public updateFeatured = async (userID: string, callrecordingID: string) => {
+    try {
+      const { success } = await updateFeatured({
+        user: userID,
+        callrecording: callrecordingID,
+      });
+
+      this.featuredStatus = success;
+      console.log("> Update Featured of Recording: ", success);
+    } catch (err) {
+      console.log(err.message);
+      showGeneralErrorAlert(UPDATE_FEATURED_ERROR);
+    }
+  }
+
+  public checkFeatured = async (callrecordingID: string) => {
+    try {
+      const { code } = await checkFeatured(callrecordingID);
+
+      this.featuredCount = code;
+      console.log("> Check Featured of Recording: ", code);
+    } catch (err) {
+      console.log(err.message);
+      showGeneralErrorAlert(CHECK_FEATURED_ERROR);
     }
   }
 }

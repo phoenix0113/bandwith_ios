@@ -355,8 +355,24 @@ export const VideoPlayerWrapper = styled.View`
   width: 100%;
 `;
 
-
 export const VideoPlayerContent = styled.View`
   position: absolute;
   width: 100%;
+`;
+
+export const OptioinsView = styled.View`
+  border: 1px solid red;
+  width: 100%;
+  position: absolute;
+`;
+
+export const FeatureCount = styled.Text`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 25px;
+  letter-spacing: 0px;
+  text-align: center;
+  color: red;
+  margin-top: -17px;
 `;

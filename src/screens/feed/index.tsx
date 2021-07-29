@@ -6,10 +6,11 @@ import { tabBarHeight } from "../../utils/styles";
 import { BasicSafeAreaView } from "../../components/styled";
 
 import { FeedRecordingComponent } from "./FeedItem";
+import { FeedOptionComponent } from "./FeedOption";
 
 import { FeedStorageContext } from "../../services/feed";
 
-import { PageContent } from "./styled";
+import { PageContent, OptioinsView } from "./styled";
 
 const testVideoFile = "../../assets/test_video.mp4";
 
@@ -57,6 +58,10 @@ export const FeedScreen = observer((): JSX.Element => {
   return (
     <BasicSafeAreaView>
       <PageContent>
+        <FeedOptionComponent
+          height={height + 4}
+        />
+        
         <ScrollView
           onScrollEndDrag={onScrollEndDrag}
           ref={scrollRef}

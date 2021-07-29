@@ -5,7 +5,8 @@ import { getError } from "../utils";
 
 import {
   GetAllRecordsQuery, PublishRecordingRequest, Document, GetAllRecordsResponse, GetRecordResponse, GetVerifyCodeResponse,
-  ReportRequest, GetAllRecordingID, DeleteCallRecordingRequest, UpdateUserProfileRequest,
+  ReportRequest, GetAllRecordingID, DeleteCallRecordingRequest, UpdateUserProfileRequest, UpdateRecordingResponse,
+  CreateBlockRecordingRequest, BasicResponse,
 } from "../../shared/interfaces";
 import { API } from "../../shared/routes";
 
@@ -105,6 +106,28 @@ export const updateUserProfile = async (request: UpdateUserProfileRequest): Prom
 export const getSharedRecordingById = async (id: string): Promise<GetRecordResponse> => {
   try {
     const response = await shareinstance.get<GetRecordResponse>(`${API.SHARED}/${id}`);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const updateFeatured = async (request: CreateBlockRecordingRequest): Promise<BasicResponse> => {
+  try {
+    const response = await instance.post<BasicResponse>(API.UPDATE_FEATURED, request);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};
+
+export const checkFeatured = async (callrecordingID: string): Promise<UpdateRecordingResponse> => {
+  try {
+    const response = await instance.post<UpdateRecordingResponse>(`${API.CHECK_FEATURED}/${callrecordingID}`);
 
     return response.data;
   } catch (err) {
