@@ -4,6 +4,7 @@ export type MainBottomTabsParamList = {
   ContactList: undefined;
   Profile: undefined;
   Feed: undefined;
+  Shared: undefined;
 };
 
 export enum MainScreensEnum {
@@ -12,4 +13,5 @@ export enum MainScreensEnum {
   ContactList="ContactList",
   Profile="Profile",
   Feed="Feed",
+  Shared="Shared",
 }

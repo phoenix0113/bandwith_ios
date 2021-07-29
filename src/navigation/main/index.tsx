@@ -10,6 +10,7 @@ import { NotificationsScreen } from "../../screens/notifications";
 import { ProfileScreen } from "../../screens/profile";
 import { ContactListScreen } from "../../screens/contacts";
 import { FeedScreen } from "../../screens/feed";
+import { SharedScreen } from "../../screens/shared";
 
 import HomeIcon from "../../assets/images/navigation/home.svg";
 import NotificationsIcon from "../../assets/images/navigation/notification.svg";
@@ -33,7 +34,6 @@ export const MainNavigation = observer(() => {
     });
     return counter;
   }, [notifications]);
-
 
   return (
     <Tab.Navigator

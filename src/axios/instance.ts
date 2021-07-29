@@ -11,3 +11,5 @@ export const setBearerToken = (token: string): void => {
 export const clearBearerToken = (): void => {
   instance.defaults.headers.common = null;
 };
+
+export const shareinstance = axios.create({ baseURL: SERVER_BASE_URL });

@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
+import { SERVER_BASE_URL } from "./utils/constants";
 import { COLORS, SpinnerOverlayText } from "./components/styled";
 
 /**
@@ -52,6 +53,22 @@ const App = observer(() => {
     return null;
   }, [incomingCallData, netAccessible, netConnected]);
 
+  const config = {
+    screens: {
+      Shared: {
+        path: "shared/:id",
+        parse: {
+          sharedRecordingID: (id: string) => `${id}`
+        }
+      }
+    }
+  }
+
+  const linking = {
+    prefixes: [ SERVER_BASE_URL ],
+    config,
+  };
+  
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="light-content"/>
@@ -66,7 +83,7 @@ const App = observer(() => {
         animation="fade"
        />
 
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer ref={navigationRef} linking={linking}>
         <WelcomeNavigation />
       </NavigationContainer>
     </SafeAreaProvider>

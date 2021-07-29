@@ -1,3 +1,4 @@
+import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from "@react-navigation/stack";
 
 export type WelcomeStackParamList = {
@@ -12,6 +13,7 @@ export type WelcomeStackParamList = {
   VerifyCode: undefined;
   ResetPassword: undefined;
   EditProfile: undefined;
+  Shared: { id: string };
 };
 
 export enum WelcomeScreensEnum {
@@ -26,6 +28,7 @@ export enum WelcomeScreensEnum {
   VerifyCode="VerifyCode",
   ResetPassword="ResetPassword",
   EditProfile="EditProfile",
+  Shared="Shared",
 }
 
 export type WelcomeScreenNavigationProps = StackNavigationProp<
@@ -62,3 +65,15 @@ export type PhoneSetupScreenNavigationProps = StackNavigationProp<
   WelcomeStackParamList,
   "PhoneSetup"
 >;
+
+type SharedScreenRouteProp = RouteProp<WelcomeStackParamList, "Shared">;
+
+type ProfileScreenNavigationProp = StackNavigationProp<
+  WelcomeStackParamList,
+  "Shared"
+>;
+
+export type SharedScreenProps = {
+  route: SharedScreenRouteProp;
+  navigation: ProfileScreenNavigationProp;
+};

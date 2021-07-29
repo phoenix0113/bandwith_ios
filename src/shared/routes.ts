@@ -39,6 +39,7 @@ export const PATH = {
   ALL: "all",
   DELETE: "delete",
   UPDATE: "update",
+  SHARED: "shared",
 };
 
 export const API = {
@@ -78,4 +79,5 @@ export const API = {
   REPORT: `/${PATH.API}/${PATH.RECORD}/${PATH.REPORT}`,
   DELETE: `/${PATH.API}/${PATH.RECORD}/${PATH.DELETE}`,
   PROFILE_UPDATE: `/${PATH.API}/${PATH.PROFILE}/${PATH.UPDATE}`,
+  SHARED: `/${PATH.SHARED}/${PATH.RECORD}`,
 };

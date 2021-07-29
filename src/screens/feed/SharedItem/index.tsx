@@ -18,13 +18,13 @@ export const SharedFeedItemComponent = observer((
 ) => {
   return (
     <VideoWrapper key={recording._id} withoutBorder>
-      <FeedVideoComponent
+      {/* <FeedVideoComponent
         isShared
         recording={recording}
         showComments={showComments}
         backToFeed={backToFeed}
         openRecordUser={openRecordUser}
-      />
+      /> */}
     </VideoWrapper>
   );
 });

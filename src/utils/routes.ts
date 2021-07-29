@@ -8,7 +8,8 @@ export enum Routes {
   INCOMMING_CALL="/call/incomming",
   OUTGOING_CALL="/call/outgoing",
   LIVE_CALL="/call/live",
-  FEED="/feed"
+  FEED="/feed",
+  SHARED="/shared",
 }
 
 export enum Params {
