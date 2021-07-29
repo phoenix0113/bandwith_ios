@@ -57,6 +57,10 @@ export const REPORT_SUCCESS = "Your report sent successfully!";
 
 export const REPORT_ERROR = "Something went wrong while sending the report.";
 
+export const UPDATE_FEATURED_ERROR = "Something went wrong while updating the call recording's featured.";
+
+export const CHECK_FEATURED_ERROR = "Something went wrong while checking the call recording's featured.";
+
 export const FETCH_COMMENTS_ERROR = "Something went wrong while getting comments data.";
 
 export const LOADING_RECORDINGS_ERROR = "Something went wrong while getting recordings data.";

@@ -374,5 +374,5 @@ export const FeatureCount = styled.Text`
   letter-spacing: 0px;
   text-align: center;
   color: red;
-  margin-top: -17px;
+  margin-top: -20px;
 `;

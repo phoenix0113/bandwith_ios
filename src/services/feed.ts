@@ -2,7 +2,7 @@ import { action, makeAutoObservable, observable, runInAction, toJS, reaction } f
 import { createContext } from "react";
 import {
   getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID, getAllRecordingsList,
-  updateFeatured, checkFeatured
+  updateFeatured, checkFeatured, getFeaturedStatus,
 } from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
 import {
@@ -19,6 +19,8 @@ class FeedMobxService {
   @observable featuredStatus = false;
 
   @observable featuredCount = 0;
+
+  @observable userID = "";
 
   @observable sharedRecording: GetRecordResponse = null;
 
@@ -38,6 +40,7 @@ class FeedMobxService {
       () => UserServiceInstance.profile,
       (profile) => {
         if (profile) {
+          this.userID = profile._id;
           this.loadRecordings();
           this.loadRecordingList();
         }
@@ -118,6 +121,8 @@ class FeedMobxService {
         this.currentRecording = recording;
       }
     });
+    this.checkFeatured(this.currentRecording._id);
+    this.getFeaturedStatus(this.currentRecording._id);
     console.log(">  Current Recording ", _id);
   }
 
@@ -128,6 +133,8 @@ class FeedMobxService {
       }
     });
     console.log(">  Current Filter Recording ", _id);
+    this.checkFeatured(this.currentFilterRecording._id);
+    this.getFeaturedStatus(this.currentFilterRecording._id);
   }
 
   public sendReport = async (id: string, email: string, title: string, body: string) => {
@@ -188,6 +195,21 @@ class FeedMobxService {
 
       this.featuredCount = code;
       console.log("> Check Featured of Recording: ", code);
+    } catch (err) {
+      console.log(err.message);
+      showGeneralErrorAlert(CHECK_FEATURED_ERROR);
+    }
+  }
+
+  public getFeaturedStatus = async (callrecordingID: string) => {
+    try {
+      const { success } = await getFeaturedStatus({
+        user: this.userID,
+        callrecording: callrecordingID
+      });
+
+      this.featuredStatus = success;
+      console.log("> Featured status of Recording: ", success);
     } catch (err) {
       console.log(err.message);
       showGeneralErrorAlert(CHECK_FEATURED_ERROR);

@@ -102,86 +102,94 @@ export const FeedOptionComponent  = observer(({ height }: IProps) => {
 
   return (
     <>
-      {(currentProfileUser !== "") && (
-        <ProfileComponent
-          id={currentProfileUser}
-          showUserProfile={showUserProfile}
-        />
-      )}
-
-      {sharedRecording && (
-        <SharedFeedItemComponent
-          key={sharedRecording._id}
-          openRecordUser={openRecordUser}
-          recording={sharedRecording}
-          showComments={showComments}
-          backToFeed={backToFeed}
-        />
-      )}
-
-      {openedComments && (
-        <CommentsComponent
-          id={currentRecording?._id}
-          visible={openedComments}
-          hide={hideComments}
-          isRecording
-        />
-      )}
-
-      {(isReport !== "") && (
-        <ReportRecordingComponent
-          closeHandler={() => setIsReport("")}
-          id={isReport}
-        />
-      )}
-
-      <CallPageToolbar>
-        {
-          <CommentsFeedItemWrapper onPress={() => showUserProfile((currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?._id : currentRecording?.participants[0]?._id)}>
-            {
-              ((currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl) ? (
-                <AddToFriendIcon source={{uri: (currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl}} />
-              ) : (
-                <AddToFriendIcon source={require(tempProfileIcon)} />
-              )
-            }
-            <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
-          </CommentsFeedItemWrapper>
-        }
-
-        <CommentsFeedItemWrapper onPress={showComments}>
-          <CommentIcon />
-        </CommentsFeedItemWrapper>
-
-        <CommentsFeedItemWrapper onPress={onChangeFeatured}>
-          <ReportIcon source={(featuredStatus) ? require(featuredIcon) : require(unfeaturedIcon)} />
-          <FeatureCount>{featuredCount}</FeatureCount>
-        </CommentsFeedItemWrapper>
-
-        <CommentsFeedItemWrapper onPress={() => shareCall(currentRecording)}>
-          <ShareIcon />
-        </CommentsFeedItemWrapper>
-
-        <CommentsFeedItemWrapper onPress={() => showReport(currentRecording?._id)}>
-          <ReportIcon source={require(reportIcon)} />
-        </CommentsFeedItemWrapper>
-        
-        {
-          (currentRecording.authorList.length === 2) && (
-            <CommentsFeedItemWrapper onPress={() => showUserProfile((currentRecording?.authorList[1] === currentRecording?.user?._id) ? currentRecording?.user?._id : currentRecording?.participants[0]?._id)}>
+      {
+        (currentRecording) ? (
+          <>
+            {(currentProfileUser !== "") && (
+              <ProfileComponent
+                id={currentProfileUser}
+                showUserProfile={showUserProfile}
+              />
+            )}
+      
+            {sharedRecording && (
+              <SharedFeedItemComponent
+                key={sharedRecording._id}
+                openRecordUser={openRecordUser}
+                recording={sharedRecording}
+                showComments={showComments}
+                backToFeed={backToFeed}
+              />
+            )}
+      
+            {openedComments && (
+              <CommentsComponent
+                id={currentRecording?._id}
+                visible={openedComments}
+                hide={hideComments}
+                isRecording
+              />
+            )}
+      
+            {(isReport !== "") && (
+              <ReportRecordingComponent
+                closeHandler={() => setIsReport("")}
+                id={isReport}
+              />
+            )}
+      
+            <CallPageToolbar>
               {
-                ((currentRecording?.authorList[1] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl) ? (
-                  <AddToFriendIcon source={{uri: (currentRecording?.authorList[1] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl}} />
-                ) : (
-                  <AddToFriendIcon source={require(tempProfileIcon)} />
+                <CommentsFeedItemWrapper onPress={() => showUserProfile((currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?._id : currentRecording?.participants[0]?._id)}>
+                  {
+                    ((currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl) ? (
+                      <AddToFriendIcon source={{uri: (currentRecording?.authorList[0] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl}} />
+                    ) : (
+                      <AddToFriendIcon source={require(tempProfileIcon)} />
+                    )
+                  }
+                  <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
+                </CommentsFeedItemWrapper>
+              }
+      
+              <CommentsFeedItemWrapper onPress={showComments}>
+                <CommentIcon />
+              </CommentsFeedItemWrapper>
+      
+              <CommentsFeedItemWrapper onPress={onChangeFeatured}>
+                <ReportIcon source={(featuredStatus) ? require(featuredIcon) : require(unfeaturedIcon)} />
+                <FeatureCount>{featuredCount}</FeatureCount>
+              </CommentsFeedItemWrapper>
+      
+              <CommentsFeedItemWrapper onPress={() => shareCall(currentRecording)}>
+                <ShareIcon />
+              </CommentsFeedItemWrapper>
+      
+              <CommentsFeedItemWrapper onPress={() => showReport(currentRecording?._id)}>
+                <ReportIcon source={require(reportIcon)} />
+              </CommentsFeedItemWrapper>
+              
+              {
+                (currentRecording?.authorList.length === 2) && (
+                  <CommentsFeedItemWrapper onPress={() => showUserProfile((currentRecording?.authorList[1] === currentRecording?.user?._id) ? currentRecording?.user?._id : currentRecording?.participants[0]?._id)}>
+                    {
+                      ((currentRecording?.authorList[1] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl) ? (
+                        <AddToFriendIcon source={{uri: (currentRecording?.authorList[1] === currentRecording?.user?._id) ? currentRecording?.user?.imageUrl : currentRecording?.participants[0]?.imageUrl}} />
+                      ) : (
+                        <AddToFriendIcon source={require(tempProfileIcon)} />
+                      )
+                    }
+                    <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
+                  </CommentsFeedItemWrapper>
                 )
               }
-              <AddIcon style={{ width: 20, height: 20, marginTop: -12, marginLeft: 17 }} />
-            </CommentsFeedItemWrapper>
-          )
-        }
-        
-      </CallPageToolbar>
+              
+            </CallPageToolbar>
+          </>
+        ) : (
+          <></>
+        )
+      }
     </>
   )
 });

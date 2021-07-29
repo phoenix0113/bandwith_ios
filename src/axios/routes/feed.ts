@@ -135,3 +135,14 @@ export const checkFeatured = async (callrecordingID: string): Promise<UpdateReco
     throw new Error(getError(response));
   }
 };
+
+export const getFeaturedStatus = async (request: CreateBlockRecordingRequest): Promise<BasicResponse> => {
+  try {
+    const response = await instance.post<BasicResponse>(API.GET_FEATURED, request);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};

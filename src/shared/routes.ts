@@ -40,6 +40,7 @@ export const PATH = {
   DELETE: "delete",
   UPDATE: "update",
   SHARED: "shared",
+  STATUS: "status",
 };
 
 export const API = {
@@ -82,4 +83,5 @@ export const API = {
   SHARED: `/${PATH.SHARED}/${PATH.RECORD}`,
   CHECK_FEATURED: `/${PATH.API}/${PATH.FEATURED}/${PATH.CHECK}`,
   UPDATE_FEATURED: `/${PATH.API}/${PATH.FEATURED}/${PATH.UPDATE}`,
+  GET_FEATURED: `/${PATH.API}/${PATH.FEATURED}/${PATH.STATUS}`,
 };
