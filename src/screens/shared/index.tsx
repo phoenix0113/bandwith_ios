@@ -43,14 +43,10 @@ export const SharedScreen = ({ route, navigation }: SharedScreenProps): JSX.Elem
 
   const spinnerText = useMemo(() => {
     if (incomingCallData) {
-      return "Proceeding to the call...";
-    }
-    if (netAccessible === false || netConnected === false) {
-      return "You're offline. Check your connection.";
+      return "Recording Loading...";
     }
     return null;
   }, [incomingCallData, netAccessible, netConnected]);
-
 
   const insets = useSafeAreaInsets();
   const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
