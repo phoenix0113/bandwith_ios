@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Keyboard } from "react-native";
 import { Input } from "react-native-elements";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { LoginScreenNavigationProps } from "../../navigation/welcome/types";
 import { getEmailErrorMessage, inputStyles } from "./utils";

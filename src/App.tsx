@@ -1,12 +1,13 @@
 import "react-native-gesture-handler";
 import React, { useContext, useEffect, useMemo } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, Linking } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { configure } from "mobx";
 import "react-native-get-random-values";
 import Spinner from "react-native-loading-spinner-overlay";
 import { observer } from "mobx-react";
+import DeepLinking from 'react-native-deep-linking';
 
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
@@ -19,6 +20,7 @@ import { COLORS, SpinnerOverlayText } from "./components/styled";
 import { AppServiceContext } from "./services/app";
 import { UserServiceInstance } from "./services/user";
 import { APNServiceContext } from "./services/APNs";
+import { SharedStorageContext } from "./services/shared";
 import "./services/contacts";
 import "./services/notifications";
 import "./services/socket";
@@ -30,10 +32,17 @@ import "./services/logger";
 configure({ enforceActions: "never" });
 let servicesInitialized = false;
 
-const App = observer(() => {
+import { WelcomeScreenNavigationProps } from "./navigation/welcome/types";
+
+type WithNavigatorScreen = {
+  navigation: WelcomeScreenNavigationProps;
+}
+
+const App = observer(({ navigation }: WithNavigatorScreen) => {
   const { incomingCallData } = useContext(APNServiceContext);
 
-  const { netAccessible, netConnected, netCurrentType, netOldType } = useContext(AppServiceContext);
+  const { netAccessible, netConnected } = useContext(AppServiceContext);
+  const { setShareCurrentRecordingID } = useContext(SharedStorageContext);
 
   useEffect(() => {
     if (!servicesInitialized && netAccessible === true && netConnected === true) {
@@ -53,22 +62,29 @@ const App = observer(() => {
     return null;
   }, [incomingCallData, netAccessible, netConnected]);
 
-  const config = {
-    screens: {
-      Shared: {
-        path: "shared/:id",
-        parse: {
-          sharedRecordingID: (id: string) => `${id}`
-        }
+  const handleUrl = ({ url }) => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        DeepLinking.evaluateUrl(url);
       }
-    }
+    });
   }
-
-  const linking = {
-    prefixes: [ SERVER_BASE_URL ],
-    config,
-  };
   
+  useEffect(() => {
+    DeepLinking.addScheme('https://app.bandwwith.com');
+    Linking.addEventListener('url', handleUrl);
+    DeepLinking.addRoute('/shared/:id', (response) => {
+      setShareCurrentRecordingID(response.id);
+      navigation.navigate("Shared");
+    });
+  
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        Linking.openURL(url);
+      }
+    }).catch(err => console.error('An error occurred', err));
+  });
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="light-content"/>
@@ -83,7 +99,7 @@ const App = observer(() => {
         animation="fade"
        />
 
-      <NavigationContainer ref={navigationRef} linking={linking}>
+      <NavigationContainer ref={navigationRef}>
         <WelcomeNavigation />
       </NavigationContainer>
     </SafeAreaProvider>

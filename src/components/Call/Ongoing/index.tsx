@@ -77,7 +77,7 @@ export const OngoingCallComponent = observer(({
             <BasicText>Reconnecting...</BasicText>
           </ReconnectionWrapper>}
 
-          <CallParticipant>
+          <CallParticipant style={{ transform: [{ rotateY: "180deg" }] }}>
             {localStream && <CallVideo objectFit="cover" streamURL={localStream.toURL()} />}
           </CallParticipant>
 
