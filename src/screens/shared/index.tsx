@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Spinner from "react-native-loading-spinner-overlay";
 import Video from "react-native-video/Video";
 
+import { MainNavigationNavigationProps } from "../../navigation/welcome/types";
 import { AppServiceContext } from "../../services/app";
 import { UserServiceInstance } from "../../services/user";
 import { APNServiceContext } from "../../services/APNs";
@@ -21,12 +22,17 @@ import {
 } from "../feed/styled";
 
 import PlayIcon from "../../assets/images/feed/play.svg";
+import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 const testVideoFile = "../../assets/test_video.mp4";
 
 configure({ enforceActions: "never" });
 let servicesInitialized = false;
 
-export const SharedScreen = observer(() => {
+type WithNavigatorScreen = {
+  navigation: MainNavigationNavigationProps;
+}
+
+export const SharedScreen = observer(({navigation}: WithNavigatorScreen) => {
   const { incomingCallData } = useContext(APNServiceContext);
   const { netAccessible, netConnected } = useContext(AppServiceContext);
 
@@ -46,10 +52,10 @@ export const SharedScreen = observer(() => {
   }, [incomingCallData, netAccessible, netConnected]);
 
   const insets = useSafeAreaInsets();
-  const height = Dimensions.get('screen').height - insets.top - insets.bottom - tabBarHeight();
-  const width = Dimensions.get('screen').width;
+  const height = Dimensions.get('window').height - insets.top - insets.bottom - tabBarHeight();
+  const width = Dimensions.get('window').width;
 
-  const { sharedRecording } = useContext(SharedStorageContext);
+  const { sharedRecording, setShareCurrentRecordingID } = useContext(SharedStorageContext);
 
   const playerRef = useRef<Video>(null);
 
@@ -76,6 +82,11 @@ export const SharedScreen = observer(() => {
     })
     playerRef.current?.seek(0);
   }
+
+  const onBack = () => {
+    setShareCurrentRecordingID("");
+    navigation.navigate("Main");
+  }
   
   return (
     <BasicSafeAreaView>
@@ -90,8 +101,10 @@ export const SharedScreen = observer(() => {
       />
 
       <PageWrapper>
-        <NavigationBar>
-          <LeftItem />
+        <NavigationBar style={{ width: width }}>
+          <LeftItem onPress={onBack} style={{ paddingLeft: 21 }}>
+            <BackButtonIcon />
+          </LeftItem>
           <CenterItem>
             <NavigationText>Shared</NavigationText>
           </CenterItem>
@@ -103,9 +116,9 @@ export const SharedScreen = observer(() => {
             <Video
               paused={false}
               ref={playerRef}
-              // source={{uri: sharedRecording.list[0].url}}
-              source={require(testVideoFile)}
-              style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
+              source={{uri: sharedRecording.list[0].url}}
+              // source={require(testVideoFile)}
+              style={{ height: height, width: width, zIndex: 0, position: "absolute", top: 50 }}
               repeat={true}
               loop={true}
             />

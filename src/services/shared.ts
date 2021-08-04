@@ -15,8 +15,13 @@ class SharedMobxService {
 
   public setShareCurrentRecordingID = async (id: string) => {
     try {
-      this.sharedRecordingID = id;
-      this.setShareCurrentRecording(this.sharedRecordingID);
+      if (id === "") {
+        this.sharedRecordingID = null;
+        this.sharedRecording = null;
+      } else {
+        this.sharedRecordingID = id;
+        this.setShareCurrentRecording(this.sharedRecordingID);
+      }
     } catch (err) {
       showGeneralErrorAlert(err.message);
     }

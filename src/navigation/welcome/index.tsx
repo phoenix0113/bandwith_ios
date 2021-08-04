@@ -41,7 +41,7 @@ export const WelcomeNavigation = observer(() => {
       <WelcomeStack.Screen name="VerifyCode" component={VerifyCodeScreen} />
       <WelcomeStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
       <WelcomeStack.Screen name="EditProfile" component={EditProfileScreen} />
-      <WelcomeStack.Screen name="Shared" component={SharedScreen} initialParams={{ id: "adddddddd" }} />
+      <WelcomeStack.Screen name="Shared" component={SharedScreen} />
     </WelcomeStack.Navigator>
   );
 });

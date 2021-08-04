@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { Modal, Dimensions } from "react-native";
+import React, { useMemo, useState } from "react";
+import { Dimensions } from "react-native";
 
 import CheckBox from '@react-native-community/checkbox';
 import { Input } from "react-native-elements";

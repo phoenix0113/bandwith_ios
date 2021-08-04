@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import Icon from "react-native-vector-icons/AntDesign";
-import { Switch, StyleSheet } from "react-native";
+import { Switch, StyleSheet, View, Button, Linking } from "react-native";
+import DeepLinking from 'react-native-deep-linking';
 
 import {
   COLORS, CenterItem, LeftItem, NavigationBar, RightItem, BasicSafeAreaView, BasicText,
@@ -16,7 +17,6 @@ import MakeCallIcon from "../../assets/images/home/MakeCall.svg";
 import BandwwithTextLogo from "../../assets/images/general/BandwwithTextLogo.svg";
 
 import { ContentText, ContentTitle, ContentWrapper, SwitchWrapper, PageWrapper } from "./styled";
-import { observer } from "mobx-react";
 import { WelcomeScreenNavigationProps } from "../../navigation/welcome/types";
 
 type WithNavigatorScreen = {
@@ -32,6 +32,29 @@ export const HomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element => 
   //   setShareCurrentRecordingID(url);
   //   navigation.navigate("Shared");
   // }
+
+  // const handleUrl = ({ url }) => {
+  //   Linking.canOpenURL(url).then((supported) => {
+  //     if (supported) {
+  //       DeepLinking.evaluateUrl(url);
+  //     }
+  //   });
+  // }
+  
+  // useEffect(() => {
+  //   DeepLinking.addScheme('app.bandwwith.com://');
+  //   Linking.addEventListener('url', handleUrl);
+  //   DeepLinking.addRoute('/shared/:id', (response) => {
+  //     setShareCurrentRecordingID(response.id);
+  //     navigation.navigate("Shared");
+  //   });
+  
+  //   Linking.getInitialURL().then((url) => {
+  //     if (url) {
+  //       Linking.openURL(url);
+  //     }
+  //   }).catch(err => console.error('An error occurred', err));
+  // });
   
   return (
   <BasicSafeAreaView>
@@ -67,9 +90,9 @@ export const HomeScreen = ({ navigation }: WithNavigatorScreen): JSX.Element => 
         {/* <View style={styles.container}>
           <View style={styles.container}>
             <Button
-              onPress={() => Linking.openURL('https://app.bandwwith.com/shared/6108e4248e41f9001e59fbd6')}
-              // onPress={() => setSharedID('6108e4248e41f9001e59fbd6')}
-              title="Open https://app.bandwwith.com/shared/6108e4248e41f9001e59fbd6"
+              // onPress={() => Linking.openURL('https://app.bandwwith.com/shared/6106fe388e41f9001e59fbb0')}
+              onPress={() => setSharedID('6106fe388e41f9001e59fbb0')}
+              title="Open https://app.bandwwith.com/shared/6106fe388e41f9001e59fbb0"
             />
           </View>
         </View> */}
