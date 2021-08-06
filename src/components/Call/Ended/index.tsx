@@ -55,11 +55,7 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
               {callParticipantData?.name || "Unknown user"}
             </NavigationText>
           </CenterItem>
-          <RightItem onPress={resetHandler}>
-            <NavigationText color={COLORS.ALTERNATIVE}>
-              Close
-            </NavigationText>
-          </RightItem>
+          <RightItem />
         </NavigationBar>
 
         <ContentWrapper>
@@ -82,14 +78,14 @@ export const CallEndedComponent = ({ callParticipantData, resetHandler, callId }
           )}
 
           <InputLabel>Your recording's name</InputLabel>
-            <Input
-              onChangeText={(value: string) => setRecordingName(value)}
-              placeholder="ENTER RECORDING'S NAME"
-              textContentType="oneTimeCode"
-              inputStyle={inputStyles.inputText}
-              containerStyle={inputStyles.inputContainer}
-              value={recordingName}
-            />
+          <Input
+            onChangeText={(value: string) => setRecordingName(value)}
+            placeholder="ENTER RECORDING'S NAME"
+            textContentType="oneTimeCode"
+            inputStyle={inputStyles.inputText}
+            containerStyle={inputStyles.inputContainer}
+            value={recordingName}
+          />
 
           <BasicButton
             disabled={isSubmitDisabled}
