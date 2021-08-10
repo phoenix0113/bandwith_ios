@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { observer } from "mobx-react";
 import Video from "react-native-video/Video";
+import Spinner from "react-native-loading-spinner-overlay";
 import { Dimensions, ScrollView } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,7 +11,7 @@ import { FeedStorageContext } from "../../../services/feed";
 import { ProfileRecordingComponent } from "./recordings";
 
 import {
-  NavigationBar, LeftItem, CenterItem, RightItem, COLORS
+  NavigationBar, LeftItem, CenterItem, RightItem, COLORS, BackgroundImage,
 } from "../../../components/styled";
 import {
   ProfileUserWrapper, BackContent, ProfileName, ProfileImageWrapper, ProfileEmail, ProfileContentWrapper,
@@ -19,7 +20,8 @@ import {
 
 import BackIcon from "../../../assets/images/feed/back.svg";
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
-const testVideoFile = "../../../assets/test_video.mp4";
+const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+const testBackgroundImage = "../../../assets/images/test.png";
 
 interface IProps {
   id: string;
@@ -38,6 +40,7 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
   const [currentRecording, setCurrentRecording] = useState("");
   const [position, setPosition] = useState(0);
   const [recordigns, setRecordings] = useState([]);
+  const [onReady, setOnReady] = useState(false);
 
   const scrollRef = useRef<ScrollView>();
 
@@ -50,6 +53,10 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
       }
       index++;
     });
+  }
+
+  const onLoad = () => {
+    setOnReady(true);
   }
 
   useEffect(() => {
@@ -122,14 +129,32 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
               <ProfileEmail>{profileUser?.email}</ProfileEmail>
               <ScrollView>
                 <ProfileRecordingContent>
+                  <Spinner
+                    visible={!onReady}
+                    size="large"
+                    color={COLORS.WHITE}
+                    overlayColor="0, 0, 0, 0"
+                    animation="fade"
+                  />
+
                   {
                     recordigns.map((recording) => (
                       <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
+                        {
+                          (!onReady) && (
+                            <BackgroundImage
+                              style={{ width: width / 3 - 8, height: 2 * width / 3 - 14 }}
+                              source={require(testBackgroundImage)}
+                            />
+                          )
+                        }
+
                         <Video
-                          source={{uri: recording.list[0].url}}
-                          // source={require(testVideoFile)}
+                          // source={{uri: recording.list[0].url}}
+                          source={{ uri: testVideoFile }}
                           style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
                           paused={true}
+                          onLoad={onLoad}
                         />
                       </ProfileVideo>
                     ))

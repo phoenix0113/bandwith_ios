@@ -146,3 +146,18 @@ export const getFeaturedStatus = async (request: CreateBlockRecordingRequest): P
     throw new Error(getError(response));
   }
 };
+
+export const loadAvailableRecordings = async (
+  query: GetAllRecordsQuery,
+): Promise<GetAllRecordsResponse> => {
+  const stringified = stringify(query);
+
+  try {
+    const response = await instance.post<GetAllRecordsResponse>(`${API.RECORD_AVAILABLE}?${stringified}`);
+
+    return response.data;
+  } catch (err) {
+    const { response } = err as IAxiosError;
+    throw new Error(getError(response));
+  }
+};

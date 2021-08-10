@@ -209,3 +209,7 @@ export const ScrollViewContent = styled.ScrollView<PageWrapperProps>`
   width: 100%;
   margin-bottom: 0;
 `;
+
+export const BackgroundImage = styled.Image`
+  opacity: 1;
+`;

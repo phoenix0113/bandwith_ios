@@ -1,8 +1,7 @@
 import { action, makeAutoObservable, observable, runInAction, toJS, reaction } from "mobx";
 import { createContext } from "react";
 import {
-  getRecordingById, getRecordingsList, sendRecordingReport, getRecordingsByUserID, getAllRecordingsList,
-  updateFeatured, checkFeatured, getFeaturedStatus,
+  getRecordingById, sendRecordingReport, getRecordingsByUserID, updateFeatured, checkFeatured, getFeaturedStatus, loadAvailableRecordings,
 } from "../axios/routes/feed";
 import { GetRecordResponse } from "../shared/interfaces";
 import {
@@ -26,13 +25,13 @@ class FeedMobxService {
 
   @observable recordings: Array<GetRecordResponse> = [];
 
+  @observable recordingsCount = -1;
+
   @observable filterRecordings: Array<GetRecordResponse> = [];
 
   @observable currentFilterRecording: GetRecordResponse = null;
 
-  @observable allRecordingsLoaded = false;
-
-  @observable allRecordingsList: Array<String> = [];
+  @observable onLoaded = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -42,7 +41,6 @@ class FeedMobxService {
         if (profile) {
           this.userID = profile._id;
           this.loadRecordings();
-          this.loadRecordingList();
         }
       }
     );
@@ -50,39 +48,29 @@ class FeedMobxService {
 
   public loadRecordings = async () => {
     try {
-      const { recordings } = await getRecordingsList({
-        limit: RECORDINGS_LOAD_LIMIT, offset: this.recordings.length,
-      });
+      if (this.recordingsCount !== this.recordings.length) {
+        this.onLoaded = false;
+        const { recordings, amount } = await loadAvailableRecordings({
+          limit: RECORDINGS_LOAD_LIMIT, offset: this.recordings.length,
+        });
 
-      runInAction(() => {
-        this.recordings.push(...recordings);
-        if (this.recordings.length <= RECORDINGS_LOAD_LIMIT && recordings.length) {
-          this.currentRecording = recordings[0];
-          this.setCurrentRecording(recordings[0]._id);
+        runInAction(() => {
+          this.recordings.push(...recordings);
+          this.recordingsCount = amount;
+          if (this.recordings.length <= RECORDINGS_LOAD_LIMIT && recordings.length) {
+            this.currentRecording = recordings[0];
+            this.setCurrentRecording(recordings[0]._id);
+          }
+        });
+
+        if (recordings.length < RECORDINGS_LOAD_LIMIT) {
+          console.log("> All stored recordings were loaded");
         }
-      });
-
-      if (recordings.length < RECORDINGS_LOAD_LIMIT) {
-        console.log("> All stored recordings were loaded");
+        this.onLoaded = true;
       }
     } catch (err) {
       console.log(err.message);
       showGeneralErrorAlert(LOADING_RECORDINGS_ERROR);
-    }
-  }
-
-  public loadRecordingList = async () => {
-    try {
-      const { ids } = await getAllRecordingsList();
-      this.allRecordingsList = [];
-
-      runInAction(() => {
-        this.allRecordingsList.push(...ids);
-      });
-
-    } catch (err) {
-      console.log(err.message);
-      showGeneralErrorAlert(LOADING_ALL_RECORDINGS_ERROR);
     }
   }
 

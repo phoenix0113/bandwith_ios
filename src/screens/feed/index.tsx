@@ -10,12 +10,11 @@ import { FeedOptionComponent } from "./FeedOption";
 
 import { FeedStorageContext } from "../../services/feed";
 
-import { PageContent, OptioinsView } from "./styled";
-
-const testVideoFile = "../../assets/test_video.mp4";
+import { PageContent } from "./styled";
 
 export const FeedScreen = observer((): JSX.Element => {
   const {
+    onLoaded,
     recordings,
     setCurrentRecording,
   } = useContext(FeedStorageContext);

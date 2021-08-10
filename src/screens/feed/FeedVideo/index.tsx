@@ -1,32 +1,20 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { Share, ShareContent } from "react-native";
 import Video from "react-native-video/Video";
 import { observer } from "mobx-react";
-
-import { ProfileComponent } from "../../feed/profile";
-import { SharedFeedItemComponent } from "../../feed/SharedItem";
-import { CommentsComponent } from "../../../components/Comments";
-import { ReportRecordingComponent } from "../../feed/Report";
+import Spinner from "react-native-loading-spinner-overlay";
 
 import { FeedStorageContext } from "../../../services/feed";
+import { GetRecordResponse } from "../../../shared/interfaces";
 
-import { showGeneralErrorAlert } from "../../../utils/notifications";
+import { COLORS, BackgroundImage } from "../../../components/styled";
+import {
+  VideoWrapper, FeedPlayerContentWrapper, FeedPlayerToolTip, FeedPlayerContentWrapperView,
+} from "../../feed/styled";
 
-import { NAVIGATOR_SHARE_ERROR, SERVER_BASE_URL } from "../../../utils/constants";
-import { GetRecordResponse, RecordUser } from "../../../shared/interfaces";
-import { Params, Routes } from "../../../utils/routes";
-
-import { VideoWrapper, CommentsFeedItemWrapper, ReportIcon, FeedPlayerContentWrapper,
-  FeedPlayerToolTip, FeedPlayerContentWrapperView, AddToFriendIcon } from "../../feed/styled";
-import { CallPageToolbar } from "../../../components/styled";
-
-import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
-import CommentIcon from "../../../assets/images/feed/comment.svg";
-import ShareIcon from "../../../assets/images/feed/share.svg";
-const reportIcon = "../../../assets/images/feed/report.png";
-const testVideoFile = "../../../assets/test_video.mp4";
+const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
+const testBackgroundImage = "../../../assets/images/test.png";
 
 interface IProps {
   recording: GetRecordResponse;
@@ -43,6 +31,7 @@ export const FeedVideoComponent  = observer((
   const playerRef = useRef<Video>(null);
   
   const [showPlayButton, setShowPlayButton] = useState(false);
+  const [onReady, setOnReady] = useState(false);
 
   const onPlay = () => {
     setShowPlayButton(false);
@@ -66,6 +55,10 @@ export const FeedVideoComponent  = observer((
     playerRef.current?.seek(0);
   }
 
+  const onLoad = () => {
+    setOnReady(true);
+  }
+
   useEffect(() => {
     if (currentRecording?._id !== recording._id) {
       playerRef.current?.setNativeProps({
@@ -82,14 +75,32 @@ export const FeedVideoComponent  = observer((
 
   return (
     <VideoWrapper key={recording?._id} style={{ height: height }}>
+      <Spinner
+        visible={!onReady}
+        size="large"
+        color={COLORS.WHITE}
+        overlayColor="rgba(0, 0, 0, 0)"
+        animation="fade"
+      />
+
+      {
+        (!onReady) && (
+          <BackgroundImage
+            style={{ width: width, height: height + 4 }}
+            source={require(testBackgroundImage)}
+          />
+        )
+      }
+
       <Video
         paused={false}
         ref={playerRef}
-        source={{uri: recording.list[0].url}}
-        // source={require(testVideoFile)}
+        // source={{uri: recording.list[0].url}}
+        source={{ uri: testVideoFile }}
         style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
         repeat={true}
         loop={true}
+        onLoad={onLoad}
       />
 
       {

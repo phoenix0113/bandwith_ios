@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import { Share, ShareContent, Alert } from "react-native";
 import Video from "react-native-video/Video";
 import { observer } from "mobx-react";
+import Spinner from "react-native-loading-spinner-overlay";
 
 import { ProfileComponent } from "../../feed/profile";
 import { SharedFeedItemComponent } from "../../feed/SharedItem";
@@ -19,17 +20,17 @@ import { Params, Routes } from "../../../utils/routes";
 import { deleteCallRecording } from "../../../axios/routes/feed";
 
 import { VideoWrapper, CommentsFeedItemWrapper, ReportIcon, FeedPlayerContentWrapper,
-  FeedPlayerToolTip, FeedPlayerContentWrapperView, AddToFriendIcon } from "../../feed/styled";
-import { CallPageToolbar } from "../../../components/styled";
+  FeedPlayerToolTip, FeedPlayerContentWrapperView } from "../../feed/styled";
+import { CallPageToolbar, COLORS, BackgroundImage } from "../../../components/styled";
 
-import AddIcon from "../../../assets/images/feed/feedAddIcon.svg";
 import PlayIcon from "../../../assets/images/feed/play.svg";
 import CommentIcon from "../../../assets/images/feed/comment.svg";
 import ShareIcon from "../../../assets/images/feed/share.svg";
 const reportIcon = "../../../assets/images/feed/report.png";
 const deleteIcon = "../../../assets/images/general/delete.png";
-const testVideoFile = "../../../assets/test_video.mp4";
+const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
+const testBackgroundImage = "../../../assets/images/test.png";
 
 interface IProps {
   recording: GetRecordResponse;
@@ -53,6 +54,7 @@ export const RecordingItemComponent  = observer((
   
   const [sharedRecordingId, setSharedRecordingId] = useState(null);
   const [showPlayButton, setShowPlayButton] = useState(false);
+  const [onReady, setOnReady] = useState(false);
 
   useEffect(() => {
     if (sharedRecordingId) {
@@ -122,6 +124,10 @@ export const RecordingItemComponent  = observer((
       paused: true
     })
     playerRef.current?.seek(0);
+  }
+
+  const onLoad = () => {
+    setOnReady(true);
   }
 
   useEffect(() => {
@@ -225,14 +231,32 @@ export const RecordingItemComponent  = observer((
         
       </CallPageToolbar>
 
+      <Spinner
+        visible={!onReady}
+        size="large"
+        color={COLORS.WHITE}
+        overlayColor="0, 0, 0, 0"
+        animation="fade"
+      />
+
+      {
+        (!onReady) && (
+          <BackgroundImage
+            style={{ width: width, height: height + 4 }}
+            source={require(testBackgroundImage)}
+          />
+        )
+      }
+
       <Video
         paused={false}
         ref={playerRef}
-        source={{uri: recording.list[0].url}}
-        // source={require(testVideoFile)}
+        // source={{uri: recording.list[0].url}}
+        source={{ uri: testVideoFile }}
         style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
         repeat={true}
         loop={true}
+        onLoad={onLoad}
       />
 
       {

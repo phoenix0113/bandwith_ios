@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useContext, useMemo } from "react";
 import { configure } from "mobx";
 import { Dimensions } from "react-native";
+import { observer } from "mobx-react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Spinner from "react-native-loading-spinner-overlay";
 import Video from "react-native-video/Video";
@@ -11,11 +12,10 @@ import { UserServiceInstance } from "../../services/user";
 import { APNServiceContext } from "../../services/APNs";
 import { SharedStorageContext } from "../../services/shared";
 import { tabBarHeight } from "../../utils/styles";
-import { observer } from "mobx-react";
 
 import {
   PageWrapper, NavigationBar, NavigationText, CenterItem, LeftItem, RightItem,
-  COLORS, SpinnerOverlayText, BasicSafeAreaView,
+  COLORS, BasicSafeAreaView, BackgroundImage,
 } from "../../components/styled";
 import {
   FeedPlayerToolTip, FeedPlayerContentWrapperView, FeedPlayerContentWrapper
@@ -23,7 +23,8 @@ import {
 
 import PlayIcon from "../../assets/images/feed/play.svg";
 import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
-const testVideoFile = "../../assets/test_video.mp4";
+const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+const testBackgroundImage = "../../assets/images/test.png";
 
 configure({ enforceActions: "never" });
 let servicesInitialized = false;
@@ -60,6 +61,7 @@ export const SharedScreen = observer(({navigation}: WithNavigatorScreen) => {
   const playerRef = useRef<Video>(null);
 
   const [showPlayBtn, setShowPlayBtn] = useState(false);
+  const [onReady, setOnReady] = useState(false);
   
   const onPlay = () => {
     setShowPlayBtn(false);
@@ -88,17 +90,28 @@ export const SharedScreen = observer(({navigation}: WithNavigatorScreen) => {
     navigation.navigate("Main");
   }
   
+  const onLoad = () => {
+    setOnReady(true);
+  }
+
   return (
     <BasicSafeAreaView>
       <Spinner
-        visible={!!spinnerText}
-        textContent={spinnerText}
-        textStyle={SpinnerOverlayText.text}
+        visible={!onReady}
         size="large"
         color={COLORS.WHITE}
-        overlayColor={COLORS.BLACK}
+        overlayColor="0, 0, 0, 0"
         animation="fade"
       />
+
+      {
+        (!onReady) && (
+          <BackgroundImage
+            style={{ width: width, height: height }}
+            source={require(testBackgroundImage)}
+          />
+        )
+      }
 
       <PageWrapper>
         <NavigationBar style={{ width: width }}>
@@ -116,11 +129,12 @@ export const SharedScreen = observer(({navigation}: WithNavigatorScreen) => {
             <Video
               paused={false}
               ref={playerRef}
-              source={{uri: sharedRecording.list[0].url}}
-              // source={require(testVideoFile)}
+              // source={{uri: sharedRecording.list[0].url}}
+              source={{ uri: testVideoFile }}
               style={{ height: height, width: width, zIndex: 0, position: "absolute", top: 50 }}
               repeat={true}
               loop={true}
+              onLoad={onLoad}
             />
 
             {
