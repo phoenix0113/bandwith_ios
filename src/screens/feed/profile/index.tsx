@@ -141,17 +141,17 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
                     recordigns.map((recording) => (
                       <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
                         {
-                          (!onReady) && (
+                          (!onReady) && (recording.thumbnail) && (
                             <BackgroundImage
                               style={{ width: width / 3 - 8, height: 2 * width / 3 - 14 }}
-                              source={require(testBackgroundImage)}
+                              source={{ uri: recording.thumbnail }}
                             />
                           )
                         }
 
                         <Video
-                          // source={{uri: recording.list[0].url}}
-                          source={{ uri: testVideoFile }}
+                          source={{uri: recording.list[0].url}}
+                          // source={{ uri: testVideoFile }}
                           style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
                           paused={true}
                           onLoad={onLoad}

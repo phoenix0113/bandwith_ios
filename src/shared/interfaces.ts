@@ -317,14 +317,18 @@ export interface GetRecordResponse extends Document {
   pipeId: string;
   callId: string;
   participants?: RecordUser[];
-  authorList?: string[];
+  authorList?: RecordUser[];
   user?: RecordUser;
+  name?: string;
+  thumbnail: string;
 }
 
 export interface CallRecording extends Document, CreateCallRecordingRequest {
   list: ListRecordingItem[];
   user?: string;
   participiants?: string[];
+  authorList?: string[];
+  thumbnail?: string;
 }
 
 export interface BlockRecordingResponse {

@@ -1,16 +1,18 @@
 import "react-native-gesture-handler";
 import React, { useContext, useEffect, useMemo } from "react";
-import { StatusBar, Linking } from "react-native";
+import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { createAppContainer } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import { configure } from "mobx";
 import "react-native-get-random-values";
 import Spinner from "react-native-loading-spinner-overlay";
 import { observer } from "mobx-react";
-import DeepLinking from 'react-native-deep-linking';
 
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
+import { SharedScreen } from "./screens/shared";
 import { SERVER_BASE_URL } from "./utils/constants";
 import { COLORS, SpinnerOverlayText } from "./components/styled";
 
@@ -38,11 +40,22 @@ type WithNavigatorScreen = {
   navigation: WelcomeScreenNavigationProps;
 }
 
+const MainApp = createStackNavigator({
+  Share: {
+    screen: SharedScreen,
+    navigationOptions: {
+      headerTitle: 'Shared'
+    },
+    path: 'shared/:id'
+  },
+})
+
+const AppContainer = createAppContainer(MainApp);
+
 const App = observer(({ navigation }: WithNavigatorScreen) => {
   const { incomingCallData } = useContext(APNServiceContext);
 
   const { netAccessible, netConnected } = useContext(AppServiceContext);
-  const { setShareCurrentRecordingID } = useContext(SharedStorageContext);
 
   useEffect(() => {
     if (!servicesInitialized && netAccessible === true && netConnected === true) {
@@ -62,28 +75,7 @@ const App = observer(({ navigation }: WithNavigatorScreen) => {
     return null;
   }, [incomingCallData, netAccessible, netConnected]);
 
-  const handleUrl = ({ url }) => {
-    Linking.canOpenURL(url).then((supported) => {
-      if (supported) {
-        DeepLinking.evaluateUrl(url);
-      }
-    });
-  }
-  
-  useEffect(() => {
-    DeepLinking.addScheme('https://app.bandwwith.com');
-    Linking.addEventListener('url', handleUrl);
-    DeepLinking.addRoute('/shared/:id', (response) => {
-      setShareCurrentRecordingID(response.id);
-      navigation.navigate("Shared");
-    });
-  
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        Linking.openURL(url);
-      }
-    }).catch(err => console.error('An error occurred', err));
-  });
+  const prefix = "app.bandwwith.com://";
 
   return (
     <SafeAreaProvider>
@@ -99,9 +91,11 @@ const App = observer(({ navigation }: WithNavigatorScreen) => {
         animation="fade"
        />
 
-      <NavigationContainer ref={navigationRef}>
-        <WelcomeNavigation />
-      </NavigationContainer>
+      {/* <AppContainer uriPrefix={prefix}> */}
+        <NavigationContainer ref={navigationRef}>
+          <WelcomeNavigation />
+        </NavigationContainer>
+      {/* </AppContainer> */}
     </SafeAreaProvider>
   );
 });

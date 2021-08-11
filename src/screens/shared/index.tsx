@@ -105,10 +105,10 @@ export const SharedScreen = observer(({navigation}: WithNavigatorScreen) => {
       />
 
       {
-        (!onReady) && (
+        (!onReady) && (sharedRecording.thumbnail) && (
           <BackgroundImage
             style={{ width: width, height: height }}
-            source={require(testBackgroundImage)}
+            source={{ uri: sharedRecording.thumbnail }}
           />
         )
       }
@@ -129,8 +129,8 @@ export const SharedScreen = observer(({navigation}: WithNavigatorScreen) => {
             <Video
               paused={false}
               ref={playerRef}
-              // source={{uri: sharedRecording.list[0].url}}
-              source={{ uri: testVideoFile }}
+              source={{uri: sharedRecording.list[0].url}}
+              // source={{ uri: testVideoFile }}
               style={{ height: height, width: width, zIndex: 0, position: "absolute", top: 50 }}
               repeat={true}
               loop={true}

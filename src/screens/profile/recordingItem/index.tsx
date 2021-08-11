@@ -240,10 +240,10 @@ export const RecordingItemComponent  = observer((
       />
 
       {
-        (!onReady) && (
+        (!onReady) && (recording.thumbnail) && (
           <BackgroundImage
             style={{ width: width, height: height + 4 }}
-            source={require(testBackgroundImage)}
+            source={{ uri: recording.thumbnail }}
           />
         )
       }
@@ -251,8 +251,8 @@ export const RecordingItemComponent  = observer((
       <Video
         paused={false}
         ref={playerRef}
-        // source={{uri: recording.list[0].url}}
-        source={{ uri: testVideoFile }}
+        source={{uri: recording.list[0].url}}
+        // source={{ uri: testVideoFile }}
         style={{ height: height + 4, width: width, zIndex: 0, position: "absolute" }}
         repeat={true}
         loop={true}
