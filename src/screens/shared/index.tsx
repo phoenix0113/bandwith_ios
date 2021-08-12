@@ -24,7 +24,6 @@ import {
 import PlayIcon from "../../assets/images/feed/play.svg";
 import BackButtonIcon from "../../assets/images/general/BackButtonIcon.svg";
 const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-const testBackgroundImage = "../../assets/images/test.png";
 
 configure({ enforceActions: "never" });
 let servicesInitialized = false;
@@ -105,7 +104,7 @@ export const SharedScreen = observer(({navigation}: WithNavigatorScreen) => {
       />
 
       {
-        (!onReady) && (sharedRecording.thumbnail) && (
+        (!onReady) && (sharedRecording?.thumbnail) && (
           <BackgroundImage
             style={{ width: width, height: height }}
             source={{ uri: sharedRecording.thumbnail }}

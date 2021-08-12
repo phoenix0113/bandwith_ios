@@ -30,7 +30,6 @@ const reportIcon = "../../../assets/images/feed/report.png";
 const deleteIcon = "../../../assets/images/general/delete.png";
 const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
-const testBackgroundImage = "../../../assets/images/test.png";
 
 interface IProps {
   recording: GetRecordResponse;

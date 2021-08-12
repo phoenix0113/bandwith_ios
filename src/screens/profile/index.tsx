@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ScrollView, Dimensions, TouchableOpacity } from "react-native";
-import Video from "react-native-video/Video";
+import { ScrollView, Dimensions, TouchableOpacity, Image } from "react-native";
 import { observer } from "mobx-react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Spinner from "react-native-loading-spinner-overlay";
@@ -21,8 +20,6 @@ import { UserServiceContext, UserServiceInstance } from "../../services/user";
 
 import BackIcon from "../../assets/images/feed/back.svg";
 const tempProfileIcon = "../../assets/images/call/default_profile_image.png";
-const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-const testBackgroundImage = "../../assets/images/test.png";
 
 export const ProfileScreen = observer(() => {
   const {
@@ -35,7 +32,6 @@ export const ProfileScreen = observer(() => {
   const recordingHeight = height - 66;
   const [currentRecording, setCurrentRecording] = useState("");
   const [position, setPosition] = useState(0);
-  const [onReady, setOnReady] = useState(false);
 
   const scrollRef = useRef<ScrollView>();
 
@@ -88,10 +84,6 @@ export const ProfileScreen = observer(() => {
     setCurrentRecording("");
   }
 
-  const onLoad = () => {
-    setOnReady(true);
-  }
-
   return (
     <BasicSafeAreaView>
       <PageWrapper>
@@ -139,33 +131,12 @@ export const ProfileScreen = observer(() => {
               <BasicText lineHeight="40px">{profile?.name}</BasicText>
               <ScrollView>
                 <ProfileRecordingContent>
-                  <Spinner
-                    visible={!onReady}
-                    size="large"
-                    color={COLORS.WHITE}
-                    overlayColor="0, 0, 0, 0"
-                    animation="fade"
-                  />
-
                   {
                     profileRecordings.map((recording) => (
                       <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
-                        {
-                          (!onReady) && (recording.thumbnail) && (
-                            <BackgroundImage
-                              style={{ width: width / 3 - 8, height: 2 * width / 3 - 14 }}
-                              source={{ uri: recording.thumbnail }}
-                            />
-                          )
-                        }
-
-                        <Video
-                          source={{uri: recording.list[0].url}}
-                          // source={{ uri: testVideoFile }}
+                        <Image
+                          source={{uri: recording?.thumbnail}}
                           style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
-                          paused={true}
-                          loop={true}
-                          onLoad={onLoad}
                         />
                       </ProfileVideo>
                     ))

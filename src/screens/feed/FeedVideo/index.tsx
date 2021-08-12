@@ -13,8 +13,6 @@ import {
 
 import PlayIcon from "../../../assets/images/feed/play.svg";
 const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
-const testBackgroundImage = "../../../assets/images/test.png";
 
 interface IProps {
   recording: GetRecordResponse;
@@ -88,7 +86,6 @@ export const FeedVideoComponent  = observer((
           <BackgroundImage
             style={{ width: width, height: height + 4 }}
             source={{ uri: recording.thumbnail }}
-            // source={require(testBackgroundImage)}
           />
         )
       }

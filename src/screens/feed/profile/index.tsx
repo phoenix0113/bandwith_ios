@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
+import { Image } from "react-native";
 import { observer } from "mobx-react";
-import Video from "react-native-video/Video";
 import Spinner from "react-native-loading-spinner-overlay";
 import { Dimensions, ScrollView } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,8 +20,6 @@ import {
 
 import BackIcon from "../../../assets/images/feed/back.svg";
 const tempProfileIcon = "../../../assets/images/call/default_profile_image.png";
-const testVideoFile = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-const testBackgroundImage = "../../../assets/images/test.png";
 
 interface IProps {
   id: string;
@@ -129,32 +127,12 @@ export const ProfileComponent = observer(({ id, showUserProfile }: IProps): JSX.
               <ProfileEmail>{profileUser?.email}</ProfileEmail>
               <ScrollView>
                 <ProfileRecordingContent>
-                  <Spinner
-                    visible={!onReady}
-                    size="large"
-                    color={COLORS.WHITE}
-                    overlayColor="0, 0, 0, 0"
-                    animation="fade"
-                  />
-
                   {
                     recordigns.map((recording) => (
                       <ProfileVideo key={recording._id} onPress={() => onViewRecordings(recording._id)}>
-                        {
-                          (!onReady) && (recording.thumbnail) && (
-                            <BackgroundImage
-                              style={{ width: width / 3 - 8, height: 2 * width / 3 - 14 }}
-                              source={{ uri: recording.thumbnail }}
-                            />
-                          )
-                        }
-
-                        <Video
-                          source={{uri: recording.list[0].url}}
-                          // source={{ uri: testVideoFile }}
+                        <Image
+                          source={{uri: recording?.thumbnail}}
                           style={{ width: width / 3 - 8, height: 2 * width / 3 - 14, position: "absolute"}}
-                          paused={true}
-                          onLoad={onLoad}
                         />
                       </ProfileVideo>
                     ))

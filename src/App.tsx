@@ -1,10 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useContext, useEffect, useMemo } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, Linking } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { createAppContainer } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack'
 import { configure } from "mobx";
 import "react-native-get-random-values";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -12,7 +10,6 @@ import { observer } from "mobx-react";
 
 import { navigationRef } from "./navigation/helper";
 import { WelcomeNavigation } from "./navigation/welcome";
-import { SharedScreen } from "./screens/shared";
 import { SERVER_BASE_URL } from "./utils/constants";
 import { COLORS, SpinnerOverlayText } from "./components/styled";
 
@@ -22,7 +19,6 @@ import { COLORS, SpinnerOverlayText } from "./components/styled";
 import { AppServiceContext } from "./services/app";
 import { UserServiceInstance } from "./services/user";
 import { APNServiceContext } from "./services/APNs";
-import { SharedStorageContext } from "./services/shared";
 import "./services/contacts";
 import "./services/notifications";
 import "./services/socket";
@@ -39,18 +35,6 @@ import { WelcomeScreenNavigationProps } from "./navigation/welcome/types";
 type WithNavigatorScreen = {
   navigation: WelcomeScreenNavigationProps;
 }
-
-const MainApp = createStackNavigator({
-  Share: {
-    screen: SharedScreen,
-    navigationOptions: {
-      headerTitle: 'Shared'
-    },
-    path: 'shared/:id'
-  },
-})
-
-const AppContainer = createAppContainer(MainApp);
 
 const App = observer(({ navigation }: WithNavigatorScreen) => {
   const { incomingCallData } = useContext(APNServiceContext);
@@ -75,7 +59,26 @@ const App = observer(({ navigation }: WithNavigatorScreen) => {
     return null;
   }, [incomingCallData, netAccessible, netConnected]);
 
-  const prefix = "app.bandwwith.com://";
+  let prefix = SERVER_BASE_URL;
+  prefix += "://";
+
+  const linkingOption = {
+    enabled: true,
+    prefixes: [
+      prefix,
+    ],
+    screens: {
+      Shared: {
+        path: "shared/:id",
+        parse: { id: Number },
+      }
+    },
+    subscribe: (listener) => {
+      const onReceiveURL = ({ url }) => listener(url);
+      Linking.addEventListener('url', onReceiveURL);
+      return () => Linking.removeEventListener('url', onReceiveURL);
+    }
+  };
 
   return (
     <SafeAreaProvider>
@@ -90,12 +93,10 @@ const App = observer(({ navigation }: WithNavigatorScreen) => {
         overlayColor={COLORS.BLACK}
         animation="fade"
        />
-
-      {/* <AppContainer uriPrefix={prefix}> */}
-        <NavigationContainer ref={navigationRef}>
-          <WelcomeNavigation />
-        </NavigationContainer>
-      {/* </AppContainer> */}
+       
+      <NavigationContainer ref={navigationRef} linking={linkingOption}>
+        <WelcomeNavigation />
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 });
